@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
 
         $users = [
             [
-                'email' => 'admin@example.com',
+                'email' => 'admin@gmail.com',
                 'role_id' => 1,
                 'name' => 'Admin User',
                 'password' => 'adminpassword',
@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
                 'password' => 'userpassword',
             ],
             [
-                'email' => 'vadim@example.com',
+                'email' => 'vadim@gmail.com',
                 'role_id' => 2,
                 'name' => 'Ghofur Gulam',
                 'password' => 'password',

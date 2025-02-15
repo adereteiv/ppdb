@@ -1,6 +1,10 @@
 <aside class="app-sidebar content-padding">
     <div class="text-align-center margin-vertical">
-        <h3>user->'role' Pendaftar atau Admin</h3>
+        <h3>
+            @auth
+                {{ auth()->user()->role_id == 1 ? 'Admin' : 'Pendaftar' }}
+            @endauth
+        </h3>
         <img src="https://placehold.co/100?text=Dummy+Image" alt="">
         <h3>PPDB Daring</h3>
     </div>

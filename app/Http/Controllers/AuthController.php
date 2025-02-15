@@ -24,14 +24,16 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        // if (Auth::attempt($credentials)){
-        //     $request->session()->regenerate();
-        //     return redirect()->intended('/pendaftar/dashboard');
-        // };
+        /*
+        if (Auth::attempt($credentials)){
+            $request->session()->regenerate();
+            return redirect()->intended('/pendaftar/dashboard');
+        };
+        */
 
         $user = User::where('id', $credentials['id'])->where('role_id', 2)->first();
 
-        /* dipastikan role = pendaftar
+        /* dipastikan role = pendaftar */
         /* Dua pengecekan + error
         if (!$user){
             return back()->withErrors(['id' => 'Periksa kembali ID yang dimasukkan.'])->onlyInput('id');
@@ -59,8 +61,10 @@ class AuthController extends Controller
 
     public function authenticateAdmin(Request $request){
         $credentials = $request->validate([
-            // 'email'=> 'required|email:rfc,dns',
+            /*
             'email'=> 'required|email',
+            */
+            'email'=> 'required|email:rfc,dns',
             'password' => 'required',
         ],['email.email' => 'Mohon masukkan format email yang benar.']
         );
@@ -72,9 +76,9 @@ class AuthController extends Controller
         };
         */
 
+        /* dipastikan role = admin */
         $user = User::where('email', $credentials['email'])->where('role_id', 1)->first();
 
-        /* dipastikan role = admin
         /* Dua pengecekan + error
         if (!$user){
             return back()->withErrors(['email' => "Email tidak cocok, silakan coba lagi."])->onlyInput('email');

@@ -16,7 +16,11 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, $role): Response
     {
-        //
+        $user = Auth::user();
+
+        if (!$user || $user->role_id != $role) {
+            abort(403, 'Unauthorized access.');
+        }
 
         return $next($request);
     }
