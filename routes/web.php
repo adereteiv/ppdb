@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Session\Middleware\AuthenticateSession;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\DashboardController;
@@ -21,17 +22,21 @@ Route::post('/login', [AuthController::class, 'authenticate']);
 Route::get('/pintuadmin', [AuthController::class, 'showAdminLogin']);
 Route::post('/pintuadmin', [AuthController::class, 'authenticateAdmin']);
 
-//dashboard pendaftar
-Route::get('/pendaftar/dashboard', [DashboardController::class, 'index']);
-Route::get('/pendaftar/formulir"', [DashboardController::class, 'showFormulir']);
-Route::get('/pendaftar/dokumen"', [DashboardController::class, 'shodDokumen']);
-Route::get('/pendaftar/bukti-bayar', [DashboardController::class, 'showBuktiBayar']);
-Route::get('/pendaftar/profil', [DashboardController::class, 'showProfil']);
+Route::middleware(['role:1'])->group(function () {
+    Route::get('/admin/dashboard', [DashboardAdminController::class, 'index']);
+    Route::get('/admin/ppdb', [DashboardAdminController::class, 'kelolaPPDB']);
+    Route::get('/admin/ppdb/arsip', [DashboardAdminController::class, 'kelolaPPDBArsip']);
+    Route::get('/admin/ppdb/aktif', [DashboardAdminController::class, 'kelolaPPDBAktif']);
+    Route::get('/admin/ppdb/buat', [DashboardAdminController::class, 'buatPPDB']);
+    Route::get('/admin/pengumuman', [DashboardAdminController::class, 'kelolaPengumuman']);
+});
 
-//dashboard admin
-Route::get('/admin/dashboard', [DashboardAdminController::class, 'index']);
-Route::get('/admin/ppdb', [DashboardAdminController::class, 'kelolaPPDB']);
-Route::get('/admin/pengumuman', [DashboardAdminController::class, 'kelolaPengumuman']);
+Route::middleware(['role:2','auth.session'])->group(function () {
+    Route::get('/pendaftar/dashboard', [DashboardController::class, 'index']);
+    Route::get('/pendaftar/formulir', [DashboardController::class, 'showFormulir']);
+    Route::get('/pendaftar/dokumen', [DashboardController::class, 'showDokumen']);
+    Route::get('/pendaftar/bukti-bayar', [DashboardController::class, 'showBuktiBayar']);
+    Route::get('/pendaftar/profil', [DashboardController::class, 'showProfil']);
+});
 
-//log out
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

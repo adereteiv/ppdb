@@ -11,46 +11,27 @@ use Illuminate\Support\Facades\Session;
 class AuthController extends Controller
 {
     public function showLogin(){
-        return view('login');
+        return view('auth.login');
     }
 
     public function showAdminLogin(){
-        return view('admin.login');
+        return view('auth.pintuadmin');
     }
 
     public function authenticate(Request $request){
+        if (Auth::check()){
+            // dd (Auth::user()?->role_id);
+            return back()->with('loginError', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
+        };
+
         $credentials = $request->validate([
             'id' => 'required',
             'password' => 'required',
         ]);
 
-        /*
-        if (Auth::attempt($credentials)){
-            $request->session()->regenerate();
-            return redirect()->intended('/pendaftar/dashboard');
-        };
-        */
-
+        /* dipastikan role = pendaftar */
         $user = User::where('id', $credentials['id'])->where('role_id', 2)->first();
 
-        /* dipastikan role = pendaftar */
-        /* Dua pengecekan + error
-        if (!$user){
-            return back()->withErrors(['id' => 'Periksa kembali ID yang dimasukkan.'])->onlyInput('id');
-        }
-
-        if (!Auth::attempt($credentials)){
-            return back()->withErrors(['password' => 'Login gagal. Periksa kembali ID dan kata sandi Anda.'])->onlyInput('id');
-        }
-        */
-
-        /* Digabung
-        if (!$user || !Auth::attempt($credentials)) {
-            return back()->with('loginError', 'Login gagal. Periksa kembali ID dan kata sandi Anda.')->onlyInput('id');
-        }
-        */
-
-        /*Digabung lebih jauh*/
         if (!$user || !Auth::attempt(['id' => $credentials['id'], 'password' => $credentials['password']])) {
             return back()->with('loginError', 'Login gagal. Periksa kembali ID dan kata sandi Anda.')->onlyInput('id');
         }
@@ -60,36 +41,20 @@ class AuthController extends Controller
     }
 
     public function authenticateAdmin(Request $request){
+        if (Auth::check()){
+            // dd (Auth::user()?->role_id);
+            return back()->with('loginError', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
+        };
+
         $credentials = $request->validate([
-            /*
-            'email'=> 'required|email',
-            */
             'email'=> 'required|email:rfc,dns',
             'password' => 'required',
         ],['email.email' => 'Mohon masukkan format email yang benar.']
         );
 
-        /*
-        if (Auth::attempt($credentials)){
-            $request->session()->regenerate();
-            return redirect()->intended('/admin/dashboard');
-        };
-        */
-
         /* dipastikan role = admin */
         $user = User::where('email', $credentials['email'])->where('role_id', 1)->first();
 
-        /* Dua pengecekan + error
-        if (!$user){
-            return back()->withErrors(['email' => "Email tidak cocok, silakan coba lagi."])->onlyInput('email');
-            }
-
-        if (!Auth::attempt($credentials)){
-            return back()->withErrors(['password' => 'Login gagal.'])->onlyInput('email');
-        }
-        */
-
-        /* Fusion! */
         if (!$user || !Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
             return back()->with('loginError', 'Login gagal. Periksa kembali email dan kata sandi Anda.')->onlyInput('email');
         }
@@ -111,20 +76,6 @@ class AuthController extends Controller
         session()->invalidate();
         session()->regenerateToken();
 
-        // Still sama fungsinya, trim trim cut cut
-        /*
-        if ($user && $user->role_id == 1){
-            return redirect('/pintuadmin');
-        }
-
-        return redirect('/login');
-        */
-
-        /* Masih bisa di-trim, STREAMLINE GAS
-        return redirect($user && $user->role_id == 1 ? '/pintuadmin' : '/login');
-        */
-
-        /* Perfecto! */
         return redirect($user?->role_id == 1 ? '/pintuadmin' : '/login');
     }
 }

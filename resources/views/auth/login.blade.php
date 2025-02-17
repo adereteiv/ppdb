@@ -6,22 +6,12 @@
         </div>
         <div class="form-login margin-vertical">
 
-            @if(session()->has('berhasil'))
-            <div class="form-login_item flex justify-between reminder bg-blue teks-putih margin-vertical" x-data="{ show: true }" x-show="show" >
-                <span class="flex-1 align-self-center">
-                    {{ session(key: 'berhasil') }}
-                </span>
-                <div><button class="tombol tombol-netral" @click="show = false"><i class="bi bi-x-lg"></i></button></div>
-            </div>
+            @if(session()->has('registrasiAkunBerhasil'))
+            <x-flash-message class="bg-green teks-putih">{{ session('registrasiAkunBerhasil') }}</x-flash-message>
             @endif
 
             @if(session()->has('loginError'))
-            <div class="form-login_item flex justify-between reminder bg-red teks-putih margin-vertical" x-data="{ show: true }" x-show="show" >
-                <span class="flex-1 align-self-center">
-                    {{ session('loginError') }}
-                </span>
-                <div><button class="tombol tombol-negatif" @click="show = false"><i class="bi bi-x-lg"></i></button></div>
-            </div>
+            <x-flash-message class="bg-red teks-putih">{{ session('loginError') }}</x-flash-message>
             @endif
 
             {{--

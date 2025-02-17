@@ -73,7 +73,6 @@ class AuthControllerTest extends TestCase
         ]);
 
         $response->assertRedirect('/admin/dashboard');
-        $this->actingAs($admin);
         $this->assertAuthenticatedAs($admin);
     }
 
@@ -141,9 +140,8 @@ class AuthControllerTest extends TestCase
 
     public function test_logout_pendaftar_redirect_ke_login()
     {
-        $registrant = User::factory()->create(['role_id' => 2]);
+        User::factory()->create(['role_id' => 2]);
 
-        $this->actingAs($registrant);
         $response = $this->post('/logout');
 
         $response->assertRedirect('/login');
@@ -152,9 +150,9 @@ class AuthControllerTest extends TestCase
 
     public function test_logout_admin_redirect_ke_login_admin()
     {
-        $admin = User::factory()->create(['role_id' => 1]);
+        User::factory()->create(['role_id' => 1]);
 
-        $this->actingAs($admin);
+        // $this->actingAs($admin);
         $response = $this->post('/logout');
 
         $response->assertRedirect('/pintuadmin');

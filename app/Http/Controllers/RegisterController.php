@@ -84,6 +84,6 @@ class RegisterController extends Controller
 
         // Kirim email dengan ID Pengguna
 
-        return redirect('/login')->with('berhasil', 'Registrasi akun berhasil! Silakan login.');
+        return redirect('/login')->with('registrasiAkunBerhasil', 'Registrasi akun berhasil! Silakan login.');
     }
 }

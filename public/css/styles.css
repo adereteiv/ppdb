@@ -617,12 +617,12 @@ th,td{
     }
     .submenu{
         padding-left: 1rem;
-        display: grid;
-        grid-template-rows: 0fr;
+        /* display: grid; */
+        /* grid-template-rows: 0fr; */
         transition: 100ms ease-in-out;
         div{overflow: hidden;}
 
-        &.show{grid-template-rows: 1fr;}
+        /* &.show{grid-template-rows: 1fr;} */
     }
 }
 .app-content-area{
