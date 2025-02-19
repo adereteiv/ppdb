@@ -5,8 +5,8 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+// use Illuminate\Foundation\Testing\WithFaker;
+// use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class AuthControllerTest extends TestCase
@@ -63,12 +63,12 @@ class AuthControllerTest extends TestCase
     {
         $admin = User::factory()->create([
             'role_id' => 1, // Admin
-            'email' => 'admin@gmail.com',
+            'email' => 'admin_2@gmail.com',
             'password' => Hash::make('password'),
         ]);
 
         $response = $this->post('/pintuadmin', [
-            'email' => 'admin@gmail.com',
+            'email' => 'admin_2@gmail.com',
             'password' => 'password',
         ]);
 
@@ -78,12 +78,6 @@ class AuthControllerTest extends TestCase
 
 	public function test_authenticate_admin_gagal_format_email_keliru()
     {
-        $admin = User::factory()->create([
-            'role_id' => 1, // Admin
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('password'),
-        ]);
-
         $response = $this->post('/pintuadmin', [
             'email' => 'admin@example.com',
             'password' => 'password',
@@ -123,11 +117,11 @@ class AuthControllerTest extends TestCase
 
     public function test_authenticate_admin_gagal_password_salah()
 	{
-        $admin = User::factory()->create([
-            'role_id' => 1,
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('password'),
-        ]);
+        // $admin = User::factory()->create([
+        //     'role_id' => 1,
+        //     'email' => 'admin@gmail.com',
+        //     'password' => Hash::make('password'),
+        // ]);
 
         $response = $this->post('/pintuadmin', [
             'email' => 'admin@gmail.com',
@@ -136,6 +130,23 @@ class AuthControllerTest extends TestCase
 
         $response->assertSessionHas('loginError', 'Login gagal. Periksa kembali email dan kata sandi Anda.');
         $this->assertGuest();
+    }
+
+    public function test_tidak_bisa_login_ada_sesi_yang_aktif(){
+        $user = User::factory()->create([
+            'role_id' => 2,
+            'password' => Hash::make('passwordujicoba'),
+        ]);
+
+        // Simulasi user sudah ada
+        $this->actingAs($user);
+
+        $response = $this->post('/login',[
+            'id' => $user->id,
+            'password' => Hash::make('passwordujicoba'),
+        ]);
+
+        $response->assertSessionHas('loginError', 'Logout terlebih dahulu untuk menjalankan sesi baru.');
     }
 
     public function test_logout_pendaftar_redirect_ke_login()
@@ -150,9 +161,9 @@ class AuthControllerTest extends TestCase
 
     public function test_logout_admin_redirect_ke_login_admin()
     {
-        User::factory()->create(['role_id' => 1]);
+        $admin = User::factory()->create(['role_id' => 1]);
 
-        // $this->actingAs($admin);
+        $this->actingAs($admin);
         $response = $this->post('/logout');
 
         $response->assertRedirect('/pintuadmin');

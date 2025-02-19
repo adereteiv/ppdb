@@ -19,11 +19,6 @@ class AuthController extends Controller
     }
 
     public function authenticate(Request $request){
-        if (Auth::check()){
-            // dd (Auth::user()?->role_id);
-            return back()->with('loginError', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
-        };
-
         $credentials = $request->validate([
             'id' => 'required',
             'password' => 'required',
@@ -31,6 +26,11 @@ class AuthController extends Controller
 
         /* dipastikan role = pendaftar */
         $user = User::where('id', $credentials['id'])->where('role_id', 2)->first();
+
+        if (Auth::check()){
+            // dd (Auth::user()?->role_id);
+            return back()->with('loginError', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
+        };
 
         if (!$user || !Auth::attempt(['id' => $credentials['id'], 'password' => $credentials['password']])) {
             return back()->with('loginError', 'Login gagal. Periksa kembali ID dan kata sandi Anda.')->onlyInput('id');
@@ -41,11 +41,6 @@ class AuthController extends Controller
     }
 
     public function authenticateAdmin(Request $request){
-        if (Auth::check()){
-            // dd (Auth::user()?->role_id);
-            return back()->with('loginError', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
-        };
-
         $credentials = $request->validate([
             'email'=> 'required|email:rfc,dns',
             'password' => 'required',
@@ -54,6 +49,11 @@ class AuthController extends Controller
 
         /* dipastikan role = admin */
         $user = User::where('email', $credentials['email'])->where('role_id', 1)->first();
+
+        if (Auth::check()){
+            // dd (Auth::user()?->role_id);
+            return back()->with('loginError', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
+        };
 
         if (!$user || !Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
             return back()->with('loginError', 'Login gagal. Periksa kembali email dan kata sandi Anda.')->onlyInput('email');
