@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardAdminController;
 
 // Route::get('/', function () {return view('welcome');});
+
 Route::get('/beranda', function () {return view('beranda');});
 Route::get('/profil', function () {return view('profil');});
 Route::get('/struktur', function () {return view('struktur');});
@@ -22,7 +23,7 @@ Route::post('/login', [AuthController::class, 'authenticate']);
 Route::get('/pintuadmin', [AuthController::class, 'showAdminLogin']);
 Route::post('/pintuadmin', [AuthController::class, 'authenticateAdmin']);
 
-Route::middleware(['auth','role:1'])->group(function () {
+Route::middleware(['auth.must','role:1'])->group(function () {
     Route::get('/admin/dashboard', [DashboardAdminController::class, 'index']);
     Route::get('/admin/ppdb', [DashboardAdminController::class, 'kelolaPPDB']);
     Route::get('/admin/ppdb/arsip', [DashboardAdminController::class, 'kelolaPPDBArsip']);
@@ -31,7 +32,7 @@ Route::middleware(['auth','role:1'])->group(function () {
     Route::get('/admin/pengumuman', [DashboardAdminController::class, 'kelolaPengumuman']);
 });
 
-Route::middleware(['auth','role:2'])->group(function () {
+Route::middleware(['auth.must','role:2'])->group(function () {
     Route::get('/pendaftar/dashboard', [DashboardController::class, 'index']);
     Route::get('/pendaftar/formulir', [DashboardController::class, 'showFormulir']);
     Route::get('/pendaftar/dokumen', [DashboardController::class, 'showDokumen']);

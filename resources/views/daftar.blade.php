@@ -1,6 +1,4 @@
-<x-layouts.home-layout
- {{-- :hideFooter='true' --}}
->
+<x-layouts.home-layout :hideFooter='true'>
 @if(session('email'))
     <script>
         alert(@json(session('email')));
@@ -25,7 +23,7 @@
                             <p>Isi Data Secara Lengkap dan Jelas Sesuai dengan Data Yang Tertera Di KARTU KELUARGA/AKTA KELAHIRAN</p>
                         </div>
                     </article>
-                    <form id="form1" method="post" action="daftar">@csrf
+                    <form method="post" action="daftar">@csrf
                         <article class="content-margin-bottom">
                             <header><h3>Registrasi Akun</h3></header>
                             <table>

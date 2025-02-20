@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\BatchPPDB;
 use App\Models\TipeDokumen;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+// use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +15,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Buat role
         DB::table('roles')->insertOrIgnore([
             ['id' => 1, 'role' => 'admin'],
             ['id' => 2, 'role' => 'pendaftar'],
@@ -27,7 +28,7 @@ class DatabaseSeeder extends Seeder
                 'password' => 'adminpassword',
             ],
             [
-                'email' => 'user@example.com',
+                'email' => 'user@gmail.com',
                 'role_id' => 2,
                 'name' => 'Pendaftar',
                 'password' => 'userpassword',
@@ -41,11 +42,11 @@ class DatabaseSeeder extends Seeder
         ];
         collect($users)->each(function ($userData) {
             User::updateOrCreate(
-                ['email' => $userData['email']], // Search criteria
+                ['email' => $userData['email']],
                 [
                     'role_id' => $userData['role_id'],
                     'name' => $userData['name'],
-                    'password' => Hash::make($userData['password']), // Always hash new passwords
+                    'password' => Hash::make($userData['password']),
                 ]
             );
         });
@@ -57,6 +58,15 @@ class DatabaseSeeder extends Seeder
             ['id' => 4, 'tipe' => 'Kartu Tanda Penduduk'],
             ['id' => 5, 'tipe' => 'Kartu Identitas Anak'],
             ['id' => 6, 'tipe' => 'Surat Pernyataan'],
+        ]);
+
+        BatchPPDB::insert([
+            'tahun_ajaran' => '2025/2026',
+            'gelombang' => 1,
+            'status' => true,
+            'waktu_mulai' => now(),
+            'waktu_tenggat' => now()->addDays(30),
+            'waktu_tutup' => now()->addDays(60),
         ]);
     }
 }

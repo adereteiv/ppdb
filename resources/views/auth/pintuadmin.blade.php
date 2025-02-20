@@ -7,11 +7,11 @@
         <div class="form-login margin-vertical">
 
             @if(session()->has('loginError'))
-            <x-flash-message class="bg-red teks-putih">{{ session('loginError') }}</x-flash-message>
+            <x-flash-message flash="red">{{ session('loginError') }}</x-flash-message>
             @endif
 
             @error('email')
-            <x-flash-message class="bg-red teks-putih">{{ $message }}</x-flash-message>
+            <x-flash-message flash="red">{{ $message }}</x-flash-message>
             @enderror
             {{--
 

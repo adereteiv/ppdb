@@ -16,6 +16,7 @@ class BatchPPDB extends Model
     {
         return $this->hasMany(Pendaftaran::class);
     }
+
     public function syaratDokumen()
     {
         return $this->hasMany(SyaratDokumen::class);

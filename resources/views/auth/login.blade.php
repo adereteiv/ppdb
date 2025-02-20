@@ -6,12 +6,16 @@
         </div>
         <div class="form-login margin-vertical">
 
+            @if(session()->has('loginDulu'))
+            <x-flash-message flash="blue">{{ session('loginDulu') }}</x-flash-message>
+            @endif
+
             @if(session()->has('registrasiAkunBerhasil'))
-            <x-flash-message class="bg-green teks-putih">{{ session('registrasiAkunBerhasil') }}</x-flash-message>
+            <x-flash-message flash="green">{{ session('registrasiAkunBerhasil') }}</x-flash-message>
             @endif
 
             @if(session()->has('loginError'))
-            <x-flash-message class="bg-red teks-putih">{{ session('loginError') }}</x-flash-message>
+            <x-flash-message flash="red">{{ session('loginError') }}</x-flash-message>
             @endif
 
             {{--

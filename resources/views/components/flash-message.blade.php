@@ -1,6 +1,25 @@
-<div {{ $attributes->merge(['class' => 'form-login_item flex justify-between reminder margin-vertical'])}} x-data="{ show: true }" x-show="show" >
+@props(['flash'])
+
+@php
+    $bgFlash = match($flash){
+        default => 'bg-red',
+        'green' => 'bg-green',
+        'blue' => 'bg-blue',
+    };
+    $bgButton = match($flash){
+        default => 'tombol-negatif',
+        'green' => 'tombol-positif',
+        'blue' => 'tombol-netral',
+    };
+@endphp
+
+<div class="form-login_item {{ $bgFlash }} teks-putih flex justify-between reminder margin-vertical" x-data="{ show: true }" x-show="show" >
     <span class="flex-1 align-self-center">
         {{ $slot }}
     </span>
-    <div><button class="tombol tombol-negatif" @click="show = false"><i class="bi bi-x-lg"></i></button></div>
+    <div><button class="tombol {{ $bgButton }}" @click="show = false"><i class="bi bi-x-lg"></i></button></div>
 </div>
+
+{{--
+<x-flash-message flash="red">{{ $slot }}</x-flash-message>
+--}}
