@@ -22,28 +22,32 @@ class DatabaseSeeder extends Seeder
 
         $users = [
             [
-                'email' => 'admin@gmail.com',
+                'id' => 'ADM0001',
                 'role_id' => 1,
-                'name' => 'Admin User',
+                'email' => 'admin@gmail.com',
                 'password' => 'adminpassword',
+                'name' => 'Admin User',
             ],
             [
+                'id' => 'PEN1000',
+                'role_id' => 2,
                 'email' => 'user@gmail.com',
-                'role_id' => 2,
-                'name' => 'Pendaftar',
                 'password' => 'userpassword',
+                'name' => 'Pendaftar',
             ],
             [
-                'email' => 'vadim@gmail.com',
+                'id' => 'GHO1000',
                 'role_id' => 2,
-                'name' => 'Ghofur Gulam',
+                'email' => 'vadim@gmail.com',
                 'password' => 'password',
+                'name' => 'Ghofur Gulam',
             ],
         ];
         collect($users)->each(function ($userData) {
             User::updateOrCreate(
                 ['email' => $userData['email']],
                 [
+                    'id' => $userData['id'],
                     'role_id' => $userData['role_id'],
                     'name' => $userData['name'],
                     'password' => Hash::make($userData['password']),
@@ -60,6 +64,7 @@ class DatabaseSeeder extends Seeder
             ['id' => 6, 'tipe' => 'Surat Pernyataan'],
         ]);
 
+        // $tahun_ajaran =  now()->year . '/' . (now()->year + 1);
         BatchPPDB::insert([
             'tahun_ajaran' => '2025/2026',
             'gelombang' => 1,

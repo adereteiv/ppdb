@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Middleware\MustAuthMiddleware;
+use App\Http\Middleware\AuthMustMiddleware;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -13,9 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // $middleware->redirectGuestsTo('/login');
         $middleware->alias([
-            'auth.must' => MustAuthMiddleware::class,
+            'auth.must' => AuthMustMiddleware::class,
             'role' => RoleMiddleware::class
         ]);
     })

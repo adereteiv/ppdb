@@ -3,7 +3,7 @@
 @php
     $bgFlash = match($flash){
         default => 'bg-red',
-        'green' => 'bg-green',
+        'green' => 'bg-greendark',
         'blue' => 'bg-blue',
     };
     $bgButton = match($flash){
@@ -14,9 +14,9 @@
 @endphp
 
 <div class="form-login_item {{ $bgFlash }} teks-putih flex justify-between reminder margin-vertical" x-data="{ show: true }" x-show="show" >
-    <span class="flex-1 align-self-center">
+    <div class="flex-1 align-self-center">
         {{ $slot }}
-    </span>
+    </div>
     <div><button class="tombol {{ $bgButton }}" @click="show = false"><i class="bi bi-x-lg"></i></button></div>
 </div>
 

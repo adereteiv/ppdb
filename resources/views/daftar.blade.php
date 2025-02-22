@@ -1,9 +1,4 @@
-<x-layouts.home-layout :hideFooter='true'>
-@if(session('email'))
-    <script>
-        alert(@json(session('email')));
-    </script>
-@endif
+<x-layouts.home-layout :hideFooter='false'>
 
 <section id="section-daftar" class="home-section">
     <div class="container">
@@ -30,16 +25,24 @@
                                 <tr>
                                     <td width="20%">Alamat e-mail Orang Tua/Wali</td>
                                     <td>
-                                        <input name="email" type="email" class="form-item" style="width:385px;" required placeholder="Masukkan email Orang Tua">
+                                        <input name="email" type="email" class="form-item" style="width:385px;" required placeholder="Masukkan email orang tua" value="{{ old('email') }}">
+                                        @error('email')
+                                            <br><p style="color: red">{{ $message }}</p>
+                                        @enderror
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Masukkan Kata Sandi</td>
-                                    <td><input name="password" type="password" class="form-item" minlength="8" style="width:385px;" placeholder="Kata Sandi, min. 8 karakter" required></td>
+                                    <td>
+                                        <input name="password" type="password" class="form-item" minlength="8" style="width:385px;" placeholder="Kata sandi, min. 8 karakter" required>
+                                        @error('password')
+                                            <br><p style="color: red">{{ $message }}</p>
+                                        @enderror
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Konfirmasi Kata Sandi</td>
-                                    <td><input name="password2" type="password" class="form-item" minlength="8" style="width:385px;" placeholder="Masukkan ulang kata sandi" required></td>
+                                    <td><input name="password_confirmation" type="password" class="form-item" minlength="8" style="width:385px;" placeholder="Masukkan ulang kata sandi" required></td>
                                 </tr>
                             </table>
                         </article>
@@ -49,16 +52,52 @@
                             <div>
                                 <table>
                                     <tr><td width="20%">Nama Lengkap</td>
-                                        <td><input class="form-item" type="text" name="nama_anak" id="nama_anak" style="width:385px;" placeholder="Nama Lengkap Anak" required value="{{ old('nama_anak') }}"></td><td align="right"></td></tr>
+                                        <td>
+                                            <input class="form-item" type="text" name="nama_anak" style="width:385px;" placeholder="Nama lengkap anak" required value="{{ old('nama_anak') }}">
+                                            @if(session('akunAda'))
+                                                {{-- Check if user inserts email and nama_anak pair that has already exists in the database --}}
+                                                <br><p style="color: red">{{ session('akunAda') }}</p>
+                                            @endif
+                                        </td>
+                                        </tr>
                                     <tr><td>Nama Panggilan</td>
-                                        <td><input class="form-item" type="text" name="panggilan_anak" id="panggilan_anak" style="width:385px;" placeholder="Nama Panggilan Anak" required value="{{ old('panggilan_anak') }}"></td><td align="right"></td></tr>
+                                        <td><input class="form-item" type="text" name="panggilan_anak" style="width:385px;" placeholder="Nama panggilan anak" required value="{{ old('panggilan_anak') }}"></td>
+                                    </tr>
                                     <tr><td>Tempat Lahir </td>
-                                        <td><input class="form-item" type="text" name="tempat_lahir" id="tempat_lahir" style="width:385px;" required placeholder="Tempat Kelahiran Anak" value="{{ old('tempat_lahir') }}"></td></tr>
+                                        <td><input class="form-item" type="text" name="tempat_lahir" style="width:385px;" required placeholder="Tempat kelahiran anak" value="{{ old('tempat_lahir') }}"></td>
+                                    </tr>
                                     <tr><td>Tanggal Lahir</td>
-                                        <td><input class="form-item" style="width:385px;" type="date" x-data="{today: new Date().toISOString().split('T')[0],maxDate: new Date(new Date().setFullYear(new Date().getFullYear() - 3)).toISOString().split('T')[0]}" x-bind:max="maxDate" x-bind:min="'1900-01-01'" name="tanggal_lahir" id="tanggal_lahir" required></td>
+                                        <td>
+                                            <input class="form-item" style="width:385px;" type="date" name="tanggal_lahir" required value="{{ old('tanggal_lahir') }}"
+                                            x-data="{
+                                                today: new Date().toISOString().split('T')[0],
+                                                maxDate: new Date(new Date().setFullYear(new Date().getFullYear() - 4)).toISOString().split('T')[0],
+                                                minDate: new Date(new Date().setFullYear(new Date().getFullYear() - 7)).toISOString().split('T')[0],
+                                                errorMessage: ''
+                                            }"
+                                            x-bind:max="maxDate" x-bind:min="minDate"
+                                            @input="
+                                                    errorMessage = '';
+                                                    let selectedDate = new Date($event.target.value);
+                                                    let maxDateObject = new Date(maxDate);
+                                                    let minDateObject = new Date(minDate);
+
+                                                    if (selectedDate > maxDateObject) {
+                                                        errorMessage = 'Anak harus berusia minimal 4 tahun.';
+                                                    } else if (selectedDate <= minDateObject) {
+                                                        errorMessage = 'Anak tidak boleh berusia 7 tahun atau lebih.';
+                                                    }
+                                                "
+                                            >
+                                            @error('tanggal_lahir')
+                                                {{-- Check if user inserts email and nama_anak pair that has already exists in the database --}}
+                                                <br><p style="color: red">{{ $message }}</p>
+                                            @enderror
+                                        </td>
                                     </tr>
                                     <tr><td>Alamat</td>
-                                        <td colspan="3"><textarea class="form-item" style="width:385px;" rows="4" type="text" name="alamat_anak" id="alamat_anak" placeholder="Tempat Tinggal Anak" required></textarea></td></tr>
+                                        <td colspan="3"><textarea class="form-item" style="width:385px;" rows="4" type="text" name="alamat_anak" placeholder="Tempat Tinggal Anak" required>{{ old('alamat_anak') }}</textarea></td>
+                                    </tr>
                                 </table>
                             </div>
                         </article>

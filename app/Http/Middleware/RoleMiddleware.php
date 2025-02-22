@@ -62,7 +62,10 @@ class RoleMiddleware
         // HANYA GARA GARA (OR), hampir gila 6 jam
         // if ($user || $user->role_id != $role_id) {};
         if ($user && $user->role_id != $role_id) {
-            return response()->view('auth.unauthorized', ['redirect'=>$user->role_id == 1 ? '/pintuadmin' : '/login'], 403);
+            return response()->view('auth.unauthorized', [
+                'previous'=>$user->role_id == 1 ? '/admin/dashboard' : '/pendaftar/dashboard',
+                'redirect'=>$user->role_id == 1 ? '/pintuadmin' : '/login',
+            ], 403);
         };
 
         return $next($request);

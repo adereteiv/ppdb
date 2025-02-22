@@ -6,10 +6,13 @@ use App\Models\Dokumen;
 use App\Models\BuktiBayar;
 use App\Models\Pendaftaran;
 use App\Models\OrangTuaWali;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class InfoAnak extends Model
 {
+    use HasFactory;
+
     protected $table = 'info_anak';
 
     protected $guarded = ['id',];

@@ -3,10 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Pendaftaran;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use App\Models\Pendaftaran;
 
 class User extends Authenticatable
 {
@@ -20,7 +22,12 @@ class User extends Authenticatable
      */
     protected $table = 'users';
 
-    protected $fillable = ['name','email','password',];
+    // https://medium.com/@online-web-tutor/laravel-how-to-disable-primary-key-auto-increment-in-model-ee6416b49871
+    protected $keyType = 'string';
+
+    public $incrementing = false;
+
+    protected $fillable = ['name','email','password','role_id'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -50,6 +57,20 @@ class User extends Authenticatable
         parent::boot();
 
         static::creating(function ($user) {
+            if (!isset($user->id)){
+                // $user->id = strtoupper(Str::random(3)) . random_int(1000, 9999);
+                // $user->id = strtoupper(substr($user->name, 0, 3)) . random_int(1000, 9999);
+
+                do{
+                    $firstname = explode(' ',trim($user->name))[0];
+                    $inisial = strtoupper(substr($firstname ?? 'PD', 0, 3));
+                    $random = random_int(1000, 9999);
+                    $userId = $inisial . $random;
+                } while ((DB::table('users')->where('id', $userId)->exists()));
+
+                $user->id = $userId;
+            }
+
             if (!isset($user->role_id)){
                 $user->role_id = 2;
             }

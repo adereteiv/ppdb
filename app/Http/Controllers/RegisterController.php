@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\InfoAnak;
-use App\Models\Pendaftaran;
 use App\Models\BatchPPDB;
+use App\Models\Pendaftaran;
+use App\Notifications\KirimUserIDNotification;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class RegisterController extends Controller
 {
@@ -27,16 +30,29 @@ class RegisterController extends Controller
         */
 
         //Untuk mendapatkan batch_id
-        $activeBatch = BatchPPDB::where('status', true)->first();
+        $activeBatch = BatchPPDB::where('status', true)->latest()->first();
 
-        //Cek pasangan email dan anak
+        /* Cek pasangan email dan anak
+        * if this code is used, the account will be made still
         $existingUser = User::where('email', $request->email)->first();
         $existingChild = InfoAnak::where('nama_anak', $request->nama_anak)
-            ->whereHas('pendaftaran', function($query) use ($existingUser) {
+        ->whereHas('pendaftaran', function($query) use ($existingUser) {
                 $query->where('user_id', optional($existingUser)->id);
             })->exists();
         if ($existingUser && $existingChild) {
             return back()->with('email' , 'Anak dengan email ini telah didaftarkan.')->withInput();
+        }
+        */
+
+        /*
+        OK
+        */
+        $existingUser = User::where('email', $request->email)
+            ->where('name', $request->nama_anak)
+            ->first();
+
+        if ($existingUser) {
+            return back()->with('akunAda' , 'Anak dengan email ini sudah terdaftar. Jika ingin mendaftarkan anak lain, silakan cek kembali atau hubungi admin untuk bantuan.')->withInput();
         }
 
         /*test purpose
@@ -44,18 +60,24 @@ class RegisterController extends Controller
         */
         $request->validate([
             'email'=> 'required|email:rfc,dns',
-            'password' => 'required|min:8|max:255',
-            'password2' => 'required|same:password',
+            'password' => 'required|confirmed|min:8|max:255',
             'nama_anak' => 'required|string|max:255',
             'panggilan_anak' => 'required|string|max:255',
             'tempat_lahir' => 'required|string',
             'tanggal_lahir' => [
                 'required','date',
-                'before_or_equal:' . now()->toDateString(), // Ensure no future dates
-                'before_or_equal:' . now()->subYears(3)->toDateString() // Ensure at least 3 years ago
+                'before_or_equal:' . now()->subYears(4)->toDateString(),
+                'after:' . now()->subYears(7)->toDateString(),
             ],
             'alamat_anak' => 'required|string',
-        ]);
+        ],
+        [
+            'email.email' => 'Mohon masukkan format email yang benar.',
+            'password.confirmed' => 'Kata sandi tidak cocok.',
+            'tanggal_lahir.before_or_equal' => 'Anak harus berusia minimal 4 tahun.',
+            'tanggal_lahir.after' => 'Usia anak maksimal 6 tahun.',
+        ],
+        );
 
         /*test purpose
         dd('Ok');
@@ -64,7 +86,7 @@ class RegisterController extends Controller
 
         $user = User::create([
             'name' => $request->nama_anak,
-            'email' => $request->email,
+            'email' => strtolower($request->email),
             'password' => Hash::make($request->password),
         ]);
 
@@ -75,15 +97,17 @@ class RegisterController extends Controller
 
         InfoAnak::create([
             'pendaftaran_id' => $pendaftaran->id,
-            'nama_anak' => $request->nama_anak,
-            'panggilan_anak' => $request->panggilan_anak,
+            'nama_anak' => ucwords(strtolower($request->nama_anak)),
+            'panggilan_anak' => ucwords(strtolower($request->panggilan_anak)),
             'tempat_lahir'=> $request->tempat_lahir,
             'tanggal_lahir'=> $request->tanggal_lahir,
             'alamat_anak'=> $request->alamat_anak,
         ]);
 
-        // Kirim email dengan ID Pengguna
+        $user->notify(new KirimUserIDNotification($user->id));
 
-        return redirect('/login')->with('registrasiAkunBerhasil', 'Registrasi akun berhasil! Silakan login.');
+        Session::flash('user_id', $user->id);
+
+        return redirect('/login')->with('registrasiAkunBerhasil', 'Registrasi akun berhasil!');
     }
 }

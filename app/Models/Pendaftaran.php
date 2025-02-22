@@ -5,13 +5,16 @@ namespace App\Models;
 use App\Models\User;
 use App\Models\InfoAnak;
 use App\Models\BatchPPDB;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Pendaftaran extends Model
 {
+    use HasFactory;
+
     protected $table = 'pendaftaran';
 
-    protected $fillable = ['status','catatan_admin'];
+    protected $guarded = ['id'];
 
     public function batchPPDB()
     {

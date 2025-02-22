@@ -19,21 +19,21 @@ return new class extends Migration
             $table->foreignId('batch_id')->constrained('batch_ppdb')->onDelete('cascade');
             $table->foreignId('tipe_dokumen_id')->constrained('tipe_dokumen')->onDelete('cascade');
             $table->boolean('is_wajib')->default(true);
-            $table->string('keterangan_dokumen');
+            $table->string('keterangan_dokumen')->nullable();
         });
 
         Schema::create('dokumen', function (Blueprint $table) {
             $table->id();
             $table->foreignId('anak_id')->constrained('info_anak')->onDelete('cascade');
             $table->foreignId('tipe_dokumen_id')->constrained('tipe_dokumen')->onUpdate('cascade');
-            $table->string('file_path')->nullable();
+            $table->string('file_path');
             $table->timestamps();
         });
 
         Schema::create('bukti_bayar', function (Blueprint $table) {
             $table->id();
             $table->foreignId('anak_id')->constrained('info_anak')->onDelete('cascade');
-            $table->string('jalur_berkas');
+            $table->string('file_path');
             $table->timestamps();
         });
     }

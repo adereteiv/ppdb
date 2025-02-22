@@ -11,7 +11,15 @@
             @endif
 
             @if(session()->has('registrasiAkunBerhasil'))
-            <x-flash-message flash="green">{{ session('registrasiAkunBerhasil') }}</x-flash-message>
+            <x-flash-message flash="green">
+                {{ session('registrasiAkunBerhasil') }}
+            </x-flash-message>
+            <x-flash-message flash>
+                <h6>Perhatian!</h6>
+                <p><strong class="text-center">ID Pengguna : {{ session('user_id') }}</strong></p>
+                <br>
+                <p><small>Salin dan simpan ID Pengguna Anda untuk keperluan login! Anda tidak akan melihat pesan ini lagi.</small></p>
+            </x-flash-message>
             @endif
 
             @if(session()->has('loginError'))
