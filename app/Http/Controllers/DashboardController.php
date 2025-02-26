@@ -2,23 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pendaftaran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index(){
-        return view('pendaftar.dashboard');
+        $pendaftaran = Pendaftaran::where('user_id', Auth::id())->first();
+        return view('pendaftar.dashboard',compact('pendaftaran'));
     }
-    public function showFormulir(){
-        return view('pendaftar.formulir');
-    }
-    public function showDokumen(){
+    public function dokumen(){
         return view('pendaftar.dokumen');
     }
-    public function showBuktiBayar(){
+    public function buktiBayar(){
         return view('pendaftar.bukti-bayar');
     }
-    public function showProfil(){
-        return view('pendaftar.profil');
+    public function profil(){
+        $user = Auth::user();
+        $pendaftaran = Pendaftaran::where('user_id', Auth::id())->first();
+
+        return view('pendaftar.profil',compact('user','pendaftaran'));
     }
 }

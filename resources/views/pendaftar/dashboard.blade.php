@@ -1,10 +1,9 @@
 <x-layouts.app-layout>
 
 <div id="pendaftar-beranda" class="app-content gap">
-    {{-- <div class="wrapper">
-        <h5 class="margin-vertical">
-            <x-status-pendaftaran :status="$pendaftaran->status" />
-        </h5>
+    <div class="wrapper">
+        <h3 class="margin-vertical"> Status Pendaftaran :
+            <x-status-pendaftaran :status="$pendaftaran->status ?? null"/></h3>
         <div>
             <ul>
                 <li class="">Formulir Pendaftaran</li>
@@ -12,11 +11,11 @@
                 <li class="">Bukti Pembayaran</li>
             </ul>
         </div>
-    </div> --}}
+    </div>
     <div class="flex gap">
         <div class="wrapper flex-1">
             <div class="margin-vertical">
-                <h5>Syarat & Ketentuan</h5>
+                <h2>Syarat & Ketentuan</h2>
             </div>
             <div>
                 <ol>
@@ -33,7 +32,7 @@
                             <li>KTP Orang Tua/Wali</li>
                             <li>Akta Kelahiran Anak</li>
                             <li>Pas Foto Anak</li>
-                            <li>Surat Pernyataan Orang Tua/Wali Calon Siswa <a href="#">(unduh disini)</a></li>
+                            <li>Surat Pernyataan Orang Tua/Wali Calon Siswa <a href="#">(lihat disini)</a></li>
                             <li>KIA (opsional)</li>
                         </ul>
                     </li>
@@ -42,16 +41,16 @@
         </div>
         <div class="wrapper flex-1">
             <div class="margin-vertical">
-                <h5>Prosedur Pendaftaran</h5>
+                <h2>Prosedur Pendaftaran</h2>
             </div>
             <div>
                 <ol>
-                    <li>Melakukan registrasi akun dengan menekan tombol Daftar Sekarang pada halaman Beranda atau halaman Log In;</li>
-                    <li>Silakan mengakses Portal Pendaftar dengan melakukan Log In terlebih dahulu;</li>
-                    <li>Mengisi Formulir Pendaftaran dengan sebenar-benarnya dan mengunggah Dokumen Persyaratan;</li>
-                    <li>Format Surat Pernyataan dapat diunduh pada halaman Portal PPDB di bagian Syarat Pendaftaran;</li>
-                    <li>Menerima hasil penerimaan yang diumumkan pada Notifikasi di Portal Pendaftar maupun bagian Papan Informasi di halaman Portal PPDB.</li>
-                    <li>Mengunggah Bukti Pembayaran dilakukan setelah .... </li>
+                    <li>Melakukan registrasi akun dengan menekan tombol 'Daftar Sekarang' pada halaman beranda;</li>
+                    <li>Silakan mengakses Dashboard Anda dengan melakukan Log In terlebih dahulu;</li>
+                    <li>Mengisi Formulir Pendaftaran dengan sebenar-benarnya;</li>
+                    <li>Mengunggah Dokumen Persyaratan, format Surat Pernyataan dapat diunduh pada halaman Portal PPDB di bagian Syarat Pendaftaran</a>;</li>
+                    <li>Membayar biaya pendaftaran dan mengunggah Bukti Pembayaran pada Dashboard.</li>
+                    <li>Pengumuman hasil penerimaan di bagian Papan Informasi pada halaman <a href="/beranda" style="text-decoration: none">Portal PPDB</a>.</li>
                 </ol>
             </div>
         </div>

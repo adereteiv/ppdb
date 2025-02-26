@@ -19,18 +19,18 @@ class InfoAnak extends Model
 
     public function pendaftaran()
     {
-        return $this->belongsTo(Pendaftaran::class);
+        return $this->belongsTo(Pendaftaran::class,'pendaftaran_id');
     }
     public function orangTuaWali()
     {
-        return $this->hasMany(OrangTuaWali::class);
+        return $this->hasMany(OrangTuaWali::class, 'anak_id');
     }
     public function dokumen()
     {
-        return $this->hasMany(Dokumen::class);
+        return $this->hasMany(Dokumen::class,'anak_id');
     }
     public function buktiBayar()
     {
-        return $this->hasMany(BuktiBayar::class);
+        return $this->hasMany(BuktiBayar::class,'anak_id');
     }
 }

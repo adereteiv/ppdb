@@ -9,17 +9,18 @@
                 <tr>
                     <td width="150px">ID Pengguna</td>
                     <td>:</td>
-                    <td>Slot</td>
+                    {{-- kalau null bagaimana? --}}
+                    <td>{{ $user->id }}</td>
                 </tr>
                 <tr>
                     <td>ID Pendaftaran</td>
                     <td>:</td>
-                    <td>Slot</td>
+                    <td>{{ $pendaftaran->id }}</td>
                 </tr>
                 <tr>
                     <td>Mendaftar Pada</td>
                     <td>:</td>
-                    <td>Slot</td>
+                    <td>{{ $pendaftaran->created_at }}</td>
                 </tr>
             </table>
         </div>

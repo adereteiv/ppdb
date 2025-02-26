@@ -13,6 +13,6 @@ class BuktiBayar extends Model
 
     public function infoAnak()
     {
-        return $this->belongsTo(InfoAnak::class);
+        return $this->belongsTo(InfoAnak::class, 'anak_id');
     }
 }

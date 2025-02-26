@@ -14,11 +14,11 @@ class SyaratDokumen extends Model
 
     public function batchPPDB()
     {
-        return $this->belongsTo(BatchPPDB::class);
+        return $this->belongsTo(BatchPPDB::class, 'batch_id');
     }
 
     public function tipeDokumen()
     {
-        return $this->belongsTo(related: TipeDokumen::class);
+        return $this->belongsTo(TipeDokumen::class, 'tipe_dokumen_id');
     }
 }

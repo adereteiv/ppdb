@@ -29,11 +29,11 @@ class AuthController extends Controller
 
         if (Auth::check()){
             // dd (Auth::user()?->role_id);
-            return back()->with('loginError', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
+            return back()->with('error', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
         };
 
         if (!$user || !Auth::attempt(['id' => $credentials['id'], 'password' => $credentials['password']])) {
-            return back()->with('loginError', 'Login gagal. Periksa kembali ID dan kata sandi Anda.')->onlyInput('id');
+            return back()->with('error', 'Login gagal. Periksa kembali ID dan kata sandi Anda.')->onlyInput('id');
         }
 
         $request->session()->regenerate();
@@ -52,11 +52,11 @@ class AuthController extends Controller
 
         if (Auth::check()){
             // dd (Auth::user()?->role_id);
-            return back()->with('loginError', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
+            return back()->with('error', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
         };
 
         if (!$user || !Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
-            return back()->with('loginError', 'Login gagal. Periksa kembali email dan kata sandi Anda.')->onlyInput('email');
+            return back()->with('error', 'Login gagal. Periksa kembali email dan kata sandi Anda.')->onlyInput('email');
         }
 
         $request->session()->regenerate();

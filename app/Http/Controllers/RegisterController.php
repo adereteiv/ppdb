@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Session;
 class RegisterController extends Controller
 {
     public function showRegister(){
-        $activeBatch = BatchPPDB::where('status', true)->first();
+        $activeBatch = BatchPPDB::where('status', true)->latest()->first();
 
         if (!$activeBatch) {
             return view('daftar', ['batchClosed' => true]);
@@ -25,28 +25,8 @@ class RegisterController extends Controller
     }
 
     public function store(Request $request){
-        /*test purpose
-        return response()->json(request()->all());
-        */
-
-        //Untuk mendapatkan batch_id
         $activeBatch = BatchPPDB::where('status', true)->latest()->first();
 
-        /* Cek pasangan email dan anak
-        * if this code is used, the account will be made still
-        $existingUser = User::where('email', $request->email)->first();
-        $existingChild = InfoAnak::where('nama_anak', $request->nama_anak)
-        ->whereHas('pendaftaran', function($query) use ($existingUser) {
-                $query->where('user_id', optional($existingUser)->id);
-            })->exists();
-        if ($existingUser && $existingChild) {
-            return back()->with('email' , 'Anak dengan email ini telah didaftarkan.')->withInput();
-        }
-        */
-
-        /*
-        OK
-        */
         $existingUser = User::where('email', $request->email)
             ->where('name', $request->nama_anak)
             ->first();
@@ -55,11 +35,9 @@ class RegisterController extends Controller
             return back()->with('akunAda' , 'Anak dengan email ini sudah terdaftar. Jika ingin mendaftarkan anak lain, silakan cek kembali atau hubungi admin untuk bantuan.')->withInput();
         }
 
-        /*test purpose
-        $validated = $request->validate([
-        */
         $request->validate([
-            'email'=> 'required|email:rfc,dns',
+            // enforce stronger email validation to prevent bot spam
+            'email' => 'required|email:rfc,dns',
             'password' => 'required|confirmed|min:8|max:255',
             'nama_anak' => 'required|string|max:255',
             'panggilan_anak' => 'required|string|max:255',
@@ -78,11 +56,6 @@ class RegisterController extends Controller
             'tanggal_lahir.after' => 'Usia anak maksimal 6 tahun.',
         ],
         );
-
-        /*test purpose
-        dd('Ok');
-        dd($validated);
-        */
 
         $user = User::create([
             'name' => $request->nama_anak,
@@ -108,6 +81,6 @@ class RegisterController extends Controller
 
         Session::flash('user_id', $user->id);
 
-        return redirect('/login')->with('registrasiAkunBerhasil', 'Registrasi akun berhasil!');
+        return redirect('/login')->with('success', 'Registrasi akun berhasil!');
     }
 }

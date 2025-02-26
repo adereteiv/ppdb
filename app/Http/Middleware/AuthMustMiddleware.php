@@ -18,7 +18,6 @@ class AuthMustMiddleware
     {
         if(!Auth::check())
         {
-            // return redirect()->route('login')->with('loginDulu', 'Silakan login terlebih dahulu.');
             return redirect('/login')->with('loginDulu', 'Silakan login terlebih dahulu.');
         }
 

@@ -14,11 +14,11 @@ class Dokumen extends Model
 
     public function infoAnak()
     {
-        return $this->belongsTo(InfoAnak::class);
+        return $this->belongsTo(InfoAnak::class, 'anak_id');
     }
 
     public function tipeDokumen()
     {
-        return $this->belongsTo(TipeDokumen::class);
+        return $this->belongsTo(TipeDokumen::class, 'tipe_dokumen_id');
     }
 }

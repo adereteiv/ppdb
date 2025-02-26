@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        Dashboard @auth{{ auth()->user()->role_id == 1 ? 'Admin' : 'Pendaftar' }}@endauth -  PPDB TK Negeri Pembina Sungai Kakap
+        Dashboard @auth{{ Auth::user()->role_id == 1 ? 'Admin' : 'Pendaftar' }}@endauth -  PPDB TK Negeri Pembina Sungai Kakap
     </title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">

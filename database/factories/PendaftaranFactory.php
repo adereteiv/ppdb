@@ -19,8 +19,9 @@ class PendaftaranFactory extends Factory
     public function definition(): array
     {
         return [
-            'batch_id' => BatchPPDB::factory() ,
-            'user_id' => User::factory() ,
+            'batch_id' => BatchPPDB::latest('id')->value('id') ?? BatchPPDB::factory(),
+            'user_id'  => User::factory(),
+            'status'   => fake()->randomElement(['Belum Lengkap', 'Lengkap', 'Terverifikasi']),
         ];
     }
 }

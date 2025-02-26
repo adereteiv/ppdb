@@ -13,11 +13,11 @@ class TipeDokumen extends Model
 
     public function syaratDokumen()
     {
-        return $this->hasMany(SyaratDokumen::class);
+        return $this->hasMany(SyaratDokumen::class,'tipe_dokumen_id');
     }
 
     public function dokumen()
     {
-        return $this->hasMany(Dokumen::class);
+        return $this->hasMany(Dokumen::class,'tipe_dokumen_id');
     }
 }

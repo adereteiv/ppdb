@@ -27,7 +27,7 @@
 
     <section id="section-prosedur" class="home-section">
         <div class="container">
-            <h2 class="text-align-center margin-vertical">Tata Cara Pendaftaran</h2>
+            <h2 id="tata-pendaftaran" class="text-align-center margin-vertical">Tata Cara Pendaftaran</h2>
             <div>
                 <h3 class="margin-vertical">Syarat dan Ketentuan</h3>
                 <div class="flex">
@@ -49,7 +49,7 @@
                                     <li>KTP Orang Tua/Wali</li>
                                     <li>Akta Kelahiran Anak</li>
                                     <li>Pas Foto Anak</li>
-                                    <li>Surat Pernyataan Orang Tua/Wali Calon Siswa <a href="#">(unduh disini)</a></li>
+                                    <li>Surat Pernyataan Orang Tua/Wali Calon Siswa <a href="#">(lihat disini)</a></li>
                                     <li>KIA (opsional)</li>
                                 </ul>
                             </li>
@@ -65,12 +65,12 @@
                     </div>
                     <div class="section-kid-body">
                         <ol>
-                            <li>Melakukan registrasi akun dengan menekan tombol Daftar Sekarang pada halaman Beranda atau halaman Log In;</li>
-                            <li>Silakan mengakses Portal Pendaftar dengan melakukan Log In terlebih dahulu;</li>
-                            <li>Mengisi Formulir Pendaftaran dengan sebenar-benarnya dan mengunggah Dokumen Persyaratan;</li>
-                            <li>Format Surat Pernyataan dapat diunduh pada halaman Portal PPDB di bagian Syarat Pendaftaran;</li>
-                            <li>Menerima hasil penerimaan yang diumumkan pada Notifikasi di Portal Pendaftar maupun bagian Papan Informasi di halaman Portal PPDB.</li>
-                            <li>Mengunggah Bukti Pembayaran dilakukan setelah</li>
+                            <li>Melakukan registrasi akun dengan menekan tombol 'Daftar Sekarang' pada halaman beranda;</li>
+                            <li>Silakan mengakses Dashboard Anda dengan melakukan Log In terlebih dahulu;</li>
+                            <li>Mengisi Formulir Pendaftaran dengan sebenar-benarnya;</li>
+                            <li>Mengunggah Dokumen Persyaratan, format Surat Pernyataan dapat diunduh pada halaman Portal PPDB di bagian <a href="#tata-pendaftaran" style="text-decoration: none">Syarat Pendaftaran</a>;</li>
+                            <li>Membayar biaya pendaftaran dan mengunggah Bukti Pembayaran pada Dashboard.</li>
+                            <li>Pengumuman hasil penerimaan di bagian Papan Informasi pada halaman <a href="/beranda">Portal PPDB.</li>
                         </ol>
                     </div>
                 </div>

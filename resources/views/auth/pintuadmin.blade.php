@@ -6,8 +6,8 @@
     <div class="container">
         <div class="form-login margin-vertical">
 
-            @if(session()->has('loginError'))
-            <x-flash-message flash="red">{{ session('loginError') }}</x-flash-message>
+            @if(session()->has('error'))
+            <x-flash-message flash="red">{{ session('error') }}</x-flash-message>
             @endif
 
             @error('email')
@@ -25,10 +25,12 @@
 
             <form method="POST" action="/pintuadmin">@csrf
                 <div class="gap">
-                    <input type="email" name="email" class="form-login_item"  placeholder="Email Admin" value="{{ old('email') }}" autofocus required>
+                    <x-input type="email" name="email" class="form-login_item" placeholder="Email Admin" autofocus required/>
+                    {{-- <input type="email" name="email" class="form-login_item"  placeholder="Email Admin" value="{{ old('email') }}" autofocus required> --}}
                 </div>
                 <div class="gap">
-                    <input type="password" name="password" class="form-login_item" placeholder="Kata Sandi" required>
+                    <x-input type="password" name="password" class="form-login_item" placeholder="Kata sandi" required/>
+                    {{-- <input type="password" name="password" class="form-login_item" placeholder="Kata Sandi" required> --}}
                 </div>
                 <div class="margin-vertical">
                     <button type="submit" class="form-login_item tombol-besar tombol-netral">Log In</button>

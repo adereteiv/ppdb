@@ -16,9 +16,11 @@ class BatchPPDBFactory extends Factory
      */
     public function definition(): array
     {
+        static $gelombangCounter = 1;
+
         return [
             'tahun_ajaran' => now()->year . '/' . (now()->year + 1),
-            'gelombang' => 2,
+            'gelombang' => $gelombangCounter++,
             'status' => fake()->boolean(),
             'waktu_mulai' => now(),
             'waktu_tenggat' => now()->addDays(30),

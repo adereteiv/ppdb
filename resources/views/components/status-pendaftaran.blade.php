@@ -1,4 +1,4 @@
-@props(['status'])
+@props(['status' => 'Belum Lengkap'])
 
 @php
     $statuses = [
@@ -6,10 +6,12 @@
         'Lengkap' => 'status bg-greendark',
         'Terverifikasi' => 'status bg-blue',
     ];
+
+    $status = $status ?? 'Belum Lengkap';
 @endphp
 
-<span class="status {{ $statuses[$status]  ?? '' }}">{{ $status }}</span>
+<span class="status {{ $statuses[$status]  ?? 'bg-yellowdark' }}">{{ $status }}</span>
 
 {{--
-<x-status-pendaftaran :status="$pendaftaran->status" />
+<x-status-pendaftaran :status="$pendaftaran->status ?? null" />
  --}}

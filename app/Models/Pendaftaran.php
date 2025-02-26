@@ -18,16 +18,16 @@ class Pendaftaran extends Model
 
     public function batchPPDB()
     {
-        return $this->belongsTo(BatchPPDB::class);
+        return $this->belongsTo(BatchPPDB::class, 'batch_id');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function infoAnak()
     {
-        return $this->hasOne(InfoAnak::class);
+        return $this->hasOne(InfoAnak::class,'pendaftaran_id');
     }
 }

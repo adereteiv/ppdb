@@ -116,6 +116,15 @@ p{font: var(--p);}
 .bg-red, .tombol-negatif{background:var(--red);}
 
 /* --- !framed --- */
+.alert{
+    width: auto;
+    max-width: 500px;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    position: absolute;
+    z-index: 1000;
+}
+
 .reminder{
     padding:10px;
 }
@@ -356,7 +365,46 @@ table.alternate{
     margin-top: 10px;
 }
 
+/* Tooltip */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    color: inherit;
+    fill: inherit;
+}
 
+.tooltip .tooltiptext {
+    visibility: hidden;
+    position: absolute;
+    z-index: 1;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    width: 150px;
+    bottom: 150%; /* move away from bottom relative to parent .tooltip */
+    left: 50%; /* move away from left */
+    margin-left: -80px;
+    background-color: #555;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
 
 /* ----- WEB CONTENT ----- */
 :where(main ol, main ul){
@@ -633,6 +681,8 @@ th,td{
 .app-main{
     flex: 1;
     height: 100%;
+    width: 100%;
+    position: relative;
 
     display: flex;
     flex-direction: column;
