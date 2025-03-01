@@ -7,7 +7,7 @@
 <div id="pendaftar-formulir" class="app-content wrapper">
     <div class="content-title margin-vertical">Formulir Pendaftaran</div>
     <div class="scrollable">
-        <form id="formPendaftaran" method="post" action="/pendaftar/formulir"> @csrf @method('PUT')
+        <form id="formPendaftaran" method="post" action="/pendaftar/formulir"> @method('PUT') @csrf
             <div class="flex">
                 <div class="flex-1">
                     <div class="form-section">
@@ -66,8 +66,8 @@
                                 <td>: <x-input-select class="pindahan-input" name="dari_kelompok" :options="config('form-options.kelompok_umur')" :value="$infoAnak->dari_kelompok ?? '' "/></td></tr>
                             {{-- <tr><td>Tanggal Diterima</td>
                                 <td>: <x-input class="pindahan-input" type="date" name="tanggal_diterima" :value="old('tanggal_diterima', $infoAnak->tanggal_diterima ?? '')"/></td></tr> --}}
-                            <tr><td>Di Kelompok</td>
-                                <td>: <x-input-select class="pindahan-input" name="di_kelompok" :options="config('form-options.kelompok_umur')" :value="$infoAnak->di_kelompok ?? '' "/></td></tr>
+                            <tr><td>Ke Kelompok</td>
+                                <td>: <x-input-select class="pindahan-input" name="ke_kelompok" :options="config('form-options.kelompok_umur')" :value="$infoAnak->ke_kelompok ?? '' "/></td></tr>
                             </tbody>
                             {{-- until here --}}
                         </table>

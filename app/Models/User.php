@@ -58,13 +58,10 @@ class User extends Authenticatable
 
         static::creating(function ($user) {
             if (!isset($user->id)){
-                // $user->id = strtoupper(Str::random(3)) . random_int(1000, 9999);
-                // $user->id = strtoupper(substr($user->name, 0, 3)) . random_int(1000, 9999);
-
                 do{
                     $firstname = explode(' ',trim($user->name))[0];
                     $inisial = strtoupper(substr($firstname ?? 'PD', 0, 3));
-                    $random = random_int(1000, 9999);
+                    $random = strtoupper(substr(Str::uuid()->toString(), 0, 8));
                     $userId = $inisial . $random;
                 } while ((DB::table('users')->where('id', $userId)->exists()));
 

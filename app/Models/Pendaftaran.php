@@ -28,6 +28,6 @@ class Pendaftaran extends Model
 
     public function infoAnak()
     {
-        return $this->hasOne(InfoAnak::class,'pendaftaran_id');
+        return $this->hasOne(InfoAnak::class, 'pendaftaran_id');
     }
 }

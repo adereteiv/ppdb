@@ -22,21 +22,21 @@ class DatabaseSeeder extends Seeder
 
         $users = [
             [
-                'id' => 'ADM0001',
+                'id' => 'ADM000001',
                 'role_id' => 1,
                 'email' => 'admin@gmail.com',
                 'password' => 'adminpassword',
                 'name' => 'Admin User',
             ],
             [
-                'id' => 'PEN1000',
+                'id' => 'PEN100000',
                 'role_id' => 2,
                 'email' => 'user@gmail.com',
                 'password' => 'userpassword',
                 'name' => 'Pendaftar',
             ],
             [
-                'id' => 'GHO1000',
+                'id' => 'GHO100000',
                 'role_id' => 2,
                 'email' => 'vadim@gmail.com',
                 'password' => 'password',

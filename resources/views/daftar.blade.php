@@ -1,5 +1,9 @@
 <x-layouts.home-layout :hideFooter='false'>
 
+@if(session()->has('error'))
+<x-flash-message class="alert" flash>{{ session('error') }}</x-flash-message>
+@endif
+
 <section id="section-daftar" class="home-section">
     <div class="container">
         <div>
@@ -14,8 +18,8 @@
                 @else
                     <article class="content-margin-bottom">
                         <div class="reminder bg-red">
-                            <h5 class="margin-bottom">Ketentuan!</h5>
-                            <p>Isi Data Secara Lengkap dan Jelas Sesuai dengan Data Yang Tertera Di KARTU KELUARGA/AKTA KELAHIRAN</p>
+                            <h5 class="margin-bottom teks-putih">Ketentuan!</h5>
+                            <p class="teks-putih">Isi Data Secara Lengkap dan Jelas Sesuai dengan Data Yang Tertera Di KARTU KELUARGA/AKTA KELAHIRAN</p>
                         </div>
                     </article>
                     <form method="post" action="daftar">@csrf
@@ -26,24 +30,19 @@
                                     <td width="20%">Alamat e-mail Orang Tua/Wali</td>
                                     <td>
                                         <x-input type="email" name="email" style="width:385px;" placeholder="Masukkan email orang tua" required/>
-                                        {{-- <input name="email" type="email" class="form-item" style="width:385px;" required placeholder="Masukkan email orang tua" value="{{ old('email') }}"> --}}
-                                        @error('email')
-                                            <br><p style="color: red">{{ $message }}</p>
-                                        @enderror
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Masukkan Kata Sandi</td>
                                     <td>
                                         <x-input type="password" name="password" style="width:385px;" minlength="8" placeholder="Kata sandi, min. 8 karakter" required/>
-                                        {{-- <input name="password" type="password" class="form-item" minlength="8" style="width:385px;" placeholder="Kata sandi, min. 8 karakter" required> --}}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Konfirmasi Kata Sandi</td>
                                     <td>
-                                        <x-input type="password" name="password_confirmation" style="width:385px;" minlength="8" placeholder="Masukkan ulang kata sandi" required/></td>
-                                        {{-- <input name="password_confirmation" type="password" class="form-item" minlength="8" style="width:385px;" placeholder="Masukkan ulang kata sandi" required></td> --}}
+                                        <x-input type="password" name="password_confirmation" style="width:385px;" minlength="8" placeholder="Masukkan ulang kata sandi" required/>
+                                    </td>
                                 </tr>
                             </table>
                         </article>
@@ -56,7 +55,6 @@
                                         <td>
                                             <x-input type="text" name="nama_anak" style="width:385px;" placeholder="Nama lengkap anak" required/>
                                             @if(session('akunAda'))
-                                                {{-- Check if user inserts email and nama_anak pair that has already exists in the database --}}
                                                 <br><p style="color: red">{{ session('akunAda') }}</p>
                                             @endif
                                         </td>
@@ -70,10 +68,6 @@
                                     <tr><td>Tanggal Lahir</td>
                                         <td>
                                             <x-input style="width:385px;" type="date" name="tanggal_lahir" required/>
-                                            @error('tanggal_lahir')
-                                                {{-- Check if user inserts email and nama_anak pair that has already exists in the database --}}
-                                                <br><p style="color: red">{{ $message }}</p>
-                                            @enderror
                                         </td>
                                     </tr>
                                     <tr><td>Alamat</td>

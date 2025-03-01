@@ -5,18 +5,33 @@
     <div class="scrollable">
         <div class="constrict">
             <form method="post" action="">
+                @foreach ($syarat_dokumen as $dokumen)
                 <div class="inputbox">
-                    <label for="aktalahir">
-                        {{$nama_dokumen}}
-                        <span class="subtext">{$if_wajib=1 -> <font color="#FF0000">*</font>}{$if_wajib=0 -> (opsional)}</span>
-                        <span class="subtext">{$keterangan=null->shows nothing}</span>
+                    <label for="id">
+                        {{$tipe_dokumen->tipe}}
+                        <span class="subtext">
+                            @if ($is_wajib -> true)
+                            <font color="#FF0000">*</font>
+                            @elseif ($if_wajib -> false)
+                            "(opsional)"
+                            @endif
+                        </span>
+                        <span class="subtext">
+                            @if ($keterangan -> null)
+
+                            @else
+                            {{ $syarat_dokumen -> keterangan }}
+                            @endif
+                        </span>
                     </label>
-                    <input type="file" id="aktalahir" class="" hidden required>
+                    <input type="file" id="id" class="" hidden required>
                     <label for="aktalahir">
                         <div class="inputbox-y form-item">Telusuri</div>
                         <div class="inputbox-x form-item">Pilih Berkas</div>
                     </label>
                 </div>
+                @endforeach
+
                 <div class="inputbox">
                     <label for="aktalahir">
                         Akta Kelahiran Anak
@@ -29,6 +44,7 @@
                         <div class="inputbox-x form-item">Pilih Berkas</div>
                     </label>
                 </div>
+
                 <div class="inputbox">
                     <label for="dokumen">
                         Kartu Keluarga
@@ -41,6 +57,7 @@
                         <div class="inputbox-x form-item">Pilih Berkas</div>
                     </label>
                 </div>
+
                 <div class="margin-vertical text-align-center">
                     <input id="uploadBtn" class="tombol-besar" type="submit" value="Simpan" disabled>
                 </div>

@@ -24,14 +24,14 @@
             let alert = document.querySelector(".alert"); //append style class="alert"
             if (alert) {
                 alert.style.opacity = "0";
-                setTimeout(() => alert.remove(), 1500); // fade-out dulu 500ms baru remove
+                setTimeout(() => alert.remove(), 2000); // fade-out dulu 500ms baru remove
             }
-        }, 5000); // Auto-dismiss after 3000ms
+        }, 10000); // Auto-dismiss after 3000ms
     });
 </script>
 
 {{--
-<x-flash-message flash="red">{{ $slot }}</x-flash-message>
+<x-flash-message flash>{{ $slot }}</x-flash-message>
 --}}
 
 {{-- https://www.itsolutionstuff.com/post/laravel-8-flash-message-tutorial-exampleexample.html --}}

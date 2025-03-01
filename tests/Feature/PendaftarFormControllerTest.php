@@ -77,7 +77,7 @@ class PendaftarFormControllerTest extends TestCase
         // $response = $this->actingAs($user)->put('/pendaftar/formulir', $data);
         $response = $this->actingAs($user)->put('/pendaftar/formulir', array_merge($infoAnak->toArray(), $dataWali));
 
-        $response->assertSessionHasErrors(['sekolah_lama', 'tanggal_pindah', 'dari_kelompok', 'di_kelompok']);
+        $response->assertSessionHasErrors(['sekolah_lama', 'tanggal_pindah', 'dari_kelompok', 'ke_kelompok']);
     }
 
     public function test_partially_filled_wali_data_is_saved_even_when_orang_tua_is_selected()

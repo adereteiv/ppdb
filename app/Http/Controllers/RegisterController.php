@@ -6,11 +6,11 @@ use App\Models\User;
 use App\Models\InfoAnak;
 use App\Models\BatchPPDB;
 use App\Models\Pendaftaran;
-use App\Notifications\KirimUserIDNotification;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\RateLimiter;
+use App\Notifications\KirimUserIDNotification;
 
 class RegisterController extends Controller
 {
@@ -27,17 +27,18 @@ class RegisterController extends Controller
     public function store(Request $request){
         $activeBatch = BatchPPDB::where('status', true)->latest()->first();
 
-        $existingUser = User::where('email', $request->email)
-            ->where('name', $request->nama_anak)
-            ->first();
+        $existingEmail = User::where('email', $request->email)->count();
+        if ($existingEmail >= 2) {
+            return back()->with('akunAda', 'Maksimal 2 pendaftaran anak per email. Silakan gunakan email lain.')->withInput();
+        };
 
+        $existingUser = User::where('email', $request->email)->where('name', $request->nama_anak)->first();
         if ($existingUser) {
             return back()->with('akunAda' , 'Anak dengan email ini sudah terdaftar. Jika ingin mendaftarkan anak lain, silakan cek kembali atau hubungi admin untuk bantuan.')->withInput();
         }
 
         $request->validate([
-            // enforce stronger email validation to prevent bot spam
-            'email' => 'required|email:rfc,dns',
+            'email' => ['required','email:rfc,dns,spoof,strict,indisposable','regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|edu|id|gov|co\.id)$/i',],
             'password' => 'required|confirmed|min:8|max:255',
             'nama_anak' => 'required|string|max:255',
             'panggilan_anak' => 'required|string|max:255',
@@ -51,15 +52,23 @@ class RegisterController extends Controller
         ],
         [
             'email.email' => 'Mohon masukkan format email yang benar.',
+            'email.regex' => 'Hanya domain .com, .edu, .id, .gov, atau .co.id yang diperbolehkan.',
+            'email.indisposable' => 'Harap masukkan alamat email Anda yang sebenarnya.',
             'password.confirmed' => 'Kata sandi tidak cocok.',
             'tanggal_lahir.before_or_equal' => 'Anak harus berusia minimal 4 tahun.',
-            'tanggal_lahir.after' => 'Usia anak maksimal 6 tahun.',
+            'tanggal_lahir.after' => 'Usia anak maksimal berada di bawah 7 tahun.',
         ],
         );
 
+        $sanitize = [
+            'nama_anak' => ucwords(strtolower(trim($request->input('nama_anak')))),
+            'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak')))),
+            'email' => strtolower(trim($request->input('panggilan_anak'))),
+        ];
+
         $user = User::create([
-            'name' => $request->nama_anak,
-            'email' => strtolower($request->email),
+            'name' => $sanitize['nama_anak'],
+            'email' => $sanitize['email'],
             'password' => Hash::make($request->password),
         ]);
 
@@ -70,8 +79,8 @@ class RegisterController extends Controller
 
         InfoAnak::create([
             'pendaftaran_id' => $pendaftaran->id,
-            'nama_anak' => ucwords(strtolower($request->nama_anak)),
-            'panggilan_anak' => ucwords(strtolower($request->panggilan_anak)),
+            'nama_anak' => $sanitize['nama_anak'],
+            'panggilan_anak' => $sanitize['panggilan_anak'],
             'tempat_lahir'=> $request->tempat_lahir,
             'tanggal_lahir'=> $request->tanggal_lahir,
             'alamat_anak'=> $request->alamat_anak,
@@ -80,6 +89,9 @@ class RegisterController extends Controller
         $user->notify(new KirimUserIDNotification($user->id));
 
         Session::flash('user_id', $user->id);
+
+        $key = 'register:' . $request->ip();
+        RateLimiter::hit($key, 14400);
 
         return redirect('/login')->with('success', 'Registrasi akun berhasil!');
     }

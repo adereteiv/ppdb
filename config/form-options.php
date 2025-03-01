@@ -1,5 +1,6 @@
 <?php
 
+// Samakan dengan db value
 return [
     'jenis_kelamin'     => ['Laki-Laki','Perempuan'],
     'kewarganegaraan'   => ['WNI','WNA Keturunan'],

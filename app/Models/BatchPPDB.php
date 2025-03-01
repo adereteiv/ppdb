@@ -16,11 +16,11 @@ class BatchPPDB extends Model
 
     public function pendaftaran()
     {
-        return $this->hasMany(Pendaftaran::class);
+        return $this->hasMany(Pendaftaran::class, 'batch_id');
     }
 
     public function syaratDokumen()
     {
-        return $this->hasMany(SyaratDokumen::class);
+        return $this->hasMany(SyaratDokumen::class, 'batch_id');
     }
 }

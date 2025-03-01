@@ -18,13 +18,13 @@
                 <h6>Perhatian!</h6>
                 <hr>
                 <p>ID Pengguna Anda:</p>
-                <p>
+                <sup>
                     <strong id="userId" class="text-center">{{ session('user_id') }}</strong>
                     <button id="copyButton" class="tombol-none tooltip">
                         <span id="tooltiptext" class="tooltiptext">Salin</span>
                         <i fill="currentColor" class="bi bi-copy"></i>
                     </button>
-                </p>
+                </sup>
                 <br>
                 <p><small>Salin dan simpan ID Pengguna Anda untuk keperluan login! Anda tidak akan melihat pesan ini lagi.</small></p>
                 <script>
@@ -53,7 +53,7 @@
                                 document.execCommand("copy");
                                 document.body.removeChild(tempInput);
 
-                                tooltiptext.textContent = `ID Anda ${userIdElement.textContent} berhasil disalin!`;
+                                tooltiptext.textContent = `Berhasil menyalin ID ${userIdElement.textContent}!`;
                             }
                         });
 
@@ -64,34 +64,17 @@
                 </script>
             </x-flash-message>
             @endif
+
             @if(session()->has('error'))
-            <x-flash-message flash="red">{{ session('error') }}</x-flash-message>
+            <x-flash-message flash>{{ session('error') }}</x-flash-message>
             @endif
-
-            {{--
-            @error('id')
-            <div class="form-login_item flex justify-between reminder bg-red teks-putih margin-vertical" x-data="{ show: true }" x-show="show" >
-                <span class="flex-1 align-self-center">{{ $message }}</span>
-                <div><button class="tombol tombol-negatif" @click="show = false"><i class="bi bi-x-lg"></i></button></div>
-            </div>
-            @enderror
-
-            @error('password')
-            <div class="form-login_item flex justify-between reminder bg-red teks-putih margin-vertical" x-data="{ show: true }" x-show="show" >
-                <span class="flex-1 align-self-center">{{ $message }}</span>
-                <div><button class="tombol tombol-negatif" @click="show = false"><i class="bi bi-x-lg"></i></button></div>
-            </div>
-            @enderror
-            --}}
 
             <form method="post" action="/login">@csrf
                 <div class="gap">
                     <x-input type="text" name="id" class="form-login_item" placeholder="ID Pengguna" autofocus required/>
-                    {{-- <input type="text" name="id" class="form-login_item" placeholder="ID Pengguna" value="{{old('id')}}" autofocus required> --}}
                 </div>
                 <div class="gap">
                     <x-input type="password" name="password" class="form-login_item" placeholder="Kata Sandi" required/>
-                    {{-- <input type="password" name="password" class="form-login_item" placeholder="Kata Sandi" required> --}}
                 </div>
                 <div class="margin-vertical">
                     <button type="submit" class="form-login_item tombol-besar tombol-netral">Log In</button>

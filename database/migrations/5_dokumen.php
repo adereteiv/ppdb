@@ -19,10 +19,10 @@ return new class extends Migration
             $table->foreignId('batch_id')->constrained('batch_ppdb')->onDelete('cascade');
             $table->foreignId('tipe_dokumen_id')->constrained('tipe_dokumen')->onDelete('cascade');
             $table->boolean('is_wajib')->default(true);
-            $table->string('keterangan_dokumen')->nullable();
+            $table->string('keterangan')->nullable();
         });
 
-        Schema::create('dokumen', function (Blueprint $table) {
+        Schema::create('dokumen_persyaratan', function (Blueprint $table) {
             $table->id();
             $table->foreignId('anak_id')->constrained('info_anak')->onDelete('cascade');
             $table->foreignId('tipe_dokumen_id')->constrained('tipe_dokumen')->onUpdate('cascade');
@@ -42,7 +42,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('tipe_dokumen');
         Schema::dropIfExists('syarat_dokumen');
-        Schema::dropIfExists('dokumen');
+        Schema::dropIfExists('dokumen_persyaratan');
         Schema::dropIfExists('bukti_bayar');
     }
 };

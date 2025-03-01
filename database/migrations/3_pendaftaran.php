@@ -62,7 +62,7 @@ return new class extends Migration
             $table->date('tanggal_pindah')->nullable();
             $table->enum('dari_kelompok', ['TK A','TK B'])->nullable();
             // $table->date('tanggal_diterima')->nullable();
-            $table->enum('di_kelompok', ['TK A','TK B'])->nullable();
+            $table->enum('ke_kelompok', ['TK A','TK B'])->nullable();
             $table->timestamps();
         });
     }

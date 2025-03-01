@@ -10,7 +10,7 @@ class SyaratDokumen extends Model
 {
     protected $table = 'syarat_dokumen';
 
-    protected $fillable = ['is_wajib','keterangan_dokumen'];
+    protected $guarded = ['id'];
 
     public function batchPPDB()
     {

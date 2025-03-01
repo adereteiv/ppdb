@@ -48,7 +48,7 @@ class InfoAnakFactory extends Factory
                 'tanggal_pindah'   => fake()->date(),
                 'dari_kelompok'    => fake()->randomElement(['TK A', 'TK B']),
                 // 'tanggal_diterima' => fake()->date(),
-                'di_kelompok'      => fake()->randomElement(['TK A', 'TK B']),
+                'ke_kelompok'      => fake()->randomElement(['TK A', 'TK B']),
             ]);
         }
         return $data;

@@ -6,9 +6,9 @@ use App\Models\InfoAnak;
 use App\Models\TipeDokumen;
 use Illuminate\Database\Eloquent\Model;
 
-class Dokumen extends Model
+class DokumenPersyaratan extends Model
 {
-    protected $table = 'dokumen';
+    protected $table = 'dokumen_persyaratan';
 
     protected $guarded = 'id';
 

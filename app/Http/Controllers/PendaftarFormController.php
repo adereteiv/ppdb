@@ -6,7 +6,6 @@ use App\Models\InfoAnak;
 use App\Models\Pendaftaran;
 use App\Models\OrangTuaWali;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\BatchPPDB;
 
@@ -88,7 +87,7 @@ class PendaftarFormController extends Controller
                 'sekolah_lama'     => 'required|string',
                 'tanggal_pindah'   => 'required|date',
                 'dari_kelompok'    => 'required|in:TK A,TK B',
-                'di_kelompok'      => 'required|in:TK A,TK B',
+                'ke_kelompok'      => 'required|in:TK A,TK B',
             ];
         }
 
@@ -155,7 +154,7 @@ class PendaftarFormController extends Controller
             'sekolah_lama.required'      => 'Silakan diisi dengan nama sekolah lama.',
             'tanggal_pindah.required'    => 'Tanggal pindah dari sekolah yang lama',
             'dari_kelompok.required'     => 'Isi dengan kelompok umur dari TK yang lama',
-            'di_kelompok.required'       => 'Mendaftar pada kelompok umur baru',
+            'ke_kelompok.required'       => 'Mendaftar pada kelompok umur baru',
 
             'nama_ayah.required'         => 'Nama Ayah wajib diisi.',
             'pendidikan_ayah.required'   => 'Silakan diisi sesuai kebenaran yang ada.',
@@ -188,7 +187,13 @@ class PendaftarFormController extends Controller
         }
         */
 
-        $validatedData = $request->validate($rules,$messages);
+        $validatedData = array_merge(
+            $request->validate($rules,$messages),[
+                'nama_anak' => ucwords(strtolower(trim($request->input('nama_anak')))),
+                'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak'))))
+            ]
+        );
+
         // dd($validatedData);
 
         $infoAnak = InfoAnak::updateOrCreate(['pendaftaran_id' => $pendaftaran->id], $validatedData);
@@ -216,7 +221,7 @@ class PendaftarFormController extends Controller
         $validatedData = $validator->validated();
         */
 
-        return redirect('/pendaftar/formulir')->with('success', 'Formulir berhasil diunggah!');
+        return redirect('/pendaftar/formulir')->with('success', 'Formulir berhasil disimpan!');
     }
 
     private function saveOrangTuaWali($anakId, $relasi, $data){
@@ -233,11 +238,11 @@ class PendaftarFormController extends Controller
         ];
 
         $dbMapping = [
-                'nama'       => $data["nama_{$relasi}"] ?? null,
+                'nama'       => ucwords(strtolower(trim($data["nama_{$relasi}"]))) ?? null,
                 'pendidikan' => $data["pendidikan_{$relasi}"] ?? null,
                 'pekerjaan'  => $data["pekerjaan_{$relasi}"] ?? null,
-                'alamat'     => $data["alamat_{$relasi}"] ?? null,
-                'nomor_hp'   => $data["nomor_hp_{$relasi}"] ?? null,
+                'alamat'     => trim($data["alamat_{$relasi}"]) ?? null,
+                'nomor_hp'   => trim($data["nomor_hp_{$relasi}"]) ?? null,
         ];
 
         // \Log::info("Mapped data", ['relasi' => $relasi, 'mapping' => $dbMapping]);

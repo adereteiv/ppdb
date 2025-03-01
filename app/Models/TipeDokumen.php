@@ -16,8 +16,8 @@ class TipeDokumen extends Model
         return $this->hasMany(SyaratDokumen::class,'tipe_dokumen_id');
     }
 
-    public function dokumen()
+    public function dokumenPersyaratan()
     {
-        return $this->hasMany(Dokumen::class,'tipe_dokumen_id');
+        return $this->hasMany(DokumenPersyaratan::class,'tipe_dokumen_id');
     }
 }

@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 // use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AuthController extends Controller
 {
@@ -19,45 +19,50 @@ class AuthController extends Controller
     }
 
     public function authenticate(Request $request){
+        if (Auth::check()){
+            return back()->with('error', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
+        };
+
         $credentials = $request->validate([
             'id' => 'required',
             'password' => 'required',
         ]);
 
-        /* dipastikan role = pendaftar */
         $user = User::where('id', $credentials['id'])->where('role_id', 2)->first();
 
-        if (Auth::check()){
-            // dd (Auth::user()?->role_id);
-            return back()->with('error', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
-        };
-
-        if (!$user || !Auth::attempt(['id' => $credentials['id'], 'password' => $credentials['password']])) {
+        if (!$user || !Auth::attempt(['id' => $credentials['id'], 'password' => $credentials['password'], 'role_id' => 2])) {
             return back()->with('error', 'Login gagal. Periksa kembali ID dan kata sandi Anda.')->onlyInput('id');
         }
+
+        $key = 'login:pendaftar:' . $request->ip() . ':' . $request->input('id','');
+        RateLimiter::clear($key);
 
         $request->session()->regenerate();
         return redirect()->intended('/pendaftar/dashboard');
     }
 
     public function authenticateAdmin(Request $request){
-        $credentials = $request->validate([
-            'email'=> 'required|email:rfc,dns',
-            'password' => 'required',
-        ],['email.email' => 'Mohon masukkan format email yang benar.']
-        );
-
-        /* dipastikan role = admin */
-        $user = User::where('email', $credentials['email'])->where('role_id', 1)->first();
-
         if (Auth::check()){
-            // dd (Auth::user()?->role_id);
             return back()->with('error', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
         };
 
-        if (!$user || !Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
+        $credentials = $request->validate([
+            'email' => ['required','email:rfc,strict,dns,spoof,indisposable','regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|edu|id|gov|co\.id)$/i'],
+            'password' => 'required',
+        ],[
+            'email.email' => 'Mohon masukkan format email yang benar.',
+            'email.regex' => 'Domain email tidak ditemukan. Harap masukkan alamat email Anda yang sebenarnya!',
+            'email.indisposable' => 'Harap masukkan alamat email Anda yang sebenarnya.',
+        ]);
+
+        $user = User::where('email', $credentials['email'])->where('role_id', 1)->first();
+
+        if (!$user || !Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password'], 'role_id' => 1])) {
             return back()->with('error', 'Login gagal. Periksa kembali email dan kata sandi Anda.')->onlyInput('email');
         }
+
+        $key = 'login:admin:' . $request->ip() . ':' . strtolower($request->email);
+        RateLimiter::clear($key);
 
         $request->session()->regenerate();
         return redirect()->intended('/admin/dashboard');
@@ -66,12 +71,6 @@ class AuthController extends Controller
     public function logout(){
         $user = Auth::user();
         Auth::logout();
-
-        // Does the same thing, so request() can be ignored
-        /*
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
-        */
 
         session()->invalidate();
         session()->regenerateToken();
