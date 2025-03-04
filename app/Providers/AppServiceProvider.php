@@ -45,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $attempts = RateLimiter::attempts($key);
 
-        $window = 10;
+        $window = 5;
 
         if ($attempts > 1) {
             $extraAttempts = $attempts - 1;

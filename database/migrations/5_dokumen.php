@@ -27,6 +27,7 @@ return new class extends Migration
             $table->foreignId('anak_id')->constrained('info_anak')->onDelete('cascade');
             $table->foreignId('tipe_dokumen_id')->constrained('tipe_dokumen')->onUpdate('cascade');
             $table->string('file_path');
+            // ->nullable();
             $table->timestamps();
         });
 

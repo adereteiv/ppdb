@@ -70,7 +70,7 @@
                             <li>Mengisi Formulir Pendaftaran dengan sebenar-benarnya;</li>
                             <li>Mengunggah Dokumen Persyaratan, format Surat Pernyataan dapat diunduh pada halaman Portal PPDB di bagian <a href="#tata-pendaftaran" style="text-decoration: none">Syarat Pendaftaran</a>;</li>
                             <li>Membayar biaya pendaftaran dan mengunggah Bukti Pembayaran pada Dashboard.</li>
-                            <li>Pengumuman hasil penerimaan di bagian Papan Informasi pada halaman <a href="/beranda">Portal PPDB.</li>
+                            <li>Pengumuman hasil penerimaan di bagian Papan Informasi pada halaman <a href="/beranda">Portal PPDB.</a></li>
                         </ol>
                     </div>
                 </div>

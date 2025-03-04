@@ -15,7 +15,6 @@ class PendaftarFormController extends Controller
      * Display a listing of the resource.
      */
 
-    //  BELUM
     public function index()
     {
         $user = Auth::user();
@@ -41,13 +40,10 @@ class PendaftarFormController extends Controller
      * Store a newly created resource in storage.
      */
 
-    //  BELUM
     public function update(Request $request)
     {
         $user = Auth::user();
         $activeBatch = BatchPPDB::where('status', true)->latest()->first();
-
-        // dd($request->all());
 
         $pendaftaran = Pendaftaran::updateOrCreate(
             ['user_id' => $user->id],
@@ -178,15 +174,6 @@ class PendaftarFormController extends Controller
             'nomor_hp_wali.regex'        => 'Silakan isi dengan format: +62XXXXXXXX.',
         ];
 
-        /* Testing Purpose
-        try {
-            $validatedData = $request->validate($rules);
-            dd($validatedData); // This will trigger ONLY if validation passes
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            dd($e->errors()); // This will show exactly which fields are failing
-        }
-        */
-
         $validatedData = array_merge(
             $request->validate($rules,$messages),[
                 'nama_anak' => ucwords(strtolower(trim($request->input('nama_anak')))),
@@ -194,41 +181,16 @@ class PendaftarFormController extends Controller
             ]
         );
 
-        // dd($validatedData);
-
         $infoAnak = InfoAnak::updateOrCreate(['pendaftaran_id' => $pendaftaran->id], $validatedData);
-        // dd($infoAnak);
 
-        // OrangTuaWali::updateOrCreate($); DRY
-
-        /* v.1, saves to database with null all over because fields are left empty
-        $this->saveOrangTuaWali($infoAnak->id, 'ayah', $validatedData);
-        $this->saveOrangTuaWali($infoAnak->id, 'ibu', $validatedData);
-        $this->saveOrangTuaWali($infoAnak->id, 'wali', $validatedData);
-        */
-
-        /* v.2 */
         $this->saveOrangTuaWali($infoAnak->id, 'ayah', $request->only(['nama_ayah', 'pendidikan_ayah', 'pekerjaan_ayah', 'alamat_ayah', 'nomor_hp_ayah']));
         $this->saveOrangTuaWali($infoAnak->id, 'ibu', $request->only(['nama_ibu', 'pendidikan_ibu', 'pekerjaan_ibu', 'alamat_ibu', 'nomor_hp_ibu']));
         $this->saveOrangTuaWali($infoAnak->id, 'wali', $request->only(['nama_wali', 'pendidikan_wali', 'pekerjaan_wali', 'alamat_wali', 'nomor_hp_wali']));
-
-        /* Testing Purpose
-        $validator = \Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
-            dd($validator->errors()->toArray()); // Shows all validation errors
-        }
-
-        $validatedData = $validator->validated();
-        */
 
         return redirect('/pendaftar/formulir')->with('success', 'Formulir berhasil disimpan!');
     }
 
     private function saveOrangTuaWali($anakId, $relasi, $data){
-        /* v.2 */
-        // \Log::info("Before filtering", ['relasi' => $relasi, 'data' => $data]);
-
-        // field not filled = null
         $default = [
             'nama' => null,
             'pendidikan' => null,
@@ -245,45 +207,11 @@ class PendaftarFormController extends Controller
                 'nomor_hp'   => trim($data["nomor_hp_{$relasi}"]) ?? null,
         ];
 
-        // \Log::info("Mapped data", ['relasi' => $relasi, 'mapping' => $dbMapping]);
-
         $mapped = array_merge($default, $dbMapping);
 
-        // \Log::info("After mapping", ['relasi' => $relasi, 'saved' => $mapped]);
-
-        // cek kalau data ada disimpan meskipun hanya 1 field yang diisi maka lanjut ke updateOrCreate dengan isi berupa data yang sudah difilter di $mapped
         if (!empty(array_filter($dbMapping))) {
-            // $saved =
             OrangTuaWali::updateOrCreate(['anak_id' => $anakId, 'relasi' => $relasi],$mapped);
-            // \Log::info("Saved data", ['relasi' => $relasi, 'tersimpan' => $saved]);
         }
-
-        /* v.2 masih null
-        \Log::info("Before filtering", ['relasi' => $relasi, 'data' => $data]);
-        $filter = array_filter($data);
-        \Log::info("After filtering", ['relasi' => $relasi, 'filter' => $filter]);
-        if (!empty($filter)) {
-            $saved = OrangTuaWali::updateOrCreate(
-                ['anak_id' => $anakId, 'relasi' => $relasi],
-                $filter
-            );
-            \Log::info("Saved data", ['relasi' => $relasi, 'saved' => $saved]);
-        }
-        */
-
-        /* v.1 data terekam tapi tidak di-assign ke variabel penampungnya sehingga tidak masuk ke database
-        $saved = OrangTuaWali::updateOrCreate(
-            ['anak_id' => $anakId, 'relasi' => $relasi],
-            [
-                'nama'       => $data["nama_{$relasi}"] ?? null,
-                'pendidikan' => $data["pendidikan_{$relasi}"] ?? null,
-                'pekerjaan'  => $data["pekerjaan_{$relasi}"] ?? null,
-                'alamat'     => $data["alamat_{$relasi}"] ?? null,
-                'nomor_hp'   => $data["nomor_hp_{$relasi}"] ?? null,
-            ]
-        );
-        */
-        // dd($saved);
     }
 
     /**

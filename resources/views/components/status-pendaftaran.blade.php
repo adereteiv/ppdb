@@ -2,9 +2,9 @@
 
 @php
     $statuses = [
-        'Belum Lengkap' => 'status bg-yellowdark',
-        'Lengkap' => 'status bg-greendark',
-        'Terverifikasi' => 'status bg-blue',
+        'Belum Lengkap' => 'bg-yellowdark',
+        'Lengkap' => 'bg-greendark',
+        'Terverifikasi' => 'bg-blue',
     ];
 
     $status = $status ?? 'Belum Lengkap';

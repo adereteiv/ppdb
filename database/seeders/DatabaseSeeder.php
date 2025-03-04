@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\SyaratDokumen;
 use App\Models\User;
 use App\Models\BatchPPDB;
 use App\Models\TipeDokumen;
@@ -55,15 +56,6 @@ class DatabaseSeeder extends Seeder
             );
         });
 
-        TipeDokumen::insert([
-            ['id' => 1, 'tipe' => 'Foto Anak'],
-            ['id' => 2, 'tipe' => 'Kartu Keluarga'],
-            ['id' => 3, 'tipe' => 'Akta Kelahiran'],
-            ['id' => 4, 'tipe' => 'Kartu Tanda Penduduk'],
-            ['id' => 5, 'tipe' => 'Kartu Identitas Anak'],
-            ['id' => 6, 'tipe' => 'Surat Pernyataan'],
-        ]);
-
         // $tahun_ajaran =  now()->year . '/' . (now()->year + 1);
         BatchPPDB::insert([
             'tahun_ajaran' => '2025/2026',
@@ -72,6 +64,26 @@ class DatabaseSeeder extends Seeder
             'waktu_mulai' => now(),
             'waktu_tenggat' => now()->addDays(30),
             'waktu_tutup' => now()->addDays(60),
+        ]);
+        $batch = BatchPPDB::where('tahun_ajaran', '2025/2026')->where('gelombang', 1)->firstOrFail();;
+
+        TipeDokumen::insert([
+            ['id' => 1, 'tipe' => 'Foto Anak'],
+            ['id' => 2, 'tipe' => 'Kartu Keluarga'],
+            ['id' => 3, 'tipe' => 'Akta Kelahiran'],
+            ['id' => 4, 'tipe' => 'Kartu Tanda Penduduk'],
+            ['id' => 5, 'tipe' => 'Kartu Identitas Anak'],
+            ['id' => 6, 'tipe' => 'Surat Pernyataan'],
+        ]);
+        $tipeDokumen = TipeDokumen::pluck('id', 'tipe');
+
+        SyaratDokumen::insert([
+            ['batch_id' => $batch->id, 'tipe_dokumen_id' => $tipeDokumen['Foto Anak'], 'is_wajib' => true, 'keterangan' => null,],
+            ['batch_id' => $batch->id, 'tipe_dokumen_id' => $tipeDokumen['Kartu Keluarga'], 'is_wajib' => true, 'keterangan' => null],
+            ['batch_id' => $batch->id, 'tipe_dokumen_id' => $tipeDokumen['Akta Kelahiran'], 'is_wajib' => true, 'keterangan' => null],
+            ['batch_id' => $batch->id, 'tipe_dokumen_id' => $tipeDokumen['Kartu Tanda Penduduk'], 'is_wajib' => true, 'keterangan' => 'KTP Ayah/Ibu/Wali'],
+            ['batch_id' => $batch->id, 'tipe_dokumen_id' => $tipeDokumen['Kartu Identitas Anak'], 'is_wajib' => false, 'keterangan' => null],
+            ['batch_id' => $batch->id, 'tipe_dokumen_id' => $tipeDokumen['Surat Pernyataan'], 'is_wajib' => true, 'keterangan' => 'Harus diunduh dari sistem'],
         ]);
     }
 }

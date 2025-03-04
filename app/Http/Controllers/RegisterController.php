@@ -27,7 +27,7 @@ class RegisterController extends Controller
     public function store(Request $request){
         $activeBatch = BatchPPDB::where('status', true)->latest()->first();
 
-        $existingEmail = User::where('email', $request->email)->count();
+        $existingEmail = User::where('email', $request->email)->where('role_id', 2)->count();
         if ($existingEmail >= 2) {
             return back()->with('akunAda', 'Maksimal 2 pendaftaran anak per email. Silakan gunakan email lain.')->withInput();
         };
@@ -63,7 +63,7 @@ class RegisterController extends Controller
         $sanitize = [
             'nama_anak' => ucwords(strtolower(trim($request->input('nama_anak')))),
             'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak')))),
-            'email' => strtolower(trim($request->input('panggilan_anak'))),
+            'email' => strtolower(trim($request->input('email'))),
         ];
 
         $user = User::create([

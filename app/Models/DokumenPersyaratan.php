@@ -10,7 +10,7 @@ class DokumenPersyaratan extends Model
 {
     protected $table = 'dokumen_persyaratan';
 
-    protected $guarded = 'id';
+    protected $guarded = ['id'];
 
     public function infoAnak()
     {
