@@ -40,7 +40,8 @@ Route::middleware(['auth.must','role:1'])->group(function () {
 });
 
 Route::middleware(['auth.must','role:2'])->group(function () {
-    Route::get('/pendaftar/dashboard', [DashboardController::class, 'index']);
+    Route::get('/pendaftar/dashboard', [DashboardController::class, 'showDashboard']);
+    Route::get('/pendaftar/profil', [DashboardController::class, 'showProfil']);
 
     Route::resource('/pendaftar/formulir', PendaftarFormController::class)->only(['index', 'update']);
     Route::put('/pendaftar/formulir/', [PendaftarFormController::class, 'update']);
@@ -50,8 +51,6 @@ Route::middleware(['auth.must','role:2'])->group(function () {
 
     Route::resource('/pendaftar/buktibayar', PendaftarUnggahBuktiBayarController::class)->only(['index', 'update']);
     Route::put('/pendaftar/buktibayar', [PendaftarUnggahBuktiBayarController::class, 'update']);
-
-    Route::get('/pendaftar/profil', [DashboardController::class, 'profil']);
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

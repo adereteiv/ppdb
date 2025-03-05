@@ -23,7 +23,7 @@
                         />
 
                         @if ($dokumen)
-                        <x-preview :dokumen="$dokumen"/>
+                        <x-preview class="inputbox" :dokumen="$dokumen"/>
                         @endif
                     </div>
                 @endforeach

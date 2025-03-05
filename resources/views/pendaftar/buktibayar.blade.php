@@ -17,7 +17,7 @@
                 :dokumen="$buktiBayar"/>
 
                 @if ($buktiBayar)
-                <x-preview :dokumen="$buktiBayar"/>
+                <x-preview class="inputbox" :dokumen="$buktiBayar"/>
                 @endif
             </div>
 

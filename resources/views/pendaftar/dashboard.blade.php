@@ -2,13 +2,13 @@
 
 <div id="pendaftar-beranda" class="app-content gap">
     <div class="wrapper">
-        <h3 class="margin-vertical"> Status Pendaftaran :
-            <x-status-pendaftaran :status="$pendaftaran->status ?? null"/></h3>
-        <div>
+        <h3 class="margin-vertical flex"> Status Pendaftaran :&nbsp;<x-status-pendaftaran class="flex align-items-center" :status="$pendaftaran->status ?? null"/>
+        </h3>
+        <div class="stepper">
             <ul>
-                <li class="">Formulir Pendaftaran</li>
-                <li class="">Dokumen Persyaratan</li>
-                <li class="">Bukti Pembayaran</li>
+                <li class="{{ $formulirLengkap ? 'active' : '' }}">Formulir Pendaftaran</li>
+                <li class="{{ $dokumenLengkap ? 'active' : '' }}">Dokumen Persyaratan</li>
+                <li class="{{ $buktiBayarLengkap ? 'active' : '' }}">Bukti Pembayaran</li>
             </ul>
         </div>
     </div>

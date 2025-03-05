@@ -10,8 +10,8 @@
     $status = $status ?? 'Belum Lengkap';
 @endphp
 
-<span class="status {{ $statuses[$status]  ?? 'bg-yellowdark' }}">{{ $status }}</span>
+<span {{ $attributes->merge(['class' => "status $statuses[$status]"]) }}>{{ $status }}</span>
 
 {{--
-<x-status-pendaftaran :status="$pendaftaran->status ?? null" />
+<x-status-pendaftaran class="flex" :status="$pendaftaran->status ?? null" />
  --}}

@@ -5,7 +5,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 *{
-    font-family: 'Albert Sans', sans-serif;
+    font-family: 'Onest', sans-serif;
     font-size: 16px;
     padding: 0;
     margin: 0;
@@ -36,7 +36,7 @@
 
     --bluedark:#0056b3;
     --blue:#2962ff;
-    --cyan:#109CF1;
+    --cyan:#24E0FF;
     --bluemild:#92BDDA;
     --bluepowder:#eaf2f5;
 
@@ -310,14 +310,10 @@ table.alternate{
 
 /* Preview */
 .preview{
-    margin-top: 10px;
-}
-.preview img{
-    max-width: 100%;
+    width: 100%;
     height: auto;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-top: 5px;
+    img{width: 100px; height: auto; cursor: pointer; border: 1px solid #ddd; padding: 5px;}
+    .pdf{width: 100px; height: auto; cursor: pointer; padding: 5px;}
 }
 
 /* Modal */
@@ -722,6 +718,8 @@ th,td{
 }
 /* Pendaftar - Beranda */
 .stepper{
+    --greenlight: #00d563;
+    --greeneon: #008f4c;
     ul, ol{
         display:flex;
     }
@@ -734,26 +732,17 @@ th,td{
     li:before {
         display: block;
         content: "";
-        --size: 30px;
+        --size: 20px;
         width: var(--size);
         height: var(--size);
         position: relative;
         background: white;
         border: 1px solid #000;
         border-radius: 50%;
-        margin: 0 auto;
+        margin: 0 auto 10px auto;
     }
-    li:not(:last-child):after {
-        content: "";
-        position: relative;
-        left: 50%;
-        background: #ddd;
-        order: -1;
-        height: 4px;
-        top: 15px;
-    }
-    li.active {color: var(--blue);}
-    li.active:before, li.active:after {border-color: var(--blue);background: var(--blue);color: var(--blue);}
+    /* li.active:before{background: var(--greendark); border-color: var(--greendark); box-shadow: var(--greenmild) 0 -1px 7px 1px, inset rgb(0, 78, 17) 0 -1px 9px, var(--greendark) 0 2px 14px;} */
+    li.active:before{background: var(--blue);border-color: var(--bluedark); box-shadow: var(--bluedark) 0 -1px 7px 1px, inset #006 0 -1px 9px, var(--blue) 0 2px 14px;}
 }
 /* Pendaftar - Formulir */
 .form-section{
