@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\InfoAnak;
+use App\Models\BatchPPDB;
 use App\Models\Pendaftaran;
+use App\Models\InfoAnak;
 use App\Models\OrangTuaWali;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\BatchPPDB;
 
 class PendaftarFormController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-
     public function index()
     {
         $user = Auth::user();
@@ -83,7 +82,14 @@ class PendaftarFormController extends Controller
                 'sekolah_lama'     => 'required|string',
                 'tanggal_pindah'   => 'required|date',
                 'dari_kelompok'    => 'required|in:TK A,TK B',
-                'ke_kelompok'      => 'required|in:TK A,TK B',
+                'ke_kelompok'      => [
+                    'required','in:TK A,TK B',
+                    function ($attribute, $value, $message) use ($request) {
+                        if ($request->dari_kelompok === "TK B" && $value !== 'TK B') {
+                            $message("Kepindahan dari TK B masuk ke kelompok TK B");
+                        }
+                    }
+                ],
             ];
         }
 
@@ -93,13 +99,13 @@ class PendaftarFormController extends Controller
                 'pendidikan_ayah' => 'required|in:Tidak Sekolah,Paket A,Paket B,Paket C,SD/MI,SMP/MTs,SMA/SMK/MA,D-1,D-2,D-3,D-4,S-1,S-2,S-3',
                 'pekerjaan_ayah'  => 'required|in:Sudah Meninggal,Mengurus Rumah Tangga,Petani,Nelayan,Peternak,Buruh,Pedagang Kecil,Pedagang Besar,Pegawai Swasta,Guru,PNS,Dokter,TNI,Polisi,Dosen,Karyawan BUMN,Wiraswasta,Tenaga Kerja Indonesia',
                 'alamat_ayah'     => 'required|string',
-                'nomor_hp_ayah'   => 'required|regex:/^(?:\+?\d{1,3})?[ -]?\d{10,15}$/|min:10|max:20',
+                'nomor_hp_ayah'   => 'required|regex:/^(?:\+?\d{1,3})?[ \-]?\d{10,15}$/|min:10|max:20',
 
                 'nama_ibu'        => 'required|string',
                 'pendidikan_ibu'  => 'required|in:Tidak Sekolah,Paket A,Paket B,Paket C,SD/MI,SMP/MTs,SMA/SMK/MA,D-1,D-2,D-3,D-4,S-1,S-2,S-3',
                 'pekerjaan_ibu'   => 'required|in:Sudah Meninggal,Mengurus Rumah Tangga,Petani,Nelayan,Peternak,Buruh,Pedagang Kecil,Pedagang Besar,Pegawai Swasta,Guru,PNS,Dokter,TNI,Polisi,Dosen,Karyawan BUMN,Wiraswasta,Tenaga Kerja Indonesia',
                 'alamat_ibu'      => 'required|string',
-                'nomor_hp_ibu'    => 'required|regex:/^(?:\+?\d{1,3})?[ -]?\d{10,15}$/|min:10|max:20',
+                'nomor_hp_ibu'    => 'required|regex:/^(?:\+?\d{1,3})?[ \-]?\d{10,15}$/|min:10|max:20',
             ];
         } else if ($request->yang_mendaftarkan === 'Wali') {
             $rules += [
@@ -107,7 +113,7 @@ class PendaftarFormController extends Controller
                 'pendidikan_wali' => 'required|in:Tidak Sekolah,Paket A,Paket B,Paket C,SD/MI,SMP/MTs,SMA/SMK/MA,D-1,D-2,D-3,D-4,S-1,S-2,S-3',
                 'pekerjaan_wali'  => 'required|in:Sudah Meninggal,Mengurus Rumah Tangga,Petani,Nelayan,Peternak,Buruh,Pedagang Kecil,Pedagang Besar,Pegawai Swasta,Guru,PNS,Dokter,TNI,Polisi,Dosen,Karyawan BUMN,Wiraswasta,Tenaga Kerja Indonesia',
                 'alamat_wali'     => 'required|string',
-                'nomor_hp_wali'   => 'required|regex:/^(?:\+?\d{1,3})?[ -]?\d{10,15}$/|min:10|max:20',
+                'nomor_hp_wali'   => 'required|regex:/^(?:\+?\d{1,3})?[ \-]?\d{10,15}$/|min:10|max:20',
             ];
         }
 
@@ -148,38 +154,42 @@ class PendaftarFormController extends Controller
 
             'mendaftar_sebagai.required' => 'Wajib diisi.',
             'sekolah_lama.required'      => 'Silakan diisi dengan nama sekolah lama.',
-            'tanggal_pindah.required'    => 'Tanggal pindah dari sekolah yang lama',
-            'dari_kelompok.required'     => 'Isi dengan kelompok umur dari TK yang lama',
-            'ke_kelompok.required'       => 'Mendaftar pada kelompok umur baru',
+            'dari_kelompok.required'     => 'Isi dengan kelompok umur dari TK lama',
+            'ke_kelompok.required'       => 'Isi dengan kelompok umur pada TK sekarang',
 
             'nama_ayah.required'         => 'Nama Ayah wajib diisi.',
             'pendidikan_ayah.required'   => 'Silakan diisi sesuai kebenaran yang ada.',
             'pekerjaan_ayah.required'    => 'Silakan diisi sesuai kebenaran yang ada.',
             'alamat_ayah.required'       => 'Silakan diisi sesuai kebenaran yang ada.',
             'nomor_hp_ayah.required'     => 'Silakan diisi sesuai kebenaran yang ada.',
-            'nomor_hp_ayah.regex'        => 'Silakan isi dengan format: +62XXXXXXXX.',
+            'nomor_hp_ayah.regex'        => 'Silakan isi dengan format: +62XXXXXXXXXX.',
 
             'nama_ibu.required'          => 'Nama Ibu wajib diisi.',
             'pendidikan_ibu.required'    => 'Silakan diisi sesuai kebenaran yang ada.',
             'pekerjaan_ibu.required'     => 'Silakan diisi sesuai kebenaran yang ada.',
             'alamat_ibu.required'        => 'Silakan diisi sesuai kebenaran yang ada.',
             'nomor_hp_ibu.required'      => 'Silakan diisi sesuai kebenaran yang ada.',
-            'nomor_hp_ibu.regex'         => 'Silakan isi dengan format: +62XXXXXXXX.',
+            'nomor_hp_ibu.regex'         => 'Silakan isi dengan format: +62XXXXXXXXXX.',
 
             'nama_wali.required'         => 'Nama Wali wajib diisi.',
             'pendidikan_wali.required'   => 'Silakan diisi sesuai kebenaran yang ada.',
             'pekerjaan_wali.required'    => 'Silakan diisi sesuai kebenaran yang ada.',
             'alamat_wali.required'       => 'Silakan diisi sesuai kebenaran yang ada.',
             'nomor_hp_wali.required'     => 'Silakan diisi sesuai kebenaran yang ada.',
-            'nomor_hp_wali.regex'        => 'Silakan isi dengan format: +62XXXXXXXX.',
+            'nomor_hp_wali.regex'        => 'Silakan isi dengan format: +62XXXXXXXXXX.',
         ];
 
-        $validatedData = array_merge(
-            $request->validate($rules,$messages),[
-                'nama_anak' => ucwords(strtolower(trim($request->input('nama_anak')))),
-                'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak'))))
-            ]
-        );
+        $sanitize = [
+            'nama_anak' => ucwords(strtolower(trim($request->input('nama_anak')))),
+            'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak'))))
+        ];
+
+        $validatedData = array_merge($request->validate($rules, $messages), [
+                $sanitize['nama_anak'],
+                $sanitize['panggilan_anak'],
+                // 'nama_anak' => ucwords(strtolower(trim($request->input('nama_anak')))),
+                // 'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak'))))
+        ]);
 
         $infoAnak = InfoAnak::updateOrCreate(['pendaftaran_id' => $pendaftaran->id], $validatedData);
 

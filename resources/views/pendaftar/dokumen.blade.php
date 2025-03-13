@@ -14,7 +14,7 @@
                         $dokumen = $dokumenPersyaratan->where('tipe_dokumen_id', $syarat->tipe_dokumen_id)->first();
                     @endphp
                     <div class="margin-vertical">
-                        <x-inputbox
+                        <x-inputbox-file
                             :label="$syarat->tipeDokumen->tipe"
                             :isWajib="$syarat->is_wajib"
                             keterangan="{{ $syarat->keterangan }}"

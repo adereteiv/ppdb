@@ -27,7 +27,7 @@
                 </sup>
                 <br>
                 <p><small>Salin dan simpan ID Pengguna Anda untuk keperluan login! Anda tidak akan melihat pesan ini lagi.</small></p>
-                <script>
+                {{-- <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         const copyButton = document.getElementById("copyButton");
                         const userIdElement = document.getElementById("userId");
@@ -61,7 +61,7 @@
                             tooltiptext.textContent = "Salin";
                         });
                     });
-                </script>
+                </script> --}}
             </x-flash-message>
             @endif
 

@@ -17,7 +17,7 @@
     <div class="flex-1 align-self-center">{{ $slot }}</div>
     <div><button class="tombol {{ $bgButton }}" @click="show = false"><i class="bi bi-x-lg"></i></button></div>
 </div>
-
+{{--
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => {
@@ -28,7 +28,7 @@
             }
         }, 10000); // Auto-dismiss after 3000ms
     });
-</script>
+</script> --}}
 
 {{--
 <x-flash-message flash>{{ $slot }}</x-flash-message>

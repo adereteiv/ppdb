@@ -64,6 +64,7 @@ class DatabaseSeeder extends Seeder
             'waktu_mulai' => now(),
             'waktu_tenggat' => now()->addDays(30),
             'waktu_tutup' => now()->addDays(60),
+            'timestamp' => now(),
         ]);
         $batch = BatchPPDB::where('tahun_ajaran', '2025/2026')->where('gelombang', 1)->firstOrFail();;
 

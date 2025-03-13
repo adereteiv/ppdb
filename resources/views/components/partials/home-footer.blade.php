@@ -46,9 +46,10 @@
                 <h5 class="footer-head text-align-center">Kontak</h5>
                 <div class="text-align-center">
                     <p>Silakan hubungi kami melalui :</p>
-                    <p><img src="C:\laragon\www\draft_PPDBTK\resources\img\wa.png" alt="">
+                    <p>
+                        {{-- <img src="{{ asset('img/wa.png') }}" alt=""> --}}
                         <a href="https://wa.me/+62NO-HP-DISINI?text=Selamat%20Pagi/%20Siang/%20Sore%20Admin,%20saya%20butuh%20bantuan%20tentang%20pendaftaran%20TKN%20Pembina%20Sungai%20Kakap%20apakah%20bisa%20dibantu?" target="_blank" rel="noopener">
-                            <label class="cursor-pointer"><b>+62&nbsp;XXXX&nbsp;XXXX&nbsp;XXXX</b></label>
+                            <p class="cursor-pointer"><b>+62&nbsp;XXXX&nbsp;XXXX&nbsp;XXXX</b></p>
                         </a>
                         <p>Pada pukul JJ:MM - JJ:MM WIB</p>
                     </p>

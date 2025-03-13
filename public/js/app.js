@@ -1,12 +1,15 @@
-import './bootstrap';
-import { fetchContent, alert, initCopyToClipboard } from './misc.js';
-import { togglePindahanBit, toggleRequiredFields, initAdjustPhoneInput, initGelombangSelection } from './form.js';
+import { fetchContent, alert, copyToClipboard } from './misc.js';
+import { togglePindahanBit, toggleRequiredFields, toggleKelompokUmur, initAdjustPhoneInput, initGelombangSelection } from './form.js';
 import ModalControl from "./modal.js";
 
 document.addEventListener("DOMContentLoaded", function () {
+    // [✓] Works
     alert();
-    initCopyToClipboard();
 
+    // [✓] Works, put app.js to x-layouts.home-layout
+    copyToClipboard();
+
+    // [✓] Works
     document.body.addEventListener("click", async function (event) {
         if (event.target.matches(".load-content")) {
             event.preventDefault();
@@ -16,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // [✓] Works
     document.body.addEventListener("click", async function (event) {
         const modalUrl = event.target.closest("[data-url]")?.dataset.url;
         if (modalUrl) {
@@ -42,17 +46,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // [✓] Works
     document.querySelectorAll('input[name="mendaftar_sebagai"]').forEach(radio => {
         radio.addEventListener("change", togglePindahanBit);
     });
+    // togglePindahanBit();
+
+    // [✓] Works
     document.querySelectorAll('input[name="yang_mendaftarkan"]').forEach(radio => {
         radio.addEventListener("change", toggleRequiredFields);
     });
-    togglePindahanBit();
-    toggleRequiredFields();
+    // toggleRequiredFields();
 
+    // [✓] Works
+    toggleKelompokUmur();
+
+    // [✓] Works
     initAdjustPhoneInput();
 
+    // [✓] Works
     initGelombangSelection();
 });
 

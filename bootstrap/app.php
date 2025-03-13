@@ -26,9 +26,13 @@ return Application::configure(basePath: dirname(__DIR__))
             $time = ceil($retryAfter / 60);
             $message = "Terlalu banyak percobaan. Silakan coba lagi dalam {$time} menit.";
 
+            /* Commit 9
             if ($request->is('daftar')) {
                 $message = "Anda mencoba melakukan terlalu banyak pendaftaran. Harap coba lagi dalam {$time} menit.";
-            } elseif ($request->is('login')) {
+            }
+            */
+
+            if ($request->is('login')) {
                 $message = "Terlalu banyak percobaan login. Coba lagi dalam {$time} menit.";
                 $key = 'login:pendaftar:' . $request->ip() . ':' . $request->input('id','');
                 $maxAttempts = 5;

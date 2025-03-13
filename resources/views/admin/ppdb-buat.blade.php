@@ -2,127 +2,156 @@
 
 <div id="admin-ppdb-buat" class="app-content wrapper">
     <div class="content-title margin-vertical">Buka Gelombang PPDB</div>
-    <form id="ppdbCreate" class="ppdb-buat scrollable flex">
-        <div class="content-padding gap content-margin-right ">
-            <div class="inputbox">
-                <label class="" for="tahunajar"><h6>Tahun Ajaran</h6></label>
-                <input class="form-item" type="text" id="tahunajar" placeholder="" required>
+    <form id="ppdbBuat" method="post" action="/admin/ppdb/buat" class="ppdb-buat scrollable flex">@csrf
+        <div class="flex-1 content-padding gap content-margin-right ">
+            {{-- <script>
+                function ppdbForm(options, existingBatches) {
+                    return {
+                        tahunAjaran: "",
+                        gelombang: "",
+
+                        incrementGelombang() {
+                            if (!this.tahunAjaran) {
+                                this.gelombang = "";
+                                return;
+                            }
+
+                            if (existingBatches[this.tahunAjaran]) {
+                                let latestGelombang = existingBatches[this.tahunAjaran].slice(-1)[0].gelombang;
+                                this.gelombang = latestGelombang + 1;
+                            } else {
+                                this.gelombang = 1;
+                            }
+                        }
+                    };
+                }
+            </script> --}}
+            <div>
+                 {{-- x-data="ppdbForm({{ json_encode($options) }}, {{ json_encode($existingBatch) }})"> --}}
+                <x-inputbox for="tahun_ajaran">
+                    <x-slot:label><h6>Tahun Ajaran</h6></x-slot>
+                    <x-input-select name="tahun_ajaran" :options="$options" class="form-item" id="tahun_ajaran" required
+                    {{-- x-model="tahunAjaran" @change="incrementGelombang"  --}}
+                    />
+                </x-inputbox>
+                <x-inputbox for="gelombang">
+                    <x-slot:label><h6>Gelombang</h6></x-slot>
+                    <x-input type="text" name="gelombang" class="form-item" id="gelombang" disabled required
+                    {{-- x-model="gelombang" --}}
+                    />
+                </x-inputbox>
+                <script type="application/json" id="gelombangData">
+                    {!! json_encode($gelombang) !!}
+                </script>
             </div>
-            <div class="inputbox">
-                <label class="" for="gelombang"><h6>Gelombang</h6></label>
-                <textarea class="form-item" type="text" id="gelombang" required></textarea>
-            </div>
-            <div class="inputbox">
-                <label class="" for="jadwal"><h6>Periode Pendaftaran</h6></label>
-                <div class="flex justify-center">
-                    <input class="form-item" type="datetime-local" id="jadwal" name="" placeholder="">
-                    <span style="margin:5px;">&nbsp;sampai dengan&nbsp;</span>
-                    <input class="form-item" type="datetime-local" id="jadwal" name="" placeholder="">
-                </div>
-            </div>
-            <div class="inputbox">
-                <label class="" for="jadwal"><h6>Periode Evaluasi<font color="#ff6d00"> (PPDB otomatis tertutup)</font></h6></label>
-                <input class="form-item" type="datetime-local" id="jadwal" name="" placeholder="">
+
+            <script>
+                function ppdbDateValidation() {
+                    return {
+                        minMulai: "",
+                        // maxMulai: "",
+                        waktuMulai: "",
+                        waktuTenggat: "",
+                        waktuTutup: "",
+
+                        init() {
+                            this.updateMinMulai();
+                        },
+
+                        updateMinMulai() {
+                            let now = new Date();
+                            let offset = now.getTimezoneOffset() * 60000;
+                            let localTime = new Date(now.getTime() - offset).toISOString().slice(0, 16);
+
+                            this.minMulai = localTime;
+                            // this.waktuMulai = localTime; //Sets waktu_mulai to current time
+
+                            // let maxDate = new Date(now);
+                            // maxDate.setUTCMonth(now.getUTCMonth() + 4);
+                            // this.maxMulai = maxDate.toISOString().slice(0, 16);
+                        },
+
+                        get minTenggat() {
+                            if (!this.waktuMulai) return this.minMulai;
+                            let date = new Date(this.waktuMulai);
+                            date.setUTCMonth(date.getUTCMonth() + 1);
+                            return date.toISOString().slice(0, 16);
+                        },
+
+                        get maxTenggat() {
+                            if (!this.waktuMulai) return this.MinMulai;
+                            let date = new Date(this.waktuMulai);
+                            date.setUTCMonth(date.getUTCMonth() + 4);
+                            return date.toISOString().slice(0, 16);
+                        }
+                    };
+                }
+            </script>
+            <div x-data="ppdbDateValidation()">
+                <x-inputbox for="jadwal">
+                    <x-slot:label><h6>Periode Pendaftaran</h6></x-slot>
+                    <div class="flex justify-center">
+                        <x-input type="datetime-local" name="waktu_mulai" class="form-item" id="jadwal" required
+                        x-model="waktuMulai"
+                        x-bind:min="minMulai"
+                        {{-- x-bind:max="maxMulai" --}}
+                        />
+                        <span style="margin:5px;">&nbsp;sampai dengan&nbsp;</span>
+                        <x-input type="datetime-local" name="waktu_tenggat" class="form-item" id="jadwal" required
+                        x-model="waktuTenggat"
+                        x-bind:min="minTenggat"
+                        x-bind:max="maxTenggat"
+                        />
+                    </div>
+                </x-inputbox>
+                <x-inputbox for="waktu_tutup">
+                    <x-slot:label><h6>Periode Evaluasi<font color="#ff6d00"> (PPDB otomatis tertutup)</font></h6></x-slot>
+                    <x-input type="datetime-local" name="waktu_tutup" class="form-item" id="waktu_tutup"
+                    x-model="waktuTutup"
+                    x-bind:min="waktuTenggat"
+                    x-bind:disabled="!waktuTenggat"
+                    />
+                </x-inputbox>
             </div>
         </div>
         <div class="flex-1 content-padding flex flex-nowrap flex-col">
             <div class="flex justify-between">
                 <h6>Atur Syarat Dokumen</h6>
                 <div class="flex">
-                    <button class="tombol-mini tombol-netral" alt="Edit">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="16px" width="16px"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
-                        Edit
-                    </button>
-                    <button class="tombol-mini tombol-netral" alt="Tambah"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20px" width="20px"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+                    <button type="button" class="tombol-mini tombol-netral" alt="Tambah" data-url="/admin/ppdb/buat/syarat-dokumen">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20px" width="20px"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
                         Tambah
                     </button>
                 </div>
             </div>
             <div class="frame scrollable flex gap">
-                <!-- Example document requirements -->
+                @foreach ($syaratDokumen as $syarat)
+                @php
+                    $label = $syarat->tipeDokumen->tipe;
+                    $name = Str::slug($label, '_');
+                @endphp
                 <div class="checkmenu">
-                    <input id="checkbox1" type="checkbox" value="test">
+                    <input id="checkbox{{ $name }}" type="checkbox" name="include[{{ $name }}]" value="{{ $syarat->tipeDokumen->id }}">
                     <div>
-                        <label for="checkbox1">
-                            <h6>Nama Dokumen</h6>
-                            <p>Keterangan dokumen</p>
-                        </label>
+                        <x-inputbox for="keterangan_{{ $name }}">
+                            <x-slot:label><h6>{{ $syarat->tipeDokumen->id }}. {{ $label }}</h6></x-slot>
+                            <p>Keterangan :</p>
+                            <textarea id="keterangan_{{ $name }}" name="keterangan[{{ $name }}]" class="form-item" required>{{ $syarat->keterangan }}</textarea>
+                        </x-inputbox>
                         <div>
-                            <input id="wajib1" type="checkbox" value="test"><label for="wajib1"> wajib</label>
-                        </div>
-                        <!-- Shows by javascript -->
-                        <div class="flex" style="display: slot;">
-                            <button class="tombol-mini tombol-positif">&#x2714; Simpan</button>
-                            <button class="tombol-mini tombol-negatif">&#10006; Batal</button>
+                            <input id="wajib{{ $name }}" type="checkbox" name="is_wajib[{{ $name }}]" value="1" {{ $syarat->is_wajib ? 'checked' : '' }}><label for="wajib{{ $syarat->id }}"> Wajibkan</label>
                         </div>
                     </div>
                 </div>
-                <div class="checkmenu">
-                    <input id="checkbox2" type="checkbox" value="test">
-                    <div>
-                        <label for="checkbox2">
-                            <h6>Nama Dokumen</h6>
-                            <p>Keterangan dokumen</p>
-                        </label>
-                        <div>
-                            <form action="">
-                                <input id="wajib2" type="radio" name="is_wajib"><label for="wajib2"> wajib</label>
-                                <input id="opsional2" type="radio" name="is_wajib"><label for="opsional2"> opsional</label>
-                            </form>
-                            <!-- Shows by javascript -->
-                            <div class="flex" style="display: slot;">
-                                <button class="tombol-mini tombol-positif">&#x2714; Simpan</button>
-                                <button class="tombol-mini tombol-negatif">&#10006; Batal</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="checkmenu">
-                    <input id="checkbox2" type="checkbox" value="test">
-                    <div>
-                        <label for="checkbox2">
-                            <h6>Nama Dokumen</h6>
-                            <p>Keterangan dokumen dokumen dokumen dokumen dokumen</p>
-                        </label>
-                        <div>
-                            <form action="">
-                                <input id="wajib2" type="radio" name="is_wajib"><label for="wajib2"> wajib</label>
-                                <input id="opsional2" type="radio" name="is_wajib"><label for="opsional2"> opsional</label>
-                            </form>
-                            <!-- Shows by javascript -->
-                            <div class="flex" style="display: slot;">
-                                <button class="tombol-mini tombol-positif">&#x2714; Simpan</button>
-                                <button class="tombol-mini tombol-negatif">&#10006; Batal</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="checkmenu">
-                    <input id="checkbox2" type="checkbox" value="test">
-                    <div>
-                        <label for="checkbox2">
-                            <h6>Nama Dokumen</h6>
-                            <p>Keterangan dokumen dokumen dokumen dokumen dokumen</p>
-                        </label>
-                        <div>
-                            <form action="">
-                                <input id="wajib2" type="radio" name="is_wajib"><label for="wajib2"> wajib</label>
-                                <input id="opsional2" type="radio" name="is_wajib"><label for="opsional2"> opsional</label>
-                            </form>
-                            <!-- Shows by javascript -->
-                            <div class="flex" style="display: slot;">
-                                <button class="tombol-mini tombol-positif">&#x2714; Simpan</button>
-                                <button class="tombol-mini tombol-negatif">&#10006; Batal</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </form>
     <div class="margin-vertical text-align-center">
-        <button type="submit" class="tombol-besar tombol-netral" form="ppdbCreate">Simpan</button>
+        <button type="submit" class="tombol-besar tombol-netral" form="ppdbBuat">Simpan</button>
     </div>
 </div>
+
+<x-modal/>
 
 </x-layouts.app-layout>

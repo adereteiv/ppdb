@@ -9,7 +9,7 @@
     <div class="constrict">
         <form method="post" action="/pendaftar/buktibayar" enctype="multipart/form-data"> @method('PUT') @csrf
             <div class="margin-vertical">
-                <x-inputbox
+                <x-inputbox-file
                 label="Bukti Bayar"
                 isWajib="true"
                 fileType="bukti_bayar"

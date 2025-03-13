@@ -60,6 +60,17 @@ class RegisterController extends Controller
         ],
         );
 
+        $key = 'register:' . $request->ip();
+        // RateLimiter::clear($key);
+
+        if(RateLimiter::tooManyAttempts($key, 1)) {
+            $retryAfter = RateLimiter::availableIn($key);
+            $time = ceil($retryAfter/60);
+            $message = "Anda mencoba melakukan terlalu banyak pendaftaran. Harap coba lagi dalam {$time} menit";
+            return back()->with('error', $message)->withInput();
+
+        }
+
         $sanitize = [
             'nama_anak' => ucwords(strtolower(trim($request->input('nama_anak')))),
             'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak')))),
@@ -90,8 +101,14 @@ class RegisterController extends Controller
 
         Session::flash('user_id', $user->id);
 
-        $key = 'register:' . $request->ip();
-        RateLimiter::hit($key, 14400);
+        /* Commit 9*/
+        $attempts = RateLimiter::attempts($key) + 1;
+        $window = 5;
+        if ($attempts > 1) {
+            $extraAttempts = $attempts - 1;
+            $window = pow(2, min($extraAttempts, 6)) * 10;
+        }
+        RateLimiter::hit($key, $window * 60);
 
         return redirect('/login')->with('success', 'Registrasi akun berhasil!');
     }

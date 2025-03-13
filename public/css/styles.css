@@ -20,10 +20,13 @@
     --coloraccent3:#d5d5d5;
 
     --greendark:#358600;
-    --green:#7CB518;
+    /* --green:#7CB518; */
+    /* experimental green */
+    --green:#58cc02;
     --greenmild:#C6D880;
     --greenpowder:#E6EFC2;
 
+    --orange: orange;
     --yellowdark:#ff6d00;
     --yellow:#ffc800;
     --yellowmild:#ffeb7b;
@@ -36,6 +39,9 @@
 
     --bluedark:#0056b3;
     --blue:#2962ff;
+    /* experimental blue */
+    /* --blue:#1d9bf0; */
+    /* --blue:#19bafe; */
     --cyan:#24E0FF;
     --bluemild:#92BDDA;
     --bluepowder:#eaf2f5;
@@ -95,6 +101,7 @@ p{font: var(--p);}
 .teks-positif{color: var(--greendark);}
 .teks-netral{color: var(--blue);}
 .teks-putih{color: white;}
+.bg-orange{background: var(--orange);}
 .bg-yellow{background: var(--yellow);}
 .bg-yellowdark{background: var(--yellowdark);}
 .bg-cyan{background: var(--cyan);}
@@ -115,6 +122,8 @@ p{font: var(--p);}
 
 .reminder{
     padding:10px;
+    fill: var(--colorsecondary);
+    color: var(--colorsecondary);
 }
 .status{
     border-radius: 20px;
@@ -201,6 +210,7 @@ p{font: var(--p);}
 .content-padding-no-top{padding: var(--no-top);}
 .content-padding-bottom{padding-bottom: var(--gap);}
 .padding-0{padding: 0;}
+.padding-10{padding: 10;}
 
 .margin-vertical{margin:var(--vertical-spacing);}
 .margin-vertical-narrow{margin: var(--gap) 0;}
@@ -230,6 +240,7 @@ p{font: var(--p);}
 .justify-flex-end{justify-content: flex-end;}
 .justify-end{justify-content: end;}
 .justify-center{justify-content: center; justify-items: center;}
+.justify-self-center{justify-self: center;}
 .justify-between{justify-content: space-between;}
 .justify-self-between{justify-self: space-between;}
 .justify-around{justify-content: space-around;}
@@ -283,10 +294,12 @@ table.alternate{
 /* --- custom input --- */
 .checkmenu{
     display: flex;
+    width: 100%;
     padding: 10px;
     border: var(--border);
 }
 .checkmenu > * {
+    width: 100%;
     padding-left:10px;
 }
 .checkmenu > input{
@@ -294,8 +307,7 @@ table.alternate{
     height:24px;
 }
 .inputbox{
-    padding: 10px;
-    label, input, textarea{position: relative;width: 100%;}
+    label, input, textarea, select{position: relative;width: 100%;}
     label{display: block;}
 }
 .inputbox input,
@@ -318,13 +330,12 @@ table.alternate{
 
 /* Modal */
 .modal{
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100vw;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
     height: 100vh;
-    /* height:100%; */
     background:rgba(0,0,0,0.5);
     justify-content:center;
     align-items:center;
@@ -339,7 +350,6 @@ table.alternate{
     max-height:95vh;
 
     .content{
-        display: none;
         max-width: 100%;
         max-height: 85vh;
         object-fit: contain;
@@ -347,9 +357,11 @@ table.alternate{
 }
 .modal-button{
     position: absolute;
-    top: 10px;
-    right: 12px;
+    top: 0.5px;
+    right: 0.5px;
     cursor:pointer;
+    background: none;
+    border: none;
     font-size:20px;
 }
 
@@ -424,13 +436,12 @@ th,td{
 }
 .home-header{
     position: sticky;
-    z-index: 100;
     top: 0;
     height: 50px;
     padding: 5px 0px;
     background: var(--green);
     color: var(--colorsecondary);
-    z-index: 100;
+    z-index: 200;
     a{
         text-decoration: none;
         font: inherit;
@@ -707,7 +718,7 @@ th,td{
 }
 .biodata-info{
     padding: 10px;
-    border-left: 1px solid #ddd;
+    border-left: groove;
 }
 .biodata-dokumen{
     display: flex;
@@ -717,6 +728,7 @@ th,td{
     padding: 10px 0 0 10px;
 }
 /* Pendaftar - Beranda */
+/* https://codepen.io/ephbaum/pen/MYJNaj */
 .stepper{
     --greenlight: #00d563;
     --greeneon: #008f4c;
@@ -760,11 +772,10 @@ th,td{
 }
 .admin-summary{
     display: flex;
-    height: 35%;
+    /* height: 35%; */
 }
 .beranda-item{
     flex: 1;
-    justify-content: center;
     padding: 15px;
     color: white;
 }

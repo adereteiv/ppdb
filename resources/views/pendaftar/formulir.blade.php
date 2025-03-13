@@ -7,7 +7,9 @@
 <div id="pendaftar-formulir" class="app-content wrapper">
     <div class="content-title margin-vertical">Formulir Pendaftaran</div>
     <div class="scrollable">
-        <form id="formPendaftaran" method="post" action="/pendaftar/formulir"> @method('PUT') @csrf
+        <form
+        {{-- id="formPendaftaran"  --}}
+        method="post" action="/pendaftar/formulir"> @method('PUT') @csrf
             <div class="flex">
                 <div class="flex-1">
                     <div class="form-section">
@@ -130,7 +132,7 @@
         </form>
     </div>
 </div>
-
+{{--
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("formPendaftaran");
@@ -177,6 +179,6 @@
         togglePindahanBit();
         toggleRequiredFields();
     });
-</script>
+</script> --}}
 
 </x-layouts.app-layout>

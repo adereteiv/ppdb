@@ -1,33 +1,42 @@
 <x-layouts.app-layout>
 <div id="admin-ppdb" class="app-content wrapper ">
     <div class="content-title margin-vertical">Kelola PPDB</div>
-    <div class="text-align-center">
+    <div class="flex-1 flex flex-col
+    justify-around
+    {{-- justify-center --}}
+    text-align-center">
         <div class="flex flex-col gap content-padding-vertical">
             <h3>Arsip PPDB</h3>
-            <div class="flex flex-col gap">
-                <div>
-                    <select title="" id="">
-                        <option value="" disabled selected>&nbsp;Pilih Arsip ---</option>
-                        {{-- foreach --}}
-                        {{-- {{route(from-which-ppdb with-id => selected_id] )}} --}}
-                        <option value="">Slot{Periode 2022/2023}</option>
-                    </select>
-                </div>
-                <div><a href="/admin/ppdb/arsip" class="tombol-besar tombol-netral">Akses Arsip</a></div>
+            <div>
+                @if ($arsipPPDB->isNotEmpty())
+                    <form action="admin/ppdb/arsip" methode="get" class="flex flex-col gap"> @csrf
+                        <div>
+                            <x-input-select name="periode" :options="$arsipPPDB->pluck('id', 'tahun_ajaran')->map(fn($tahun_ajaran, $id) => 'Tahun Ajaran ' . $tahun_ajaran . ' - Gel. ' . $arsipPPDB->where('id', $id)->first()->gelombang)" required/>
+                        </div>
+                        <div><button href="/admin/ppdb/arsip" class="tombol-besar tombol-netral">Akses Arsip</button></div>
+                    </form>
+                @else
+                    <span class="reminder bg-blue">Rekam arsip PPDB tidak ditemukan</span>
+                @endif
             </div>
         </div>
 
         <div class="flex flex-col gap content-padding-vertical">
             <h3>PPDB Aktif</h3>
             <div>
-                <!-- disabled if there's no active ppdb and the slot changes into text "tidak ada ppdb aktif" dan tidak akan prompt kemana mana -->
-                <a href="/admin/ppdb/ppdb-aktif" class="tombol-besar tombol-netral">Slot{Periode 20XX/20XX}</a>
+                @if ($aktifPPDB)
+                    <a href="/admin/ppdb/aktif" class="tombol-besar tombol-netral">Periode {{ $aktifPPDB->tahun_ajaran }} - Gel. {{ $aktifPPDB->gelombang }} </a>
+                @else
+                    <span class="reminder bg-blue">Rekam PPDB aktif tidak ditemukan</span>
+                @endif
             </div>
         </div>
 
         <div class="flex flex-col gap content-padding-vertical">
             <h3>Buka PPDB Baru</h3>
-            <div><a href="/admin/ppdb/buat" class="tombol-besar tombol-netral">Buat Baru</a></div>
+            <div>
+                <a href="/admin/ppdb/buat" class="tombol-besar tombol-netral">Buat Baru</a>
+            </div>
         </div>
     </div>
 </div>

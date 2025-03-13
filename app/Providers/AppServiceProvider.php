@@ -25,10 +25,14 @@ class AppServiceProvider extends ServiceProvider
     {
         /* Commit 6.5 */
         // atur ke route dan controller, mengirim limit ke ThrottleRequestException
+
+        /* Commit 9 */
+        /* Moved register throttling entirely to controller
         RateLimiter::for('register', function (Request $request) {
             $key = 'register:' . $request->ip();
             return $this->registerLimit($key);
         });
+        */
 
         RateLimiter::for('pendaftar_login', function (Request $request) {
             $key = 'login:pendaftar:' . $request->ip() . ':' . $request->input('id','');
@@ -41,6 +45,7 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
+    /* Commit 9
     private function registerLimit($key)
     {
         $attempts = RateLimiter::attempts($key);
@@ -54,6 +59,7 @@ class AppServiceProvider extends ServiceProvider
 
         return Limit::perMinutes($window, 1)->by($key);
     }
+    */
 
     private function loginLimit($key)
     {

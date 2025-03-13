@@ -2,10 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BatchPPDBController;
+use App\Http\Controllers\SyaratDokumenController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PendaftarFormController;
 use App\Http\Controllers\DashboardAdminController;
+use App\Http\Controllers\KelolaPengumumanController;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use App\Http\Controllers\PendaftarUnggahDokumenController;
 use App\Http\Controllers\PendaftarUnggahBuktiBayarController;
@@ -19,65 +22,53 @@ Route::get('/profil', function () {return view('profil');});
 Route::get('/struktur', function () {return view('struktur');});
 
 Route::get('/daftar', [RegisterController::class, 'showRegister']);
-Route::post('/daftar', [RegisterController::class, 'store'])->middleware('throttle:register');
+Route::post('/daftar', [RegisterController::class, 'store']);
+// ->middleware('throttle:register');
 
-/*log in pendaftar*/
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'authenticate'])->middleware('throttle:pendaftar_login');
 
-/*log in admin*/
 Route::get('/pintuadmin', [AuthController::class, 'showAdminLogin']);
 Route::post('/pintuadmin', [AuthController::class, 'authenticateAdmin'])->middleware('throttle:admin_login');
 
-/* Refactor to */
-Route::middleware(['auth.must','role:1'])->group(function () {
-    Route::get('/admin/dashboard', [DashboardAdminController::class, 'index']);
-    Route::get('/admin/ppdb', [DashboardAdminController::class, 'kelolaPPDB']);
-    Route::get('/admin/ppdb/arsip', [DashboardAdminController::class, 'kelolaPPDBArsip']);
-    Route::get('/admin/ppdb/aktif', [DashboardAdminController::class, 'kelolaPPDBAktif']);
-    Route::get('/admin/ppdb/buat', [DashboardAdminController::class, 'buatPPDB']);
-    Route::get('/admin/pengumuman', [DashboardAdminController::class, 'kelolaPengumuman']);
-});
+Route::middleware('auth.must')->group(function () {
+    Route::prefix('admin')->middleware('role:1')->group(function () {
+        Route::get('/dashboard', [DashboardAdminController::class, 'showDashboard']);
 
-Route::middleware(['auth.must','role:2'])->group(function () {
-    Route::get('/pendaftar/dashboard', [DashboardController::class, 'showDashboard']);
-    Route::get('/pendaftar/profil', [DashboardController::class, 'showProfil']);
+        Route::prefix('/ppdb')->group(function (){
+            Route::get('/', [DashboardAdminController::class, 'showPPDB']);
 
-    Route::resource('/pendaftar/formulir', PendaftarFormController::class)->only(['index', 'update']);
-    Route::put('/pendaftar/formulir/', [PendaftarFormController::class, 'update']);
+            Route::get('/arsip', [PPDBArsipController::class, 'index']);
 
-    Route::resource('/pendaftar/dokumen', PendaftarUnggahDokumenController::class)->only(['index', 'update']);
-    Route::put('/pendaftar/dokumen', [PendaftarUnggahDokumenController::class, 'update']);
+            Route::get('/aktif', [PPDBAktifController::class, 'index']);
 
-    Route::resource('/pendaftar/buktibayar', PendaftarUnggahBuktiBayarController::class)->only(['index', 'update']);
-    Route::put('/pendaftar/buktibayar', [PendaftarUnggahBuktiBayarController::class, 'update']);
-});
+            Route::prefix('/buat')->group(function (){
+                Route::get('/', [BatchPPDBController::class, 'index']);
+                Route::post('/', [BatchPPDBController::class, 'store']);
+                Route::get('/syarat-dokumen', [SyaratDokumenController::class, 'create']);
+            });
 
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-/*
-Route::middleware(['auth.must'])->group(function (){
-    Route::prefix('admin')->middleware(['role:1'])->group(function () {
-        Route::get('/dashboard', [DashboardAdminController::class, 'index']);
-
-        Route::prefix('/ppdb')->group(function () {
-            Route::get('/', [DashboardAdminController::class, 'kelolaPPDB']);
-            Route::get('/arsip', [DashboardAdminController::class, 'kelolaPPDBArsip']);
-            Route::get('/aktif', [DashboardAdminController::class, 'kelolaPPDBAktif']);
-            Route::get('/buat', [DashboardAdminController::class, 'buatPPDB']);
         });
 
-        Route::get('/pengumuman', [DashboardAdminController::class, 'kelolaPengumuman']);
+        Route::prefix('/pengumuman')->group(function (){
+            Route::get('/', [KelolaPengumumanController::class, 'index']);
+            Route::get('/buat', [KelolaPengumumanController::class, 'create']);
+        });
     });
 
     Route::prefix('pendaftar')->middleware(['role:2'])->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index']);
-        Route::get('/formulir', [DashboardController::class, 'formulir']);
-        Route::get('/dokumen', [DashboardController::class, 'dokumen']);
-        Route::get('/bukti-bayar', [DashboardController::class, 'buktiBayar']);
-        Route::get('/profil', [DashboardController::class, 'profil']);
+        Route::get('/dashboard', [DashboardController::class, 'showDashboard']);
+        Route::get('/profil', [DashboardController::class, 'showProfil']);
+
+        Route::resource('/formulir', PendaftarFormController::class)->only(['index', 'update']);
+        Route::put('/formulir', [PendaftarFormController::class, 'update']);
+
+        Route::resource('/dokumen', PendaftarUnggahDokumenController::class)->only(['index', 'update']);
+        Route::put('/dokumen', [PendaftarUnggahDokumenController::class, 'update']);
+
+        Route::resource('/buktibayar', PendaftarUnggahBuktiBayarController::class)->only(['index', 'update']);
+        Route::put('/buktibayar', [PendaftarUnggahBuktiBayarController::class, 'update']);
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
-*/

@@ -32,28 +32,9 @@ min="0" max="200"
 
 @if ($type == 'tel')
 placeholder="Contoh: +6289912345678"
-pattern="(?:\+?\d{1,3})?[ -]?\d{10,15}"
+pattern="(?:\+?\d{1,3})?[ \-]?\d{10,15}"
 @endif
 />
-
-@if ($type == 'tel')
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const phoneInput = document.getElementById("nomor_hp");
-
-    phoneInput.addEventListener("input", function (e) {
-        let rawValue = e.target.value.replace(/[^0-9+ -]/g, "");
-        let cleanedValue = rawValue.replace(/[^0-9]/g, "");
-
-        if (cleanedValue.length > 15) {
-            rawValue = rawValue.slice(0, -1);
-        }
-
-        e.target.value = rawValue;
-    });
-});
-</script>
-@endif
 
 @error($name)
 <br><p style="color: red">{{ $message }}</p>
