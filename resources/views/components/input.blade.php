@@ -37,7 +37,7 @@ pattern="(?:\+?\d{1,3})?[ \-]?\d{10,15}"
 />
 
 @error($name)
-<br><p style="color: red">{{ $message }}</p>
+<br><p class="flex flex-start teks-negatif">{{ $message }}</p>
 @enderror
 
 {{--

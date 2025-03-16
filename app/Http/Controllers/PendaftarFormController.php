@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InfoAnak;
 use App\Models\BatchPPDB;
 use App\Models\Pendaftaran;
-use App\Models\InfoAnak;
+use Illuminate\Support\Str;
 use App\Models\OrangTuaWali;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PendaftarFormController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $user = Auth::user();
@@ -26,18 +24,6 @@ class PendaftarFormController extends Controller
 
         return view('pendaftar.formulir', compact('user','infoAnak', 'ayah', 'ibu', 'wali'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
 
     public function update(Request $request)
     {
@@ -180,15 +166,16 @@ class PendaftarFormController extends Controller
         ];
 
         $sanitize = [
-            'nama_anak' => ucwords(strtolower(trim($request->input('nama_anak')))),
-            'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak'))))
+            /*Commit 10*/
+            'nama_anak' => Str::title(preg_replace('/\s+/', ' ', trim(strip_tags($request->input('nama_anak'))))),
+            // 'nama_anak' => ucwords(strtolower(trim($request->input('nama_anak')))),
+            'panggilan_anak' => Str::title(preg_replace('/\s+/', ' ', trim(strip_tags($request->input('panggilan_anak'))))),
+            // 'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak'))))
         ];
 
         $validatedData = array_merge($request->validate($rules, $messages), [
                 $sanitize['nama_anak'],
                 $sanitize['panggilan_anak'],
-                // 'nama_anak' => ucwords(strtolower(trim($request->input('nama_anak')))),
-                // 'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak'))))
         ]);
 
         $infoAnak = InfoAnak::updateOrCreate(['pendaftaran_id' => $pendaftaran->id], $validatedData);
@@ -210,7 +197,7 @@ class PendaftarFormController extends Controller
         ];
 
         $dbMapping = [
-                'nama'       => ucwords(strtolower(trim($data["nama_{$relasi}"]))) ?? null,
+                'nama'       => Str::title(preg_replace('/\s+/', ' ', trim($data["nama_{$relasi}"]))) ?? null,
                 'pendidikan' => $data["pendidikan_{$relasi}"] ?? null,
                 'pekerjaan'  => $data["pekerjaan_{$relasi}"] ?? null,
                 'alamat'     => trim($data["alamat_{$relasi}"]) ?? null,
@@ -223,30 +210,6 @@ class PendaftarFormController extends Controller
             OrangTuaWali::updateOrCreate(['anak_id' => $anakId, 'relasi' => $relasi],$mapped);
         }
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(InfoAnak $infoAnak)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(InfoAnak $infoAnak)
-    {
-        //
-    }
-
-    /*
-     * Update the specified resource in storage.
-    public function update(Request $request, InfoAnak $infoAnak)
-    {
-        //
-    }
-    */
 
     /**
      * Remove the specified resource from storage.

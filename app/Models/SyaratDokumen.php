@@ -4,10 +4,13 @@ namespace App\Models;
 
 use App\Models\BatchPPDB;
 use App\Models\TipeDokumen;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SyaratDokumen extends Model
 {
+    use HasFactory;
+
     protected $table = 'syarat_dokumen';
 
     protected $guarded = ['id'];

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BatchPPDB;
 use App\Models\SyaratDokumen;
-use Illuminate\Support\Str;
+use App\Models\TipeDokumen;
 use Illuminate\Http\Request;
 
 class BatchPPDBController extends Controller
@@ -28,9 +28,9 @@ class BatchPPDBController extends Controller
             }
         }
 
-        $syaratDokumen = SyaratDokumen::with('tipeDokumen')->orderBy('id', 'desc')->get();
+        $tipeDokumen = TipeDokumen::with('syaratDokumen')->orderBy('id', 'asc')->get()->values();
 
-        return view('admin.ppdb-buat', compact('options', 'existingBatch', 'syaratDokumen', 'gelombang'));
+        return view('admin.ppdb-buat', compact('options', 'existingBatch', 'tipeDokumen', 'gelombang'));
     }
 
     public function store(Request $request) {
@@ -49,7 +49,7 @@ class BatchPPDBController extends Controller
 
         $nameMapping = [];
         foreach ($request->input('include',[]) as $index => $tipeDokumenId) {
-            $rules["include.$index"]    = 'required|exists:tipe_dokumen_id';
+            $rules["include.$index"]    = 'required|exists:tipe_dokumen,id';
             $rules["keterangan.$index"] = 'nullable|string|max:255';
             $rules["is_wajib.$index"]   = 'boolean';
             $nameMapping[$index] = $tipeDokumenId;
@@ -69,6 +69,8 @@ class BatchPPDBController extends Controller
         ];
 
         $validatedData = $request->validate($rules, $messages);
+        // dd($request->all());
+        // dd($request->input('include'));
 
         $batch = BatchPPDB::create([
             'tahun_ajaran' => $validatedData['tahun_ajaran'],
@@ -83,8 +85,8 @@ class BatchPPDBController extends Controller
             SyaratDokumen::create([
                 'batch_id'          => $batch->id,
                 'tipe_dokumen_id'   => $tipeDokumenId,
-                'is_wajib'          => $validatedData['keterangan'][$index] ?? null,
-                'keterangan'        => $validatedData['is_wajib'][$index] ?? false,
+                'is_wajib'          => $validatedData['is_wajib'][$index] ?? false,
+                'keterangan'        => $validatedData['keterangan'][$index] ?? null,
             ]);
         }
 

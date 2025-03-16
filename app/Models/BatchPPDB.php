@@ -25,9 +25,10 @@ class BatchPPDB extends Model
         });
 
         static::created(function ($batch) {
-            // Only one active batch
-            BatchPPDB::where('id', '!=', $batch->id)->where('status', true)->update(['status' => false]);
-
+            // Only one active batch, $batch auto-assigned from controller
+            if ($batch->status) { // lupa if aja gagal testing seharian yakali
+                BatchPPDB::where('id', '!=', $batch->id)->where('status', true)->update(['status' => false]);
+            }
             // Update previous batch if waktu_tutup nya >= $batch->waktu_mulai, biar tutupnya pas sebelum waktu_mulai, rencana waktu_tenggat unaffected,
             // HOWEVER waktu_tenggat regulates form acceptance, SO !!REFACTOR!! Iteration 1 and Iteration 2,
             // tapi nanti paling ganti "Periode pendaftaran sudah usai, silakan menunggu pengumuman"

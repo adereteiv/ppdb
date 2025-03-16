@@ -56,7 +56,6 @@ class DatabaseSeeder extends Seeder
             );
         });
 
-        // $tahun_ajaran =  now()->year . '/' . (now()->year + 1);
         BatchPPDB::insert([
             'tahun_ajaran' => '2025/2026',
             'gelombang' => 1,
@@ -64,7 +63,8 @@ class DatabaseSeeder extends Seeder
             'waktu_mulai' => now(),
             'waktu_tenggat' => now()->addDays(30),
             'waktu_tutup' => now()->addDays(60),
-            'timestamp' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
         $batch = BatchPPDB::where('tahun_ajaran', '2025/2026')->where('gelombang', 1)->firstOrFail();;
 
@@ -84,7 +84,7 @@ class DatabaseSeeder extends Seeder
             ['batch_id' => $batch->id, 'tipe_dokumen_id' => $tipeDokumen['Akta Kelahiran'], 'is_wajib' => true, 'keterangan' => null],
             ['batch_id' => $batch->id, 'tipe_dokumen_id' => $tipeDokumen['Kartu Tanda Penduduk'], 'is_wajib' => true, 'keterangan' => 'KTP Ayah/Ibu/Wali'],
             ['batch_id' => $batch->id, 'tipe_dokumen_id' => $tipeDokumen['Kartu Identitas Anak'], 'is_wajib' => false, 'keterangan' => null],
-            ['batch_id' => $batch->id, 'tipe_dokumen_id' => $tipeDokumen['Surat Pernyataan'], 'is_wajib' => true, 'keterangan' => 'Harus diunduh dari sistem'],
+            ['batch_id' => $batch->id, 'tipe_dokumen_id' => $tipeDokumen['Surat Pernyataan'], 'is_wajib' => true, 'keterangan' => 'Dapat diunduh dari sistem'],
         ]);
     }
 }

@@ -26,12 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
             $time = ceil($retryAfter / 60);
             $message = "Terlalu banyak percobaan. Silakan coba lagi dalam {$time} menit.";
 
-            /* Commit 9
-            if ($request->is('daftar')) {
-                $message = "Anda mencoba melakukan terlalu banyak pendaftaran. Harap coba lagi dalam {$time} menit.";
-            }
-            */
-
             if ($request->is('login')) {
                 $message = "Terlalu banyak percobaan login. Coba lagi dalam {$time} menit.";
                 $key = 'login:pendaftar:' . $request->ip() . ':' . $request->input('id','');
@@ -51,7 +45,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             if (!$request->expectsJson()) {
-                return redirect()->back()->with('error', $message)->withInput();
+                return back()->with('error', $message)->withInput();
             }
 
             return response()->json(['message' => $message], 429);

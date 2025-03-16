@@ -1,6 +1,7 @@
 import { fetchContent, alert, copyToClipboard } from './misc.js';
-import { togglePindahanBit, toggleRequiredFields, toggleKelompokUmur, initAdjustPhoneInput, initGelombangSelection } from './form.js';
 import ModalControl from "./modal.js";
+import { togglePindahanBit, toggleRequiredFields, toggleKelompokUmur, initAdjustPhoneInput, initGelombangSelection } from './form.js';
+import { appendSyaratDokumen } from './syaratDokumen.js';
 
 document.addEventListener("DOMContentLoaded", function () {
     // [✓] Works
@@ -66,5 +67,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // [✓] Works
     initGelombangSelection();
+
+    // [] Works
+    document.body.addEventListener('submit', function (event) {
+        if (event.target.matches('#tambahSyaratDokumenForm')) {
+            event.preventDefault();
+            appendSyaratDokumen(event.target);
+        }
+    });
 });
 

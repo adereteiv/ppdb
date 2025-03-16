@@ -46,6 +46,7 @@ Route::middleware('auth.must')->group(function () {
                 Route::get('/', [BatchPPDBController::class, 'index']);
                 Route::post('/', [BatchPPDBController::class, 'store']);
                 Route::get('/syarat-dokumen', [SyaratDokumenController::class, 'create']);
+                Route::post('/syarat-dokumen', [SyaratDokumenController::class, 'store']);
             });
 
         });

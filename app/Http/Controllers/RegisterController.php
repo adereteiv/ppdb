@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\InfoAnak;
 use App\Models\BatchPPDB;
 use App\Models\Pendaftaran;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -68,12 +69,13 @@ class RegisterController extends Controller
             $time = ceil($retryAfter/60);
             $message = "Anda mencoba melakukan terlalu banyak pendaftaran. Harap coba lagi dalam {$time} menit";
             return back()->with('error', $message)->withInput();
-
         }
 
         $sanitize = [
-            'nama_anak' => ucwords(strtolower(trim($request->input('nama_anak')))),
-            'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak')))),
+            /*Commit 10*/
+            'nama_anak' => Str::title(preg_replace('/\s+/', ' ', trim(strip_tags($request->input('nama_anak'))))),
+            'panggilan_anak' => Str::title(preg_replace('/\s+/', ' ', trim(strip_tags($request->input('panggilan_anak'))))),
+            // 'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak')))),
             'email' => strtolower(trim($request->input('email'))),
         ];
 

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('tipe_dokumen_id')->constrained('tipe_dokumen')->onDelete('cascade');
             $table->boolean('is_wajib')->default(true);
             $table->string('keterangan')->nullable();
+            $table->timestamps();
         });
 
         Schema::create('dokumen_persyaratan', function (Blueprint $table) {

@@ -30,13 +30,13 @@
                  {{-- x-data="ppdbForm({{ json_encode($options) }}, {{ json_encode($existingBatch) }})"> --}}
                 <x-inputbox for="tahun_ajaran">
                     <x-slot:label><h6>Tahun Ajaran</h6></x-slot>
-                    <x-input-select name="tahun_ajaran" :options="$options" class="form-item" id="tahun_ajaran" required
+                    <x-input-select name="tahun_ajaran" :options="$options" id="tahun_ajaran" required
                     {{-- x-model="tahunAjaran" @change="incrementGelombang"  --}}
                     />
                 </x-inputbox>
                 <x-inputbox for="gelombang">
                     <x-slot:label><h6>Gelombang</h6></x-slot>
-                    <x-input type="text" name="gelombang" class="form-item" id="gelombang" disabled required
+                    <x-input type="text" name="gelombang" id="gelombang" readonly required
                     {{-- x-model="gelombang" --}}
                     />
                 </x-inputbox>
@@ -91,13 +91,13 @@
                 <x-inputbox for="jadwal">
                     <x-slot:label><h6>Periode Pendaftaran</h6></x-slot>
                     <div class="flex justify-center">
-                        <x-input type="datetime-local" name="waktu_mulai" class="form-item" id="jadwal" required
+                        <x-input type="datetime-local" name="waktu_mulai" id="jadwal" required
                         x-model="waktuMulai"
                         x-bind:min="minMulai"
                         {{-- x-bind:max="maxMulai" --}}
                         />
                         <span style="margin:5px;">&nbsp;sampai dengan&nbsp;</span>
-                        <x-input type="datetime-local" name="waktu_tenggat" class="form-item" id="jadwal" required
+                        <x-input type="datetime-local" name="waktu_tenggat" id="jadwal" required
                         x-model="waktuTenggat"
                         x-bind:min="minTenggat"
                         x-bind:max="maxTenggat"
@@ -106,7 +106,7 @@
                 </x-inputbox>
                 <x-inputbox for="waktu_tutup">
                     <x-slot:label><h6>Periode Evaluasi<font color="#ff6d00"> (PPDB otomatis tertutup)</font></h6></x-slot>
-                    <x-input type="datetime-local" name="waktu_tutup" class="form-item" id="waktu_tutup"
+                    <x-input type="datetime-local" name="waktu_tutup" id="waktu_tutup"
                     x-model="waktuTutup"
                     x-bind:min="waktuTenggat"
                     x-bind:disabled="!waktuTenggat"
@@ -124,25 +124,24 @@
                     </button>
                 </div>
             </div>
-            <div class="frame scrollable flex gap">
-                @foreach ($syaratDokumen as $syarat)
-                @php
-                    $label = $syarat->tipeDokumen->tipe;
-                    $name = Str::slug($label, '_');
-                @endphp
-                <div class="checkmenu">
-                    <input id="checkbox{{ $name }}" type="checkbox" name="include[{{ $name }}]" value="{{ $syarat->tipeDokumen->id }}">
-                    <div>
-                        <x-inputbox for="keterangan_{{ $name }}">
-                            <x-slot:label><h6>{{ $syarat->tipeDokumen->id }}. {{ $label }}</h6></x-slot>
-                            <p>Keterangan :</p>
-                            <textarea id="keterangan_{{ $name }}" name="keterangan[{{ $name }}]" class="form-item" required>{{ $syarat->keterangan }}</textarea>
-                        </x-inputbox>
-                        <div>
-                            <input id="wajib{{ $name }}" type="checkbox" name="is_wajib[{{ $name }}]" value="1" {{ $syarat->is_wajib ? 'checked' : '' }}><label for="wajib{{ $syarat->id }}"> Wajibkan</label>
-                        </div>
-                    </div>
-                </div>
+
+            @php
+            $asc = $tipeDokumen->isNotEmpty() && $tipeDokumen->first()->id < $tipeDokumen->last()->id;
+            @endphp
+            <div class="frame scrollable flex gap" data-sorting="{{ $asc ? 'asc' : 'desc' }}">
+                @foreach ($tipeDokumen as $index => $tipe)
+                    @php
+                        $label = $tipe->tipe;
+                        $name = Str::slug($label, '_');
+                        $syarat = $tipe->syaratDokumen->first();
+                        $num = $asc ? $index + 1 : count($tipeDokumen) - $index;
+                    @endphp
+                    <x-checkmenu
+                        checkboxName="include[{{ $label }}]" checkboxId="checkbox_{{ $label }}" checkboxValue="{{ $tipe->id }}"
+                        label="{{ $num }}. {{ $label }}"
+                        keteranganName="keterangan[{{ $label }}]" keteranganId="keterangan_{{ $label }}" keterangan="{{ $syarat ? $syarat->keterangan : '' }}"
+                        wajibName="is_wajib[{{ $label }}]" wajibId="wajib_{{ $label }}" wajibChecked="{{ $syarat && $syarat->is_wajib ? 'checked' : '' }}"
+                    />
                 @endforeach
             </div>
         </div>

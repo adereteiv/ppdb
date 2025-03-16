@@ -210,7 +210,7 @@ p{font: var(--p);}
 .content-padding-no-top{padding: var(--no-top);}
 .content-padding-bottom{padding-bottom: var(--gap);}
 .padding-0{padding: 0;}
-.padding-10{padding: 10;}
+.padding-10{padding: 10px;}
 
 .margin-vertical{margin:var(--vertical-spacing);}
 .margin-vertical-narrow{margin: var(--gap) 0;}
