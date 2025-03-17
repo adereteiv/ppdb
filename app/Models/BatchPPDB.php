@@ -18,28 +18,45 @@ class BatchPPDB extends Model
     {
         parent::boot();
 
-        // Commit 9
         // Get its parameter from Model::create($parameter), status true if now() hit waktu_mulai
         static::creating(function ($batch) {
             $batch->status = now() >= $batch->waktu_mulai;
         });
 
-        static::created(function ($batch) {
-            // Only one active batch, $batch auto-assigned from controller
-            if ($batch->status) { // lupa if aja gagal testing seharian yakali
+        static::created(function ($batch) { // $batch auto-assigned from BatchPPDB create event
+            /** ----- NOTE FOR DOCUMENTATION ----- !!!
+             * Possible cases:
+             * 1. if $batch->status === true :
+             *      - update(['status'=>false]) untuk ppdb lain yang masih aktif,
+             *      - jika tidak ada rekam ppdb lain then all's good;
+             *      - && $previousBatch, regardless of status true/false, update it's waktu_tutup if it's >= $batch->waktu_mulai,
+             *      - !$previousBatch->status === false, jalankan ini;
+             * 2. if $batch->status === false:
+             *      - maka akan ditangkap oleh RegulateBatchPPDBStatus (safety net);
+             */
+
+            // Only one active batch
+            // If $batch->status === true, nonaktifkan PPDB yang sedang aktif
+            if ($batch->status) {
                 BatchPPDB::where('id', '!=', $batch->id)->where('status', true)->update(['status' => false]);
             }
-            // Update previous batch if waktu_tutup nya >= $batch->waktu_mulai, biar tutupnya pas sebelum waktu_mulai, rencana waktu_tenggat unaffected,
-            // HOWEVER waktu_tenggat regulates form acceptance, SO !!REFACTOR!! Iteration 1 and Iteration 2,
-            // tapi nanti paling ganti "Periode pendaftaran sudah usai, silakan menunggu pengumuman"
-            // itupun dengan asumsi waktu_tenggat < waktu_tutup, karena kalau >= waktu_tutup ya udah ketutup, mana bisa ngapa-ngapain.
-            // Impact lainnya juga adalah ketika now >= waktu_tutup maka admin tidak bisa melakukan perubahan apapun pada rekam-rekam yang terkait ke dalam batch tersebut
+
+            // Separate if because waktu_tutup update is a separate matter, so it can't and shouldn't depend on the above if($batch->status){}
+            // If it does, then it would only work when $batch->status === true
+            // While we also want it to work when ($batch->status === false) so the timeline doesn't overlap with each other
             $previousBatch = BatchPPDB::where('id', '<', $batch->id)->orderBy('id', 'desc')->first();
             if($previousBatch && $previousBatch->waktu_tutup >= $batch->waktu_mulai) {
                 $previousBatch->update(['waktu_tutup' => $batch->waktu_mulai->subSecond()]);
             }
+
+            /** ---- NOTE ---- !!!
+             * Update previous batch if ($previousBatch->waktu_tutup >= $batch->waktu_mulai) agar tutupnya pas sebelum waktu_mulai, rencana waktu_tenggat unaffected,
+             * HOWEVER waktu_tenggat regulates form acceptance, SO !!REFACTOR!! Iteration 1 and Iteration 2,
+             * tapi nanti paling ganti "Periode pendaftaran sudah usai, silakan menunggu pengumuman"
+             * itupun dengan asumsi (waktu_tenggat < waktu_tutup), karena kalau (waktu_tenggat >= waktu_tutup) ya udah ketutup mana bisa ngapa-ngapain.
+             * Impact lainnya juga adalah ketika now() >= waktu_tutup, maka admin tidak bisa melakukan perubahan apapun pada rekam-rekam yang terkait ke dalam batch tersebut
+             */
         });
-        //Safety net RegulateBatchPPDBStatus
     }
 
     public function pendaftaran()

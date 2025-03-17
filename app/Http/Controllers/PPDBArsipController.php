@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class UnggahDokumenPersyaratanController extends Controller
+class PPDBArsipController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return view('admin.ppdb-rekam');
     }
 
     /**

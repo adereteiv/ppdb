@@ -11,7 +11,7 @@
                 @if ($arsipPPDB->isNotEmpty())
                     <form action="admin/ppdb/arsip" methode="get" class="flex flex-col gap"> @csrf
                         <div>
-                            <x-input-select name="periode" :options="$arsipPPDB->pluck('id', 'tahun_ajaran')->map(fn($tahun_ajaran, $id) => 'Tahun Ajaran ' . $tahun_ajaran . ' - Gel. ' . $arsipPPDB->where('id', $id)->first()->gelombang)" required/>
+                            <x-input-select name="periode" :options="$arsipOptions" required/>
                         </div>
                         <div><button href="/admin/ppdb/arsip" class="tombol-besar tombol-netral">Akses Arsip</button></div>
                     </form>

@@ -11,7 +11,9 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class BuatPPDBTest extends TestCase
 {
+    // Requires DB Seeding
     use DatabaseTransactions;
+
     /**
      * A basic feature test example.
      */

@@ -1,5 +1,9 @@
 <x-layouts.app-layout>
 
+@if(session()->has('success'))
+<x-flash-message class="alert" flash="green">{{ session('success') }}</x-flash-message>
+@endif
+
 <div id="admin-ppdb-buat" class="app-content wrapper">
     <div class="content-title margin-vertical">Buka Gelombang PPDB</div>
     <form id="ppdbBuat" method="post" action="/admin/ppdb/buat" class="ppdb-buat scrollable flex">@csrf
@@ -114,7 +118,7 @@
                 </x-inputbox>
             </div>
         </div>
-        <div class="flex-1 content-padding flex flex-nowrap flex-col">
+        <section class="flex-1 content-padding flex flex-nowrap flex-col">
             <div class="flex justify-between">
                 <h6>Atur Syarat Dokumen</h6>
                 <div class="flex">
@@ -144,7 +148,7 @@
                     />
                 @endforeach
             </div>
-        </div>
+        </section>
     </form>
     <div class="margin-vertical text-align-center">
         <button type="submit" class="tombol-besar tombol-netral" form="ppdbBuat">Simpan</button>

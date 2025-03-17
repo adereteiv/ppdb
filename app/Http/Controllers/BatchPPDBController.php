@@ -28,7 +28,10 @@ class BatchPPDBController extends Controller
             }
         }
 
-        $tipeDokumen = TipeDokumen::with('syaratDokumen')->orderBy('id', 'asc')->get()->values();
+        $tipeDokumen = TipeDokumen::with('syaratDokumen')
+        ->orderBy('id', 'desc') // sesuaikan value desc/asc untuk tampil ke admin.ppdb-buat
+        ->get()
+        ->values();
 
         return view('admin.ppdb-buat', compact('options', 'existingBatch', 'tipeDokumen', 'gelombang'));
     }
@@ -90,10 +93,11 @@ class BatchPPDBController extends Controller
             ]);
         }
 
+        $alertMessage = 'Periode PPDB berhasil dibuat!';
         if($batch->status) {
-            return redirect('admin/ppdb/aktif')->with('success', 'Periode PPDB berhasil dibuat!');
+            return redirect('admin/ppdb/aktif')->with('success', $alertMessage );
         } else {
-            return redirect('admin/ppdb/buat')->with('success', 'Periode PPDB berhasil dibuat!');
+            return redirect('admin/ppdb/buat')->with('success', $alertMessage);
         }
     }
 }

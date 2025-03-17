@@ -2,16 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\DashboardAdminController;
+use App\Http\Controllers\PPDBAktifController;
+use App\Http\Controllers\PPDBArsipController;
 use App\Http\Controllers\BatchPPDBController;
 use App\Http\Controllers\SyaratDokumenController;
-use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\KelolaPengumumanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PendaftarFormController;
-use App\Http\Controllers\DashboardAdminController;
-use App\Http\Controllers\KelolaPengumumanController;
-use Illuminate\Session\Middleware\AuthenticateSession;
 use App\Http\Controllers\PendaftarUnggahDokumenController;
 use App\Http\Controllers\PendaftarUnggahBuktiBayarController;
+use Illuminate\Session\Middleware\AuthenticateSession;
 
 /*
   Route::get('/', function () {return view('welcome');});
@@ -72,4 +74,5 @@ Route::middleware('auth.must')->group(function () {
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/logout', function() {return redirect('login');});
 });

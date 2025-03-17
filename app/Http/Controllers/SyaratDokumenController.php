@@ -42,7 +42,7 @@ class SyaratDokumenController extends Controller
                 'keterangan'    => '',
                 'wajibId'       => "wajib_{$tipeDokumen->tipe}",
                 'wajibName'     => "is_wajib[{$tipeDokumen->tipe}]",
-                'wajibChecked'  => true,
+                'wajibChecked'  => false,
             ])->render();
 
             return response()->json([

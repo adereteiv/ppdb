@@ -21,7 +21,7 @@ class PendaftarUnggahDokumenController extends Controller
         $user = Auth::user();
         $pendaftaran = Pendaftaran::where('user_id', $user->id)->firstOrFail();;
         $batch = BatchPPDB::findOrFail($pendaftaran->batch_id);
-        $syaratDokumen = SyaratDokumen::where('batch_id', $batch->id)->with('tipeDokumen')->get();
+        $syaratDokumen = SyaratDokumen::where('batch_id', $batch->id)->with('tipeDokumen')->orderBy('id', 'desc')->get(); // Sesuaikan dengan BatchPPDBController
         $dokumenPersyaratan = DokumenPersyaratan::where('anak_id', $pendaftaran->infoAnak->id)->get();
 
         return view('pendaftar.dokumen', compact('syaratDokumen','dokumenPersyaratan'));

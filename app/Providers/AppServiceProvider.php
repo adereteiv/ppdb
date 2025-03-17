@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Http\Request;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Artisan;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,16 +24,12 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        /* Commit 6.5 */
-        // atur ke route dan controller, mengirim limit ke ThrottleRequestException
-
-        /* Commit 9 */
-        /* Moved register throttling entirely to controller
-        RateLimiter::for('register', function (Request $request) {
-            $key = 'register:' . $request->ip();
-            return $this->registerLimit($key);
-        });
-        */
+        /* Commit 10.5 */
+        if ($this->app->runningInConsole()) {
+            $this->app->terminating(function () {
+                Artisan::call('batch-ppdb:regulate-status');
+            });
+        }
 
         RateLimiter::for('pendaftar_login', function (Request $request) {
             $key = 'login:pendaftar:' . $request->ip() . ':' . $request->input('id','');

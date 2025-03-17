@@ -19,10 +19,12 @@ class DashboardController extends Controller
         $user = Auth::user();
         $pendaftaran = Pendaftaran::where('user_id', Auth::id())->first();
 
+        // Indicator bit
         if(!$pendaftaran) {
             return view('pendaftar.dashboard',['formulirLengkap' => false, 'dokumenLengkap' => false, 'buktiBayarLengkap' => false]);
         }
 
+        // Indicator bit: $formulirLengkap check
         $infoAnak = InfoAnak::where('pendaftaran_id', $pendaftaran->infoAnak->id)->firstOrFail();
         $orangTuaWali = OrangTuaWali::where('anak_id', optional($infoAnak)->id)->get();
 
@@ -50,18 +52,19 @@ class DashboardController extends Controller
 
         $formulirLengkap = $infoAnakLengkap && $orangTuaWaliLengkap;
 
+        // Indicator bit: $dokumenLengkap check
         $batch = BatchPPDB::find($pendaftaran->batch_id);
         $syaratDokumen = SyaratDokumen::where('batch_id', $batch->id)->where('is_wajib', true)->pluck('tipe_dokumen_id');
         $unggahDokumen = DokumenPersyaratan::where('anak_id', $infoAnak->id)->pluck('tipe_dokumen_id');
         $dokumenLengkap = $syaratDokumen->diff($unggahDokumen)->isEmpty();
 
+        // Indicator bit: $buktiBayarLengkap check
         $buktiBayarLengkap = BuktiBayar::where('anak_id', $infoAnak->id)->exists();
 
-        if($formulirLengkap && $dokumenLengkap && $buktiBayarLengkap) {
-            if ($pendaftaran->status !== 'Lengkap') {
-                $pendaftaran->status = 'Lengkap';
-                $pendaftaran->save();
-            }
+        // Update $pendaftaran->status jika seluruh requirement Lengkap
+        if($formulirLengkap && $dokumenLengkap && $buktiBayarLengkap && ($pendaftaran->status === 'Belum Lengkap')) {
+            $pendaftaran->status = 'Lengkap';
+            $pendaftaran->save();
         }
         $pendaftaran->refresh();
 
