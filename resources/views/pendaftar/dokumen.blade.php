@@ -1,41 +1,37 @@
 <x-layouts.app-layout>
 
-@if(session()->has('success'))
-<x-flash-message class="alert" flash="green">{{ session('success') }}</x-flash-message>
+@if (session()->has('success'))
+<x-flash-message alert="green">{{ session('success') }}</x-flash-message>
 @endif
 
-<div id="pendaftar-kirim-dokumen" class="app-content wrapper">
-    <div class="content-title margin-vertical">Unggah Dokumen Persyaratan</div>
-    <div class="scrollable">
-        <div class="constrict">
-            <form method="post" action="/pendaftar/dokumen" enctype="multipart/form-data"> @method('PUT') @csrf
-                @foreach ($syaratDokumen as $syarat)
-                    @php
-                        $dokumen = $dokumenPersyaratan->where('tipe_dokumen_id', $syarat->tipe_dokumen_id)->first();
-                    @endphp
-                    <div class="margin-vertical">
-                        <x-inputbox-file
-                            :label="$syarat->tipeDokumen->tipe"
-                            :isWajib="$syarat->is_wajib"
-                            keterangan="{{ $syarat->keterangan }}"
-                            :dokumen="$dokumen"
-                            fileType="dokumen"
-                        />
+<div id="pendaftar-kirim-dokumen" class="app-content">
+    <div class="wrapper">
+        <x-partials.app-content-title :hideBackLink="true"><h6>Unggah Dokumen Persyaratan</h6></x-partials.app-content-title>
+        <hr style="border: 1px solid rgba(0, 0, 0, .15); margin: 0 1rem;">
+        <div class="scrollable">
+            <div class="content-padding-side-rem constrict">
+                <form id="docsForm" method="POST" action="/pendaftar/dokumen" enctype="multipart/form-data"> @method('PUT') @csrf
+                    @foreach ($syaratDokumen as $syarat)
+                        @php $dokumen = $dokumenPersyaratan?->where('tipe_dokumen_id', $syarat->tipe_dokumen_id)->first(); @endphp
+                        <div class="margin-vertical">
+                            <x-inputbox-file
+                                :label="$syarat->tipeDokumen->tipe"
+                                :isWajib="$syarat->is_wajib"
+                                keterangan="{{ $syarat->keterangan }}"
+                                fileType="dokumen"
+                                :dokumen="$dokumen"
+                            />
+                        </div>
+                    @endforeach
 
-                        @if ($dokumen)
-                        <x-preview class="inputbox" :dokumen="$dokumen"/>
-                        @endif
+                    <div class="margin-vertical text-align-center content-padding-vertical">
+                        <input type="submit" class="tombol-besar tombol-netral" value="Simpan">
                     </div>
-                @endforeach
-
-                <div class="margin-vertical text-align-center">
-                    <input type="submit" class="tombol-besar tombol-netral" value="Simpan">
-                </div>
-            </form>
+                    <x-scripts.submit-button form="docsForm"/>
+                </form>
+            </div>
         </div>
     </div>
 </div>
-
-<x-modal/>
 
 </x-layouts.app-layout>

@@ -97,7 +97,7 @@ class BatchPPDBController extends Controller
         if($batch->status) {
             return redirect('admin/ppdb/aktif')->with('success', $alertMessage );
         } else {
-            return redirect('admin/ppdb/buat')->with('success', $alertMessage);
+            return redirect('admin/ppdb')->with('success', $alertMessage);
         }
     }
 }

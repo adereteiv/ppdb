@@ -10,23 +10,23 @@ use Illuminate\Validation\ValidationException;
 class SyaratDokumenController extends Controller
 {
     public function create() {
-        return view('admin.tambah-syarat-dokumen-form');
+        return view('admin.partials.form-tambah-syarat-dokumen');
     }
 
     // AJAX maka data perlu diubah ke format json
     public function store(Request $request) {
         try {
             $request->validate([
-                'nama_dokumen' => 'required|string|max:255|regex:/^[\p{L}\p{N}\/\s]+$/u',
+                'nama_dokumen' => 'required|string|max:255|regex:/^[\p{L}\p{N}\/\s()]+$/u',
             ],[
                 'nama_dokumen.required' => 'Nama dokumen tidak boleh kosong.',
                 'nama_dokumen.regex' => 'Nama dokumen mengandung karakter yang tidak valid.',
             ]);
 
-            $dokumen = Str::title(preg_replace('/[^\/\s\p{L}\p{N}]+/u', '', trim(strip_tags($request->input('nama_dokumen')))));
+            $dokumen = preg_replace('/[^\p{L}\p{N}\/\s()]+/u', '', trim(strip_tags($request->input('nama_dokumen'))));
             $existingDokumen = TipeDokumen::where('tipe', $dokumen)->first();
 
-            if($existingDokumen) {
+            if ($existingDokumen) {
                 return response()->json(['error' => 'Persyaratan ini sudah ada'], 422);
             }
 

@@ -19,7 +19,8 @@ class ModelUserTest extends TestCase
         $generatedId = $user->id;
 
         // Assert/dicek bahwa format id-nya sesuai dgn yg diatur di Models/User.php
-        $this->assertMatchesRegularExpression('/^ANA\d{4}$/', $generatedId);
+        $this->assertMatchesRegularExpression('/^[A-Z]{3}[A-Z0-9]{8}$/', $generatedId);
+        // $this->assertMatchesRegularExpression('/^ANA\d{4}$/', $generatedId);
     }
 
     public function test_user_id_harus_unik()

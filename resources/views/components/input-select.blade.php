@@ -1,7 +1,9 @@
-@props(['name', 'options', 'value' => ''])
+@props(['name', 'options', 'value' => '', 'noDefault' => false])
 
-<select name="{{ $name }}" {{ $attributes->merge(['class'=>'form-item',]) }}>
+<select name="{{ $name }}" {{ $attributes }}>
+    @if (empty($noDefault))
     <option value="">-- Pilih --</option>
+    @endif
 
     @foreach ($options as $option)
     <option value="{{ $option }}" {{ old($name, $value) === $option ? 'selected' : '' }}>

@@ -6,8 +6,17 @@
     <div class="container">
         <div class="form-login margin-vertical">
 
-            @if(session()->has('error'))
-            <x-flash-message flash>{{ session('error') }}</x-flash-message>
+            @if (session()->has('error'))
+            <x-flash-message flash>
+                <div class="flex flex-nowrap">
+                        <span class="reminder-icon">
+                        <i class="bi bi-exclamation-circle"></i>
+                    </span>
+                    <span>
+                        {{ session('error') }}
+                    </span>
+                </div>
+            </x-flash-message>
             @endif
 
             @error('email')

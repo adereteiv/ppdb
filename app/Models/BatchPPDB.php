@@ -14,16 +14,23 @@ class BatchPPDB extends Model
 
     protected $guarded = ['id'];
 
-    protected static function boot()
-    {
-        parent::boot();
+    /** Commit 11
+     * Agar tidak dianggap sebagai string dan real Carbon datetime instance
+     */
+    protected $casts = [
+        'waktu_mulai' => 'datetime',
+        'waktu_tenggat' => 'datetime',
+        'waktu_tutup' => 'datetime',
+    ];
 
+    protected static function booted()
+    {
         // Get its parameter from Model::create($parameter), status true if now() hit waktu_mulai
         static::creating(function ($batch) {
             $batch->status = now() >= $batch->waktu_mulai;
         });
 
-        static::created(function ($batch) { // $batch auto-assigned from BatchPPDB create event
+        static::created(function ($batch) { // $batch auto-assigned from event BatchPPDB::create
             /** ----- NOTE FOR DOCUMENTATION ----- !!!
              * Possible cases:
              * 1. if $batch->status === true :
@@ -38,15 +45,14 @@ class BatchPPDB extends Model
             // Only one active batch
             // If $batch->status === true, nonaktifkan PPDB yang sedang aktif
             if ($batch->status) {
-                BatchPPDB::where('id', '!=', $batch->id)->where('status', true)->update(['status' => false]);
+                self::where('id', '!=', $batch->id)->where('status', true)->update(['status' => false]);
             }
 
-            // Separate if because waktu_tutup update is a separate matter, so it can't and shouldn't depend on the above if($batch->status){}
-            // If it does, then it would only work when $batch->status === true
-            // While we also want it to work when ($batch->status === false) so the timeline doesn't overlap with each other
-            $previousBatch = BatchPPDB::where('id', '<', $batch->id)->orderBy('id', 'desc')->first();
-            if($previousBatch && $previousBatch->waktu_tutup >= $batch->waktu_mulai) {
-                $previousBatch->update(['waktu_tutup' => $batch->waktu_mulai->subSecond()]);
+            // Separate if because waktu_tutup update is a separate matter, so it can't and shouldn't depend on the above if ($batch->status){}
+            // If it does, then it would only work when $batch->status === true, while we also want it to work when ($batch->status === false) so the timeline doesn't overlap with each other
+            $previousBatch = self::where('waktu_mulai', '<', $batch->waktu_mulai)->orderBy('waktu_mulai', 'desc')->first();
+            if ($previousBatch && $previousBatch->waktu_tutup >= $batch->waktu_mulai) {
+                $previousBatch->update(['waktu_tutup' => $batch->waktu_mulai->copy()->subSecond()]);
             }
 
             /** ---- NOTE ---- !!!

@@ -1,16 +1,15 @@
-@props(['status' => 'Belum Lengkap'])
+@props(['value' => 'Belum Lengkap'])
 
 @php
     $statuses = [
-        'Belum Lengkap' => 'bg-yellowdark',
-        'Lengkap' => 'bg-greendark',
-        'Terverifikasi' => 'bg-blue',
+        'Belum Lengkap' => 'tombol-orange',
+        'Lengkap' => 'tombol-positif',
+        'Terverifikasi' => 'tombol-netral',
     ];
-
-    $status = $status ?? 'Belum Lengkap';
+    $value = $value ?? 'Belum Lengkap';
 @endphp
 
-<span {{ $attributes->merge(['class' => "status $statuses[$status]"]) }}>{{ $status }}</span>
+<span {{ $attributes->merge(['class' => "status $statuses[$value]"]) }}>{{ $value }}</span>
 
 {{--
 <x-status-pendaftaran class="flex" :status="$pendaftaran->status ?? null" />

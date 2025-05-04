@@ -5,10 +5,7 @@
     {{ $slot }}
 </div>
 
-{{-- <x-inputbox label="Label">
-    <x-slot:id>
-        The field's id
-    </x-slot>
+{{-- <x-inputbox for="#">
     <x-slot:label>
         The field's label
     </x-slot>

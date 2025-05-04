@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    {{-- Commit 10 --}}
+    {{-- refer to syaratDokumen.js --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Dashboard @auth{{ Auth::user()->role_id == 1 ? 'Admin' : 'Pendaftar' }}@endauth -  PPDB TK Negeri Pembina Sungai Kakap</title>
@@ -14,15 +14,18 @@
     <script defer type="module" src="{{ asset('js/app.js') }}"></script>
 </head>
 <body>
-<div class="app-layout">
-    <x-partials.app-sidenav></x-partials.app-sidenav>
+    <div class="app-layout">
+        <x-partials.app-navbar/>
 
-    <div class="app-content-area">
-        <main class="app-main scrollable content-padding">
-            {{ $slot }}
-        </main>
+        <div class="app-content-area scrollable" class="">
+            <x-partials.app-header/>
+            <main>
+                <div class="container">
+                    {{ $slot }}
+                </div>
+            </main>
+        </div>
     </div>
-</div>
-</head>
+    <x-modal id="data-modal" class="scrollable"/>
 </body>
 </html>

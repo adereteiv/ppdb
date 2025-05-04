@@ -14,7 +14,7 @@
                         <a href="#section-prosedur">Syarat Pendaftaran</a>
                         <a href="/daftar">
                             <span>Daftar Sekarang</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M647-440H160v-80h387L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M647-440H160v-80h387L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg>
                         </a>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                             <li>Mengisi Formulir Pendaftaran dengan sebenar-benarnya;</li>
                             <li>Mengunggah Dokumen Persyaratan, format Surat Pernyataan dapat diunduh pada halaman Portal PPDB di bagian <a href="#tata-pendaftaran" style="text-decoration: none">Syarat Pendaftaran</a>;</li>
                             <li>Membayar biaya pendaftaran dan mengunggah Bukti Pembayaran pada Dashboard.</li>
-                            <li>Pengumuman hasil penerimaan di bagian Papan Informasi pada halaman <a href="/beranda">Portal PPDB.</a></li>
+                            <li>Pengumuman hasil penerimaan di bagian Papan Informasi pada halaman <a href="/beranda" style="text-decoration: none">Portal PPDB.</a></li>
                         </ol>
                     </div>
                 </div>

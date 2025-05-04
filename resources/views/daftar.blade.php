@@ -1,7 +1,7 @@
-<x-layouts.home-layout :hideFooter='false'>
+<x-layouts.home-layout>
 
-@if(session()->has('error'))
-<x-flash-message class="alert" flash>{{ session('error') }}</x-flash-message>
+@if (session()->has('error'))
+<x-flash-message alert>{{ session('error') }}</x-flash-message>
 @endif
 
 <section id="section-daftar" class="home-section">
@@ -11,18 +11,24 @@
                 <h1>Pendaftaran</h1>
             </div>
             <div class="form-daftar">
-                @if($batchClosed)
+                @if ($batchClosed)
                     <div class="text-align-center margin-vertical">
                         <h5>PPDB tidak dibuka saat ini</h5>
                     </div>
                 @else
                     <article class="content-margin-bottom">
-                        <div class="reminder bg-red">
-                            <h5 class="margin-bottom teks-putih">Ketentuan!</h5>
-                            <p class="teks-putih">Isi Data Secara Lengkap dan Jelas Sesuai dengan Data Yang Tertera Di KARTU KELUARGA/AKTA KELAHIRAN</p>
+                        <div class="reminder mild bg-greensoft flex flex-nowrap">
+                            <span class="reminder-icon">
+                                <i class="bi bi-info-circle"></i>
+                            </span>
+                            <span>
+                                <b>Ketentuan!</b>
+                                <br>
+                                Isi data secara lengkap dan jelas sesuai dengan data yang tertera di Kartu Keluarga/Akta Kelahiran
+                            </span>
                         </div>
                     </article>
-                    <form method="post" action="daftar">@csrf
+                    <form method="POST" action="daftar">@csrf
                         <article class="content-margin-bottom">
                             <header><h3>Registrasi Akun</h3></header>
                             <table>
@@ -54,7 +60,7 @@
                                     <tr><td width="20%">Nama Lengkap</td>
                                         <td>
                                             <x-input type="text" name="nama_anak" style="width:385px;" placeholder="Nama lengkap anak" required/>
-                                            @if(session('akunAda'))
+                                            @if (session('akunAda'))
                                                 <br><p style="color: red">{{ session('akunAda') }}</p>
                                             @endif
                                         </td>

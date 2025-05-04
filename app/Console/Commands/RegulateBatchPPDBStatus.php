@@ -50,6 +50,8 @@ class RegulateBatchPPDBStatus extends Command
          * As long as time is linear, this logic cannot be flawed (pun intended XD)
          */
 
+        // welp, bug found
+        /*
 		$batch = BatchPPDB::where('waktu_mulai', '<=', now())
         ->where('status', false)
         ->orderBy('waktu_mulai', 'desc')
@@ -68,6 +70,38 @@ class RegulateBatchPPDBStatus extends Command
 		} else {
 			$this->info('Skip. No relevant record needs updating.');
 		}
+        */
+
+        // Commit 11 - Refactored logic, learn as we go
+        // refer to sacred note
+        // without try catch block, it will keep returning error alert
+        try {
+            $batches = BatchPPDB::orderBy('waktu_mulai', 'desc')->get();
+
+            $now = now();
+
+            // check if the target batch isn't active + hasn't started + has waktu_tutup in the future = planned to be activated
+            $x = $batches->first(function ($batch) use ($now) {
+                return !$batch->status && $batch->waktu_mulai <= $now && $now < $batch->waktu_tutup;
+            });
+
+            if ($x) {
+                $activeBatch = $batches->firstWhere('status', true);
+                if ($activeBatch && $activeBatch->id !== $x->id) {
+                    $activeBatch->update([
+                        'status' => false,
+                        'waktu_tutup' => $now,
+                    ]);
+                }
+                $x->update(['status' => true]);
+
+                $this->info('BatchPPDB:ID:{$x->id} activated.');
+            } else {
+                $this->info('Skip. No batch to activate.');
+            }
+        } catch (\Exception $e) {
+            return;
+        }
     }
 }
     /** Possible cases:

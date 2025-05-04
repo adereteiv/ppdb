@@ -8,8 +8,8 @@
 <div class="checkmenu">
     <input id="{{ $checkboxId }}" type="checkbox" name="{{ $checkboxName }}" value="{{ $checkboxValue }}">
     <div>
-        <x-inputbox for="{{ $keteranganId }}">
-            <x-slot:label><h6 class="number">{{ $label }}</h6></x-slot>
+        <x-inputbox for="{{ $checkboxId }}">
+            <x-slot:label><b class="number">{{ $label }}</b></x-slot>
             <p>Keterangan :</p>
             <textarea id="{{ $keteranganId }}" name="{{ $keteranganName }}">{{ $keterangan }}</textarea>
         </x-inputbox>

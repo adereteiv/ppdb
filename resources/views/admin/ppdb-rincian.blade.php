@@ -1,57 +1,84 @@
 <x-layouts.app-layout>
-
-<div id="admin-ppdb-rincian" class="app-content wrapper">
-    <div class="content-title margin-vertical">Rincian PPDB
-    </div>
-    <div class="ppdb-rincian">
-        <div class="flex justify-flex-end">
-            <div class="dropdown">
-                <button class="tombol tombol-netral" onclick="tampilkanLanjutan(this)">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
-                    Tindakan
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M480-360 280-560h400L480-360Z"/></svg>
-                </button>
-                <div id="myDropdown" class="dropdown-content">
+<x-slot:backLink></x-slot:backLink>
+<div id="admin-ppdb-rincian" class="app-content">
+    <div class="wrapper">
+        <x-partials.app-content-title>
+            <x-slot:backLink>
+                @if ($batch->status)
+                    /admin/ppdb/aktif
+                @else
+                    /admin/ppdb/arsip/
+                @endif
+            </x-slot:backLink>
+            <x-slot:title><h6>Rincian PPDB</h6></x-slot:title>
+        </x-partials.app-content-title>
+        <hr style="border: 1px solid rgba(0, 0, 0, .15); margin: 0 1rem;">
+        <div class="ppdb-rincian content-padding-vertical content-padding-side-rem">
+            <div class="flex justify-flex-end">
+                <x-dropdown class="wrapper right-0">
+                    <x-slot:button>
+                        <span class="padding-left-10">Tindakan</span>
+                        <svg :style="open ? 'transform: rotate(90deg); transition: transform 0.15s;' : 'transform: rotate(0deg); transition: transform 0.15s;'" xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M400-280v-400l200 200-200 200Z"/></svg>
+                    </x-slot:button>
                     <!-- Umum -->
-                    <a href="#">Export</a>
-                    <!-- PPDB-Arsip Only , harus ditutup dulu baru bisa delete -->
-                    <a href="#">Hapus PPDB</a>
+                    <a class="dropdown-menu" href="#">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20" width="20"><path d="M480-480ZM202-65l-56-57 118-118h-90v-80h226v226h-80v-89L202-65Zm278-15v-80h240v-440H520v-200H240v400h-80v-400q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H480Z"/></svg>
+                        <span class="padding-left-10">Export Data</span>
+                    </a>
+                    @if ($batch->status)
                     <!-- PPDB-Aktif Only -->
-                    <a href="#">Tutup PPDB</a>
-                </div>
+                    <form action="{{ route('ppdb.aktif.tutup') }}" method="POST"> @csrf
+                        <button type="submit" class="dropdown-menu tombol-none margin-unset" onclick="return confirm('Yakin ingin menutup gelombang ini? (Tindakan tidak dapat diurung!)')">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20" width="20"><path d="M438-226 296-368l58-58 84 84 168-168 58 58-226 226ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
+                            <span class="padding-left-10">Tutup PPDB</span>
+                        </button>
+                    @else
+                    <!-- PPDB-Arsip Only , harus ditutup dulu baru bisa delete -->
+                    <form action="{{ route('ppdb.arsip.destroy') }}" method="POST"> @csrf
+                        <button type="submit" class="dropdown-menu tombol-none margin-unset">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20" width="20"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+                            <span class="padding-left-10">Hapus PPDB</span>
+                        </button>
+                    @endif
+                    </form>
+                </x-dropdown>
             </div>
-        </div>
-        <div class="margin-vertical-narrow">
-            <table class="alternate">
-                <tr>
-                    <th width="30%">Status</th>
-                    <td>Slot{Aktif/Arsip}</td>
-                </tr>
-                <tr>
-                    <th>Periode Pendaftaran</th>
-                    <td>Slot</td>
-                </tr>
-                <tr>
-                    <th>Gelombang</th>
-                    <td>Slot</td>
-                </tr>
-                <tr>
-                    <th>Jumlah Pendaftar</th>
-                    <td>Slot</td>
-                </tr>
-                <tr>
-                    <th>Dibuat Pada</th>
-                    <td>Slot</td>
-                </tr>
-                <tr>
-                    <th>Tanggal Mulai</th>
-                    <td>Slot</td>
-                </tr>
-                <tr>
-                    <th>Tanggal Berakhir</th>
-                    <td>Slot</td>
-                </tr>
-            </table>
+            <div class="margin-vertical-narrow">
+                <table class="alternate fixed detail">
+                    <tr><td width="20%">Status</td>
+                        <td width="2%">:</td>
+                        <td>
+                            {{ $batch->status ? ($batch->waktu_tenggat->greaterThan(now()) ? 'Menerima Pendaftaran' : 'Tidak Menerima Pendaftaran') : 'Tutup' }}
+                        </td>
+                    </tr>
+                    <tr><td>Periode Pendaftaran</td>
+                        <td>:</td>
+                        <td>{{ $batch->tahun_ajaran }}</td>
+                    </tr>
+                    <tr><td>Gelombang</td>
+                        <td>:</td>
+                        <td>{{ $batch->gelombang }}</td>
+                    </tr>
+                    <tr><td>Jumlah Pendaftar</td>
+                        <td>:</td>
+                        <td>{{ $batch->pendaftaran->count() }}</td>
+                    </tr>
+                    <tr><td>Tanggal Mulai</td>
+                        <td>:</td>
+                        <td>{{ $batch->waktu_mulai->translatedFormat('d F Y, H:i') }}</td>
+                    </tr>
+                    <tr><td>Tanggal Berakhir</td>
+                        <td>:</td>
+                        <td>{{ $batch->waktu_tenggat->translatedFormat('d F Y, H:i') }}</td>
+                    </tr>
+                    @if (!$batch->status)
+                    <tr><td>Tanggal Tutup</td>
+                        <td>:</td>
+                        <td>{{ $batch->waktu_tutup->translatedFormat('d F Y, H:i') }}</td>
+                    </tr>
+                    @endif
+                </table>
+            </div>
         </div>
     </div>
 </div>

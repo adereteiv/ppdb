@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-// use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Cache;
 
 class AuthController extends Controller
 {
@@ -18,54 +17,101 @@ class AuthController extends Controller
         return view('auth.pintuadmin');
     }
 
-    public function authenticate(Request $request){
-        if (Auth::check()){
-            return back()->with('error', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
-        };
-
-        $credentials = $request->validate([
-            'id' => 'required',
-            'password' => 'required',
-        ]);
-
-        $user = User::where('id', $credentials['id'])->where('role_id', 2)->first();
-
-        if (!$user || !Auth::attempt(['id' => $credentials['id'], 'password' => $credentials['password'], 'role_id' => 2])) {
-            return back()->with('error', 'Login gagal. Periksa kembali ID dan kata sandi Anda.')->onlyInput('id');
-        }
-
-        $key = 'login:pendaftar:' . $request->ip() . ':' . $request->input('id','');
-        RateLimiter::clear($key);
-
-        $request->session()->regenerate();
-        return redirect()->intended('/pendaftar/dashboard');
+    public function loginPendaftar(Request $request){
+        return $this->authenticate($request, 'pendaftar');
     }
 
-    public function authenticateAdmin(Request $request){
-        if (Auth::check()){
-            return back()->with('error', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput('id');
-        };
+    public function loginAdmin(Request $request){
+       return $this->authenticate($request, 'admin');
+    }
 
-        $credentials = $request->validate([
-            'email' => ['required','email:rfc,strict,dns,spoof,indisposable','regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|edu|id|gov|co\.id)$/i'],
+    private function authenticate(Request $request, string $roleType) {
+        $isAdmin = $roleType === 'admin';
+        $authField = $isAdmin ? 'email' : 'id';
+        $roleId = $isAdmin ? 1 : 2;
+
+        // Check if user has already logged in
+        if (Auth::check()) {
+            return back()->with('error', 'Logout terlebih dahulu untuk menjalankan sesi baru.')->onlyInput($authField);
+        }
+
+        /** Login Throttling
+         * Previously conflicted with RateLimiter::for()
+         * The goal is using fixed waiting period and using cache is more suitable
+         * So, we go full controller handling
+         * The Flow:
+         * 1. Determine $roleType and it's related $key
+         * 2-pre. Determine $wait period and infer it's $cooldown from now encase it in $time format
+         * 2. Check >> Is user in a lockout period? YES, return back with $time : NO, continue
+         * 3. Check >> Does $key exist? YES, increment existing $key : NO, set $key
+         */
+        // Step 1
+        $key = $isAdmin
+            ? 'login:admin:' . $request->ip() . ':' . strtolower($request->input('email'))
+            : 'login:pendaftar:' . $request->ip() . ':' . $request->input('id','');
+        $lockoutKey = "lockout:$key";
+        $attempts = Cache::get($key);
+        $wait = match (true) {
+            $attempts == 11 => 300,
+            $attempts == 9 => 120,
+            $attempts == 7 => 60,
+            $attempts == 4 => 30,
+            default => 0
+        };
+        // Step 2 | Prevent doing unnecessary steps
+        if (Cache::has($lockoutKey)) {
+            $cooldown = Cache::get($lockoutKey) - time(); // subtract by time() is necessary to show real countdown, UNIX timestamp is needed on $lockoutKey setter
+            $timeString = $cooldown > 60
+                ? gmdate("i:s", $cooldown) . ' menit'
+                : $cooldown . ' detik';
+            return back()->with('error', "Terlalu banyak percobaan. Coba lagi dalam {$timeString}.")->onlyInput($authField);
+        }
+        // Step 3
+        if (Cache::has($key)) {
+            Cache::increment($key);
+        } else {
+            Cache::put($key, 1, 600); // 10 min expiry
+        }
+
+        /* Validation */
+        $rules = [
             'password' => 'required',
-        ],[
+        ];
+        if ($isAdmin) {
+            $rules['email'] = ['required','email:rfc,strict,dns,spoof,indisposable','regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|edu|id|gov|co\.id)$/i'];
+        } else {
+            $rules['id'] = 'required';
+        }
+        $messages = [
             'email.email' => 'Mohon masukkan format email yang benar.',
             'email.regex' => 'Domain email tidak ditemukan. Harap masukkan alamat email Anda yang sebenarnya!',
             'email.indisposable' => 'Harap masukkan alamat email Anda yang sebenarnya.',
-        ]);
+        ];
+        $credentials = $request->validate($rules, $messages);
 
-        $user = User::where('email', $credentials['email'])->where('role_id', 1)->first();
+        /* Authentication */
+        // Check User record from table 'users'
+        $user = User::where([
+            [$authField, '=', $credentials[$authField]],
+            ['role_id', '=', $roleId]
+        ])->first();
 
-        if (!$user || !Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password'], 'role_id' => 1])) {
-            return back()->with('error', 'Login gagal. Periksa kembali email dan kata sandi Anda.')->onlyInput('email');
+        if (!$user || !Auth::attempt([
+            $authField => $credentials[$authField],
+            'password' => $credentials['password'],
+            'role_id' => $roleId,
+        ])) {
+            // CONSIDER USING REDIS CACHING ON DEPLOYMENT
+            Cache::put($lockoutKey, time() + $wait, $wait); // $value requires time() to check $lockoutKey, expires according to $wait seconds
+            // dd("Key: ". $key, "Key Value: " . $attempts, "Lockout Key: " . $lockoutKey, "Lockout Key Value: " . Cache::get($lockoutKey));
+            return back()->with('error', 'Login gagal. Periksa kembali '. ($isAdmin ? 'email' : 'ID') . ' dan kata sandi Anda.')->onlyInput($authField);
         }
 
-        $key = 'login:admin:' . $request->ip() . ':' . strtolower($request->email);
-        RateLimiter::clear($key);
+        Cache::forget($key);
+        Cache::forget($lockoutKey);
 
         $request->session()->regenerate();
-        return redirect()->intended('/admin/dashboard');
+        return redirect()->intended($isAdmin ? '/admin/dashboard' : '/pendaftar/dashboard');
     }
 
     public function logout(){

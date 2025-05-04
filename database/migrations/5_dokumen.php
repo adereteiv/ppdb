@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('syarat_dokumen', function (Blueprint $table) {
             $table->id();
             $table->foreignId('batch_id')->constrained('batch_ppdb')->onDelete('cascade');
-            $table->foreignId('tipe_dokumen_id')->constrained('tipe_dokumen')->onDelete('cascade');
+            $table->foreignId('tipe_dokumen_id')->constrained('tipe_dokumen')->onDelete('restrict')->onUpdate('restrict');
             $table->boolean('is_wajib')->default(true);
             $table->string('keterangan')->nullable();
             $table->timestamps();
@@ -26,7 +26,7 @@ return new class extends Migration
         Schema::create('dokumen_persyaratan', function (Blueprint $table) {
             $table->id();
             $table->foreignId('anak_id')->constrained('info_anak')->onDelete('cascade');
-            $table->foreignId('tipe_dokumen_id')->constrained('tipe_dokumen')->onUpdate('cascade');
+            $table->foreignId('tipe_dokumen_id')->constrained('tipe_dokumen')->onDelete('restrict')->onUpdate('restrict');
             $table->string('file_path');
             // ->nullable();
             $table->timestamps();

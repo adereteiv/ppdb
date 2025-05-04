@@ -22,12 +22,12 @@ class User extends Authenticatable
      */
     protected $table = 'users';
 
+    protected $fillable = ['name','email','password','role_id'];
+
     // https://medium.com/@online-web-tutor/laravel-how-to-disable-primary-key-auto-increment-in-model-ee6416b49871
     protected $keyType = 'string';
 
     public $incrementing = false;
-
-    protected $fillable = ['name','email','password','role_id'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -49,13 +49,11 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Semua akun yang dibuat lewat register role otomatis 'pendaftar'
-     */
-    protected static function boot()
+    protected static function booted()
     {
-        parent::boot();
-
+        /**
+         * Semua akun yang dibuat lewat create event, then role otomatis 'pendaftar' and the id of that is 2
+         */
         static::creating(function ($user) {
             if (!isset($user->id)){
                 do{
@@ -63,7 +61,7 @@ class User extends Authenticatable
                     $inisial = strtoupper(substr($firstname ?? 'PD', 0, 3));
                     $random = strtoupper(substr(Str::uuid()->toString(), 0, 8));
                     $userId = $inisial . $random;
-                } while ((DB::table('users')->where('id', $userId)->exists()));
+                } while ((self::where('id', $userId)->exists()));
 
                 $user->id = $userId;
             }
@@ -77,5 +75,9 @@ class User extends Authenticatable
     public function Pendaftaran()
     {
         return $this->hasOne(Pendaftaran::class,'user_id');
+    }
+
+    public function Pengumuman(){
+        return $this->hasMany(Pengumuman::class,'posted_by');
     }
 }

@@ -2,11 +2,12 @@
 
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\RoleMiddleware;
-use App\Http\Middleware\AuthMustMiddleware;
-use App\Http\Middleware\ThrottleRequestHandler;
-use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use App\Http\Middleware\AuthSecureMiddleware;
+use Illuminate\Auth\AuthenticationException;
+// use App\Http\Middleware\ThrottleRequestHandler;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,38 +17,22 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'auth.must' => AuthMustMiddleware::class,
+            'auth.secure' => AuthSecureMiddleware::class,
             'role' => RoleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->renderable(function (ThrottleRequestsException $e, $request) {
-            $retryAfter = $e->getHeaders()['Retry-After'] ?? 60;
-            $time = ceil($retryAfter / 60);
-            $message = "Terlalu banyak percobaan. Silakan coba lagi dalam {$time} menit.";
-
-            if ($request->is('login')) {
-                $message = "Terlalu banyak percobaan login. Coba lagi dalam {$time} menit.";
-                $key = 'login:pendaftar:' . $request->ip() . ':' . $request->input('id','');
-                $maxAttempts = 5;
-            } elseif ($request->is('pintuadmin')) {
-                $message = "Terlalu banyak percobaan login. Coba lagi dalam {$time} menit.";
-                $key = 'login:admin:' . $request->ip() . ':' . strtolower($request->email);
-                $maxAttempts = 5;
+        $exceptions->renderable(function (ThrottleRequestsException $e, $request){
+            $retryAfter = $e->getHeaders()['Retry-After'];
+            $time = $retryAfter > 60
+                ? gmdate("i:s", $retryAfter) . " menit."
+                : $retryAfter . " detik.";
+            if ($request->is('daftar')) {
+                return back()->with('error', "Terlalu banyak percobaan registrasi. Silakan menyelesaikan tahap pendaftaran pada registrasi sebelumnya terlebih dahulu. Coba lagi dalam " . $time)->withInput();
             }
-
-            if (isset($key)) {
-                $attempts = RateLimiter::attempts($key);
-                $try = RateLimiter::remaining($key, $maxAttempts);
-                if ($attempts <= 10){
-                    $message .= " Anda memiliki {$try} percobaan tersisa.";
-                }
-            }
-
-            if (!$request->expectsJson()) {
-                return back()->with('error', $message)->withInput();
-            }
-
-            return response()->json(['message' => $message], 429);
+            return back()->with('error', "Terlalu banyak percobaan. Coba lagi dalam " . $time)->withInput();
+        });
+        $exceptions->renderable(function (AuthenticationException $e, $request) {
+            return redirect('login')->with('loginDulu', 'Silakan login terlebih dahulu.');
         });
     })->create();

@@ -6,23 +6,23 @@
         </div>
         <div class="form-login margin-vertical">
 
-            @if(session()->has('loginDulu'))
+            @if (session()->has('loginDulu'))
             <x-flash-message flash="blue">{{ session('loginDulu') }}</x-flash-message>
             @endif
 
-            @if(session()->has('success'))
+            @if (session()->has('success'))
             <x-flash-message flash="green">
                 {{ session('success') }}
             </x-flash-message>
-            <x-flash-message flash>
+            <x-flash-message flash="blue">
                 <h6>Perhatian!</h6>
                 <hr>
                 <p>ID Pengguna Anda:</p>
                 <sup>
                     <strong id="userId" class="text-center">{{ session('user_id') }}</strong>
-                    <button id="copyButton" class="tombol-none tooltip">
+                    <button id="copyButton" class="tombol-none tooltip inline-block" tooltip="right">
                         <span id="tooltiptext" class="tooltiptext">Salin</span>
-                        <i fill="currentColor" class="bi bi-copy"></i>
+                        <i class="bi bi-copy"></i>
                     </button>
                 </sup>
                 <br>
@@ -34,7 +34,7 @@
                         const tooltiptext = document.getElementById("tooltiptext");
 
                         copyButton.addEventListener("click", function () {
-                            if(navigator.clipboard && navigator.clipboard.writeText){
+                            if (navigator.clipboard && navigator.clipboard.writeText){
                                 navigator.clipboard.writeText(userIdElement.textContent)
                                 .then(() => {
                                     tooltiptext.textContent = `ID Anda ${userIdElement.textContent} berhasil disalin!`;
@@ -65,11 +65,11 @@
             </x-flash-message>
             @endif
 
-            @if(session()->has('error'))
+            @if (session()->has('error'))
             <x-flash-message flash>{{ session('error') }}</x-flash-message>
             @endif
 
-            <form method="post" action="/login">@csrf
+            <form method="POST" action="/login">@csrf
                 <div class="gap">
                     <x-input type="text" name="id" class="form-login_item" placeholder="ID Pengguna" autofocus required/>
                 </div>

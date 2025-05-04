@@ -10,18 +10,21 @@
     <script defer type="module" src="{{ asset('js/app.js') }}"></script>
 </head>
 <body>
-<div class="home-layout">
-    @if (empty($hideHeader))
-        <x-partials.home-header></x-partials.home-header>
-    @endif
+    <div class="home-layout">
+        @if (empty($hideHeader))
+            <x-partials.home-header/>
+        @endif
 
-    <main class="flex-1 flex flex-col">
-        {{ $slot }}
-    </main>
+        <main class="flex-1 flex flex-col">
+            @if (empty($hideHeader))
+                <x-partials.home-header-mobile/>
+            @endif
+            {{ $slot }}
+        </main>
 
-    @if (empty($hideFooter))
-        <x-partials.home-footer></x-partials.home-footer>
-    @endif
-</div>
+        @if (empty($hideFooter))
+            <x-partials.home-footer/>
+        @endif
+    </div>
 </body>
 </html>

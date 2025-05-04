@@ -7,26 +7,53 @@ use App\Models\BatchPPDB;
 use App\Models\BuktiBayar;
 use App\Models\Pendaftaran;
 use App\Models\OrangTuaWali;
-use Illuminate\Http\Request;
 use App\Models\SyaratDokumen;
 use App\Models\DokumenPersyaratan;
 use App\Http\Controllers\Controller;
+use App\Services\PendaftaranService;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function showDashboard(){
+    private function getData($key = null) {
         $user = Auth::user();
-        $pendaftaran = Pendaftaran::where('user_id', Auth::id())->first();
+        $pendaftaran = Pendaftaran::where('user_id', $user->id)->first();
+        $batch = optional($pendaftaran)->batch_id
+            ? BatchPPDB::find($pendaftaran->batch_id)
+            : null;
+        $syaratDokumen = $batch
+            ? SyaratDokumen::where('batch_id', $batch->id)
+            : collect(); //looped
+        $infoAnak = optional($pendaftaran)->id
+            ? InfoAnak::where('pendaftaran_id', $pendaftaran->id)->first()
+            : null;
+        $dokumenPersyaratan = $infoAnak
+            ? DokumenPersyaratan::where('anak_id', optional($infoAnak)->id)->get()
+            : collect(); //looped
+        $orangTuaWali = $infoAnak
+            ? OrangTuaWali::where('anak_id', optional($infoAnak)->id)->get()
+            : collect(); //looped
+        $buktiBayar = $infoAnak
+            ? BuktiBayar::where('anak_id', optional($infoAnak)->id)->first()
+            : null;
+
+        $data = compact(['user', 'pendaftaran', 'batch', 'syaratDokumen', 'infoAnak', 'dokumenPersyaratan', 'orangTuaWali', 'buktiBayar']);
+        return $key ? ($data[$key] ?? null) : $data ;
+    }
+
+    public function showDashboard(){
+        $user = $this->getData('user');
+        $pendaftaran = $this->getData('pendaftaran');
 
         // Indicator bit
-        if(!$pendaftaran) {
-            return view('pendaftar.dashboard',['formulirLengkap' => false, 'dokumenLengkap' => false, 'buktiBayarLengkap' => false]);
+        if (!$pendaftaran) {
+            return view('pendaftar.dashboard', ['formulirLengkap' => false, 'dokumenLengkap' => false, 'buktiBayarLengkap' => false]);
         }
 
+        /* MOVED TO SERVICE CLASS FOR REUASABILITY
         // Indicator bit: $formulirLengkap check
-        $infoAnak = InfoAnak::where('pendaftaran_id', $pendaftaran->infoAnak->id)->firstOrFail();
-        $orangTuaWali = OrangTuaWali::where('anak_id', optional($infoAnak)->id)->get();
+        $infoAnak = $this->getData('infoAnak');
+        $orangTuaWali = $this->getData('orangTuaWali');
 
         $requiredInfoAnak = [
             'nama_anak', 'panggilan_anak', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir',
@@ -53,36 +80,58 @@ class DashboardController extends Controller
         $formulirLengkap = $infoAnakLengkap && $orangTuaWaliLengkap;
 
         // Indicator bit: $dokumenLengkap check
-        $batch = BatchPPDB::find($pendaftaran->batch_id);
-        $syaratDokumen = SyaratDokumen::where('batch_id', $batch->id)->where('is_wajib', true)->pluck('tipe_dokumen_id');
-        $unggahDokumen = DokumenPersyaratan::where('anak_id', $infoAnak->id)->pluck('tipe_dokumen_id');
-        $dokumenLengkap = $syaratDokumen->diff($unggahDokumen)->isEmpty();
+        $batch = $this->getData('batch');
+        $syaratDokumen = $this->getData('syaratDokumen')->where('is_wajib', true)->pluck('tipe_dokumen_id');
+        $dokumenUnggahan = $this->getData('dokumenPersyaratan')->pluck('tipe_dokumen_id');
+        $dokumenLengkap = $syaratDokumen->diff($dokumenUnggahan)->isEmpty();
 
         // Indicator bit: $buktiBayarLengkap check
-        $buktiBayarLengkap = BuktiBayar::where('anak_id', $infoAnak->id)->exists();
+        $buktiBayarLengkap = optional($this->getData('buktiBayar'))->exists();
 
         // Update $pendaftaran->status jika seluruh requirement Lengkap
-        if($formulirLengkap && $dokumenLengkap && $buktiBayarLengkap && ($pendaftaran->status === 'Belum Lengkap')) {
-            $pendaftaran->status = 'Lengkap';
-            $pendaftaran->save();
+        if ($formulirLengkap && $dokumenLengkap && $buktiBayarLengkap && ($pendaftaran->status === 'Belum Lengkap')) {
+            // $pendaftaran->status = 'Lengkap';
+            // $pendaftaran->save();
+            $pendaftaran->update(['status' => 'Lengkap']);
         }
+        */
+
+        $pendaftaranService = new PendaftaranService;
+        $status = $pendaftaranService->checkStatusPendaftaran($pendaftaran);
+        [
+            'formulirLengkap' => $formulirLengkap,
+            'dokumenLengkap' => $dokumenLengkap,
+            'buktiBayarLengkap' => $buktiBayarLengkap
+        ] = $status;
         $pendaftaran->refresh();
 
-        return view('pendaftar.dashboard',compact('pendaftaran','formulirLengkap', 'dokumenLengkap', 'buktiBayarLengkap'));
+        return view('pendaftar.dashboard', compact('pendaftaran','formulirLengkap', 'dokumenLengkap', 'buktiBayarLengkap'));
     }
 
     public function showProfil(){
-        $user = Auth::user();
+        $user = $this->getData('user');
+        $pendaftaran = $this->getData('pendaftaran');
 
-        $pendaftaran = Pendaftaran::where('user_id', $user->id)->firstOrFail();
-        $infoAnak = InfoAnak::where('pendaftaran_id', $pendaftaran->infoAnak->id)->firstOrFail();
-        $orangTuaWali = OrangTuaWali::where('anak_id', $infoAnak->id)->get();
+        if (!$pendaftaran) {
+            return view('pendaftar.profil', [
+                'user' => $user,
+                'pendaftaran' => null,
+                'infoAnak' => null,
+                'orangTuaWali' => collect(),
+                'syaratDokumen' => collect(),
+                'dokumenPersyaratan' => collect(),
+                'buktiBayar' => null,
+            ]);
+        }
 
-        $batch = BatchPPDB::findOrFail($pendaftaran->batch_id);
-        $syaratDokumen = SyaratDokumen::where('batch_id', $batch->id)->with('tipeDokumen')->get();
-        $dokumenPersyaratan = DokumenPersyaratan::where('anak_id', $infoAnak->id)->get();
-        $buktiBayar = BuktiBayar::where('anak_id', $infoAnak->id)->first();
+        $batch = $this->getData('batch');
+        $syaratDokumen = $this->getData('syaratDokumen')->with('tipeDokumen')->orderBy('id', 'desc')->get();
 
-        return view('pendaftar.profil',compact('user','pendaftaran', 'infoAnak', 'orangTuaWali', 'syaratDokumen', 'dokumenPersyaratan', 'buktiBayar'));
+        $infoAnak = $this->getData('infoAnak');
+        $orangTuaWali = $this->getData('orangTuaWali');
+        $dokumenPersyaratan = $this->getData('dokumenPersyaratan');
+        $buktiBayar = $this->getData('buktiBayar');
+
+        return view('pendaftar.profil', compact('user','pendaftaran', 'infoAnak', 'orangTuaWali', 'syaratDokumen', 'dokumenPersyaratan', 'buktiBayar'));
     }
 }

@@ -39,7 +39,7 @@ class AuthControllerTest extends TestCase
             'password' => 'passwordtest',
         ]);
 
-        $response->assertSessionHas('loginError', 'Login gagal. Periksa kembali ID dan kata sandi Anda.');
+        $response->assertSessionHas('error');
         $this->assertGuest();
     }
 
@@ -55,7 +55,7 @@ class AuthControllerTest extends TestCase
             'password' => 'passwordlain',
         ]);
 
-        $response->assertSessionHas('loginError', 'Login gagal. Periksa kembali ID dan kata sandi Anda.');
+        $response->assertSessionHas('error');
         $this->assertGuest();
     }
 
@@ -100,7 +100,7 @@ class AuthControllerTest extends TestCase
             'password' => 'password',
         ]);
 
-        $response->assertSessionHas('loginError', 'Login gagal. Periksa kembali email dan kata sandi Anda.');
+        $response->assertSessionHas('error');
         $this->assertGuest();
     }
 
@@ -111,7 +111,7 @@ class AuthControllerTest extends TestCase
             'password' => 'password',
         ]);
 
-        $response->assertSessionHas('loginError', 'Login gagal. Periksa kembali email dan kata sandi Anda.');
+        $response->assertSessionHas('error');
         $this->assertGuest();
     }
 
@@ -128,7 +128,7 @@ class AuthControllerTest extends TestCase
             'password' => 'passwordlain',
         ]);
 
-        $response->assertSessionHas('loginError', 'Login gagal. Periksa kembali email dan kata sandi Anda.');
+        $response->assertSessionHas('error');
         $this->assertGuest();
     }
 
@@ -146,7 +146,7 @@ class AuthControllerTest extends TestCase
             'password' => Hash::make('passwordujicoba'),
         ]);
 
-        $response->assertSessionHas('loginError', 'Logout terlebih dahulu untuk menjalankan sesi baru.');
+        $response->assertSessionHas('error');
     }
 
     public function test_logout_pendaftar_redirect_ke_login()

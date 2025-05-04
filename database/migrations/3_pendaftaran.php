@@ -24,7 +24,8 @@ return new class extends Migration
         });
 
         Schema::create('pendaftaran', function (Blueprint $table) {
-            $table->id();
+            $table->string('id')->primary();
+            // $table->id();
             $table->foreignId('batch_id')->constrained('batch_ppdb')->onDelete('cascade');
             $table->string('user_id')->nullable()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -35,7 +36,9 @@ return new class extends Migration
 
         Schema::create('info_anak', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pendaftaran_id')->constrained('pendaftaran')->onDelete('cascade');
+            $table->string('pendaftaran_id')->nullable()->index();
+            $table->foreign('pendaftaran_id')->references('id')->on('pendaftaran')->onDelete('cascade');
+            // $table->foreignId('pendaftaran_id')->constrained('pendaftaran')->onDelete('cascade');
             $table->string('nama_anak');
             $table->string('panggilan_anak');
             $table->string('tempat_lahir');
@@ -52,8 +55,8 @@ return new class extends Migration
             $table->unsignedInteger('saudara_kandung')->nullable();
             $table->unsignedInteger('saudara_tiri')->nullable();
             $table->unsignedInteger('saudara_angkat')->nullable();
-            $table->decimal('berat_badan', 4, 2)->nullable();
-            $table->decimal('tinggi_badan', 5, 2)->nullable();
+            $table->decimal('berat_badan', 5, 2)->unsigned()->nullable();
+            $table->decimal('tinggi_badan', 5, 2)->unsigned()->nullable();
             $table->enum('golongan_darah',['Belum Periksa','O','AB','A','B'])->nullable();
             $table->string('riwayat_penyakit')->nullable();
             // Asal muasal anak

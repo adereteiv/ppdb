@@ -2,22 +2,22 @@
 
 <div id="pendaftar-beranda" class="app-content gap">
     <div class="wrapper">
-        <h3 class="margin-vertical flex"> Status Pendaftaran :&nbsp;<x-status-pendaftaran class="flex align-items-center" :status="$pendaftaran->status ?? null"/>
-        </h3>
-        <div class="stepper">
-            <ul>
-                <li class="{{ $formulirLengkap ? 'active' : '' }}">Formulir Pendaftaran</li>
-                <li class="{{ $dokumenLengkap ? 'active' : '' }}">Dokumen Persyaratan</li>
-                <li class="{{ $buktiBayarLengkap ? 'active' : '' }}">Bukti Pembayaran</li>
-            </ul>
+        <x-partials.app-content-title :hideBackLink="true">
+            <h5>Status Pendaftaran :&nbsp;</h5>
+            <x-status-pendaftaran class="flex align-items-center" :value="$pendaftaran->status ?? null"/>
+        </x-partials.app-content-title>
+        <div class="stepper scrollable content-padding-side-rem content-padding-bottom-rem">
+            <li class="content-padding {{ $formulirLengkap ? 'active' : '' }}">Formulir Pendaftaran</li>
+            <li class="content-padding {{ $dokumenLengkap ? 'active' : '' }}">Dokumen Persyaratan</li>
+            <li class="content-padding {{ $buktiBayarLengkap ? 'active' : '' }}">Bukti Pembayaran</li>
         </div>
     </div>
     <div class="flex gap">
         <div class="wrapper flex-1">
-            <div class="margin-vertical">
-                <h2>Syarat & Ketentuan</h2>
-            </div>
-            <div>
+            <x-partials.app-content-title :hideBackLink="true">
+                <h5>Syarat & Ketentuan</h5>
+            </x-partials.app-content-title>
+            <div class="content-padding-side-rem content-padding-bottom">
                 <ol>
                     <li>Usia anak min. 4 tahun (di bulan XXYY):
                         <ol type="a">
@@ -40,10 +40,10 @@
             </div>
         </div>
         <div class="wrapper flex-1">
-            <div class="margin-vertical">
-                <h2>Prosedur Pendaftaran</h2>
-            </div>
-            <div>
+            <x-partials.app-content-title :hideBackLink="true">
+                <h5>Prosedur Pendaftaran</h5>
+            </x-partials.app-content-title>
+            <div class="content-padding-side-rem content-padding-bottom">
                 <ol>
                     <li>Melakukan registrasi akun dengan menekan tombol 'Daftar Sekarang' pada halaman beranda;</li>
                     <li>Silakan mengakses Dashboard Anda dengan melakukan Log In terlebih dahulu;</li>

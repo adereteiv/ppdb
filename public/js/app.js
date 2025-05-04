@@ -1,16 +1,15 @@
-import { fetchContent, alert, copyToClipboard } from './misc.js';
-import ModalControl from "./modal.js";
-import { togglePindahanBit, toggleRequiredFields, toggleKelompokUmur, initAdjustPhoneInput, initGelombangSelection } from './form.js';
-import { appendSyaratDokumen } from './syaratDokumen.js';
+import { fetchContent, alert, copyToClipboard, tooltip, toggleStaticOpen } from './misc.js';
+import modalControl from "./modal.js";
+import { togglePindahanBit, toggleRequiredFields, toggleKelompokUmur, initAdjustPhoneInput, initGelombangSelection, appendSyaratDokumen, initAutosave } from './form.js';
+import { restoreTableState } from './table.js';
 
 document.addEventListener("DOMContentLoaded", function () {
-    // [✓] Works
-    alert();
-
-    // [✓] Works, put app.js to x-layouts.home-layout
-    copyToClipboard();
-
-    // [✓] Works
+    /** misc.js
+     * [✓] fetchContent, related to modal
+     * [✓] alert
+     * [✓] copyToClipboard
+     * [✓] tooltip
+     */
     document.body.addEventListener("click", async function (event) {
         if (event.target.matches(".load-content")) {
             event.preventDefault();
@@ -19,61 +18,74 @@ document.addEventListener("DOMContentLoaded", function () {
             await fetchContent(url, target);
         }
     });
+    alert();
+    copyToClipboard();
+    tooltip();
+    toggleStaticOpen();
 
-    // [✓] Works
+    /** table.js
+     * [✓] restoreTableState
+     */
+
+    if (window.location.pathname === '/admin/ppdb/aktif' || window.location.pathname === '/admin/ppdb/arsip' ) {
+        restoreTableState();
+    }
+
+    /** modal.js
+     * [✓] modalControl.loadModalContent, use fetchContent()
+     * [✓] modalControl.open
+     * [✓] modalControl.close
+     * [✓] modalControl.closeOnClick
+     */
     document.body.addEventListener("click", async function (event) {
         const modalUrl = event.target.closest("[data-url]")?.dataset.url;
         if (modalUrl) {
             event.preventDefault();
-            ModalControl.loadModalContent(modalUrl);
+            modalControl.loadModalContent(modalUrl);
             return;
         }
 
         const modalContent = event.target.closest("[data-content]")?.dataset.content;
         if (modalContent) {
             event.preventDefault();
-            ModalControl.open(modalContent);
+            modalControl.open(modalContent);
             return;
         }
 
         if (event.target.closest(".modal-button")) {
-            ModalControl.close();
+            modalControl.close();
             return;
         }
 
         if (event.target.matches(".modal")) {
-            ModalControl.closeOnClick(event);
+            modalControl.closeOnClick(event);
             return;
         }
     });
 
-    // [✓] Works
+    /** form.js
+     * [✓] togglePindahanBit
+     * [✓] toggleRequiredFields
+     * [✓] toggleKelompokUmur
+     * [✓] initAdjustPhoneInput
+     * [✓] initGelombangSelection
+     * [✓] appendSyaratDokumen
+     */
     document.querySelectorAll('input[name="mendaftar_sebagai"]').forEach(radio => {
         radio.addEventListener("change", togglePindahanBit);
     });
-    // togglePindahanBit();
-
-    // [✓] Works
     document.querySelectorAll('input[name="yang_mendaftarkan"]').forEach(radio => {
         radio.addEventListener("change", toggleRequiredFields);
     });
-    // toggleRequiredFields();
-
-    // [✓] Works
     toggleKelompokUmur();
-
-    // [✓] Works
     initAdjustPhoneInput();
-
-    // [✓] Works
     initGelombangSelection();
-
-    // [] Works
     document.body.addEventListener('submit', function (event) {
         if (event.target.matches('#tambahSyaratDokumenForm')) {
             event.preventDefault();
             appendSyaratDokumen(event.target);
         }
     });
+    initAutosave();
 });
 

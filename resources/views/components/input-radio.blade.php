@@ -1,11 +1,14 @@
 @props(['name', 'options', 'value' => ''])
 
-@foreach ($options as $option)
-    <label>
-        <input type="radio" name="{{ $name }}" {{ $attributes->merge(['class'=>'form-item',]) }} value="{{ $option }}" {{ old($name, $value) === $option ? 'checked' : '' }}/>
-        {{ $option }}
-    </label>&nbsp;
-@endforeach
+<div class="flex gap-rem">
+    @foreach ($options as $option)
+        <label class="flex flex-center">
+            {{-- <input type="radio" name="{{ $name }}" {{ $attributes->merge(['class'=>'form-item',]) }} value="{{ $option }}" {{ old($name, $value) === $option ? 'checked' : '' }}/> --}}
+            <input type="radio" name="{{ $name }}" value="{{ $option }}" {{ old($name, $value) === $option ? 'checked' : '' }} {{ $attributes }}/>
+            &nbsp;<span>{{ $option }}</span>
+        </label>
+    @endforeach
+</div>
 
 @error($name)
 <br><p style="color: red">{{ $message }}</p>

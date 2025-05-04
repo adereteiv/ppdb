@@ -1,12 +1,12 @@
-import { fetchContent } from "./misc.js";
+import { fetchContent, toggleShow } from "./misc.js";
 
 /**
  *  Modal
  * Use [data-url] and [data-content] to pass data
 */
-const ModalControl = {
-    get modal() {return document.querySelector('.modal');},
-    get modalBody() {return document.querySelector('.modal-body');},
+const modalControl = {
+    get modal() {return document.querySelector('#data-modal');},
+    get modalBody() {return this.modal.querySelector('.modal-body');},
     focusElement: [],
     keydownListener: null,
 
@@ -17,10 +17,10 @@ const ModalControl = {
             this.open(content);
         }
     },
-    // [✓] Show the modal
+    // [✓] Show modal
     open(content = '') {
         this.modalBody.innerHTML = content;
-        this.modal.style.display = 'flex';
+        toggleShow(this.modal, true);
         this.trapFocus();
 
         this.boundCloseOnClick = this.closeOnClick.bind(this);
@@ -28,9 +28,9 @@ const ModalControl = {
         this.keydownListener = this.handleKeyDown.bind(this);
         document.addEventListener('keydown', this.keydownListener);
     },
-    // [✓] Close with button call
+    // [✓] Close modal
     close() {
-        this.modal.style.display = 'none';
+        toggleShow(this.modal, false);
         this.modalBody.innerHTML = '';
 
         if (this.keydownListener) {
@@ -63,17 +63,17 @@ const ModalControl = {
         let lastElement = this.focusElement[this.focusElement.length-1];
 
         if (event.key == 'Tab') {
-            if(event.shiftKey && document.activeElement === firstElement) {
+            if (event.shiftKey && document.activeElement === firstElement) {
                 event.preventDefault();
                 lastElement.focus();
             } else if (!event.shiftKey && document.activeElement === lastElement) {
                 event.preventDefault();
                 firstElement.focus();
             }
-        } else if(event.key == 'Escape') {
+        } else if (event.key == 'Escape') {
             this.close();
         }
     }
 };
 
-export default ModalControl;
+export default modalControl;

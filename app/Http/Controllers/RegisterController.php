@@ -6,12 +6,11 @@ use App\Models\User;
 use App\Models\InfoAnak;
 use App\Models\BatchPPDB;
 use App\Models\Pendaftaran;
-use Illuminate\Support\Str;
+use App\Notifications\KirimUserIDNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\RateLimiter;
-use App\Notifications\KirimUserIDNotification;
 
 class RegisterController extends Controller
 {
@@ -39,43 +38,44 @@ class RegisterController extends Controller
         }
 
         $request->validate([
-            'email' => ['required','email:rfc,dns,spoof,strict,indisposable','regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|edu|id|gov|co\.id)$/i',],
-            'password' => 'required|confirmed|min:8|max:255',
-            'nama_anak' => 'required|string|max:255',
-            'panggilan_anak' => 'required|string|max:255',
-            'tempat_lahir' => 'required|string',
-            'tanggal_lahir' => [
-                'required','date',
-                'before_or_equal:' . now()->subYears(4)->toDateString(),
-                'after:' . now()->subYears(7)->toDateString(),
+                'email'             => ['required','email:rfc,dns,spoof,strict,indisposable','regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|edu|id|gov|co\.id)$/i',],
+                'password'          => 'required|confirmed|min:8|max:60',
+                'nama_anak'         => 'required|string|max:255|regex:/^[a-zA-Z-\s]+$/',
+                'panggilan_anak'    => 'required|string|max:30|regex:/^[a-zA-Z-\s]+$/',
+                'tempat_lahir'      => 'required|string',
+                'tanggal_lahir'     => [
+                                        'required','date',
+                                        'before_or_equal:' . now()->subYears(4)->toDateString(),
+                                        'after:' . now()->subYears(7)->toDateString(),
+                                    ],
+                'alamat_anak'       => 'required|string|max:255',
             ],
-            'alamat_anak' => 'required|string',
-        ],
-        [
-            'email.email' => 'Mohon masukkan format email yang benar.',
-            'email.regex' => 'Hanya domain .com, .edu, .id, .gov, atau .co.id yang diperbolehkan.',
-            'email.indisposable' => 'Harap masukkan alamat email Anda yang sebenarnya.',
-            'password.confirmed' => 'Kata sandi tidak cocok.',
-            'tanggal_lahir.before_or_equal' => 'Anak harus berusia minimal 4 tahun.',
-            'tanggal_lahir.after' => 'Usia anak maksimal berada di bawah 7 tahun.',
-        ],
+            [
+                'email.required'                => 'Email wajib diisi.',
+                'email.email'                   => 'Mohon masukkan format email yang benar.',
+                'email.regex'                   => 'Hanya domain .com, .edu, .id, .gov, atau .co.id yang diperbolehkan.',
+                'email.indisposable'            => 'Harap masukkan alamat email Anda yang sebenarnya.',
+                'password.required'             => 'Kata sandi wajib diisi.',
+                'password.min'                  => 'Kata sandi minimal 8 karakter.',
+                'password.max'                  => 'Kata sandi melebihi batas maksimal 60 karakter.',
+                'password.confirmed'            => 'Kata sandi tidak cocok.',
+                'nama_anak.required'            => 'Wajib diisi.',
+                'nama_anak.max'                 => 'Melebihi batas maksimal 255 karakter.',
+                'nama_anak.regex'               => 'Hanya huruf Aa-Zz dan tanda hubung (-) yang diperbolehkan.',
+                'panggilan_anak.required'       => 'Wajib diisi.',
+                'panggilan_anak.max'            => 'Melebihi batas maksimal 30 karakter.',
+                'panggilan_anak.regex'          => 'Hanya huruf Aa-Zz dan tanda hubung (-) yang diperbolehkan.',
+                'tanggal_lahir.required'        => 'Wajib diisi.',
+                'tanggal_lahir.before_or_equal' => 'Anak harus berusia minimal 4 tahun.',
+                'tanggal_lahir.after'           => 'Usia anak maksimal berada di bawah 7 tahun.',
+                'alamat_anak.required'          => 'Alamat wajib diisi.',
+                'alamat_anak.max'               => 'Melebihi batas maksimal 255 karakter.'
+            ],
         );
 
-        $key = 'register:' . $request->ip();
-        // RateLimiter::clear($key);
-
-        if(RateLimiter::tooManyAttempts($key, 1)) {
-            $retryAfter = RateLimiter::availableIn($key);
-            $time = ceil($retryAfter/60);
-            $message = "Anda mencoba melakukan terlalu banyak pendaftaran. Harap coba lagi dalam {$time} menit";
-            return back()->with('error', $message)->withInput();
-        }
-
         $sanitize = [
-            /*Commit 10*/
             'nama_anak' => Str::title(preg_replace('/\s+/', ' ', trim(strip_tags($request->input('nama_anak'))))),
             'panggilan_anak' => Str::title(preg_replace('/\s+/', ' ', trim(strip_tags($request->input('panggilan_anak'))))),
-            // 'panggilan_anak' => ucwords(strtolower(trim($request->input('panggilan_anak')))),
             'email' => strtolower(trim($request->input('email'))),
         ];
 
@@ -100,17 +100,7 @@ class RegisterController extends Controller
         ]);
 
         $user->notify(new KirimUserIDNotification($user->id));
-
         Session::flash('user_id', $user->id);
-
-        /* Commit 9*/
-        $attempts = RateLimiter::attempts($key) + 1;
-        $window = 5;
-        if ($attempts > 1) {
-            $extraAttempts = $attempts - 1;
-            $window = pow(2, min($extraAttempts, 6)) * 10;
-        }
-        RateLimiter::hit($key, $window * 60);
 
         return redirect('/login')->with('success', 'Registrasi akun berhasil!');
     }
