@@ -15,7 +15,7 @@
                 <h5>Arsip PPDB</h5>
                 <div>
                     @if ($arsipPPDB->isNotEmpty())
-                        <form action="/admin/ppdb" method="POST" class="flex flex-col gap">@csrf
+                        <form action="{{ route('admin.ppdb.arsipKey') }}" method="POST" class="flex flex-col gap">@csrf
                             <div>
                                 <x-input-select name="periode" :options="$arsipOptions" :value="request()->cookie('arsip_key')"/>
                             </div>
@@ -31,7 +31,7 @@
                 <h5>PPDB Aktif</h5>
                 <div>
                     @if ($aktifPPDB)
-                        <a href="/admin/ppdb/aktif" class="tombol-besar tombol-netral">Periode {{ $aktifPPDB->tahun_ajaran }} - Gel. {{ $aktifPPDB->gelombang }}</a>
+                        <a href="{{ route('admin.ppdb.aktif.index') }}" class="tombol-besar tombol-netral">Periode {{ $aktifPPDB->tahun_ajaran }} - Gel. {{ $aktifPPDB->gelombang }}</a>
                     @else
                         <button class="tombol-besar tombol-netral">Rekam PPDB aktif tidak ditemukan</button>
                     @endif
@@ -41,7 +41,7 @@
             <div class="flex flex-col gap content-padding-vertical">
                 <h5>Buka PPDB Baru</h5>
                 <div>
-                    <a href="/admin/ppdb/buat" class="tombol-besar tombol-netral">Buat Baru</a>
+                    <a href="{{ route('admin.ppdb.buat.index') }}" class="tombol-besar tombol-netral">Buat Baru</a>
                 </div>
             </div>
         </div>

@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
      * [✓] restoreTableState
      */
 
-    if (window.location.pathname === '/admin/ppdb/aktif' || window.location.pathname === '/admin/ppdb/arsip' ) {
+    if (window.location.pathname === '/admin/ppdb/aktif' || window.location.pathname === '/admin/ppdb/arsip' || window.location.pathname === '/admin/pengumuman' ) {
         restoreTableState();
     }
 

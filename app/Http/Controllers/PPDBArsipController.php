@@ -6,9 +6,10 @@ use App\Models\BatchPPDB;
 use App\Models\BuktiBayar;
 use App\Models\Pendaftaran;
 use App\Models\OrangTuaWali;
-use Illuminate\Http\Request;
 use App\Models\SyaratDokumen;
 use App\Models\DokumenPersyaratan;
+use App\Services\DataTableService;
+use Illuminate\Http\Request;
 
 class PPDBArsipController extends Controller
 {
@@ -32,8 +33,7 @@ class PPDBArsipController extends Controller
         $batch = $this->getArsipKey();
         $pendaftaran = $batch // for sorting
             ? Pendaftaran::where('batch_id', $batch->id) // query builder instance
-                ->leftJoin('info_anak', 'pendaftaran.id', '=', 'info_anak.pendaftaran_id') // join table, include related data, eager load infoAnak
-                ->select('pendaftaran.*') // link it to Pendaftaran model
+                ->with('infoAnak') // link it to infoAnak
             : collect(); //looped
         $syaratDokumen = $batch
             ? SyaratDokumen::where('batch_id', $batch->id)->with('tipeDokumen')->orderBy('id', 'desc')->get()
@@ -47,6 +47,39 @@ class PPDBArsipController extends Controller
         $batch = $this->getData('batch');
         if (!$batch) {return response(404);}
 
+        $dataTable = new DataTableService;
+        $data = $dataTable->initDataTable(
+            $request,
+            $this->getData('pendaftaran'),
+            ['created_at', 'id', 'nama_anak', 'status'],
+            function($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('pendaftaran.id', 'LIKE', "%{$search}%")
+                      ->orWhereHas('infoAnak', function ($q) use ($search) {
+                          $q->where('nama_anak', 'LIKE', "%{$search}%");
+                      });
+                });
+            },
+            function($query, $sort, $order) {
+                switch($sort){
+                    case 'status':
+                        $statusOrder = $order === 'desc'
+                            ? ['Belum Lengkap', 'Lengkap', 'Terverifikasi']
+                            : ['Terverifikasi', 'Lengkap', 'Belum Lengkap'];
+                        $query->orderByRaw("FIELD(status, '" . implode("','", $statusOrder) . "')");
+                        break;
+                    case 'nama_anak':
+                        $query->leftJoin('info_anak', 'pendaftaran.id', '=', 'info_anak.pendaftaran_id') // join table, include related data, eager load infoAnak
+                            ->orderBy('info_anak.nama_anak', $order)
+                            ->select('pendaftaran.*');
+                        break;
+                    default:
+                        $query->orderBy($sort, $order);
+                        break;
+                }
+            }
+        );
+        /*
         $query = $this->getData('pendaftaran');
 
         $perPage = $request->input('perPage', 10);
@@ -74,13 +107,15 @@ class PPDBArsipController extends Controller
                 : ['Terverifikasi', 'Lengkap', 'Belum Lengkap'];
             $query->orderByRaw("FIELD(status, '" . implode("','", $statusOrder) . "')");
         } elseif ($sort === 'nama_anak') {
-            $query->orderBy('info_anak.nama_anak', $order)->select('pendaftaran.*');
+            $query->leftJoin('info_anak', 'pendaftaran.id', '=', 'info_anak.pendaftaran_id') // join table, include related data, eager load infoAnak
+                ->orderBy('info_anak.nama_anak', $order)
+                ->select('pendaftaran.*');
         } else {
             $query->orderBy($sort, $order);
         }
 
         $data = $query->paginate($perPage)->appends($request->all());
-
+        */
         return response()->json([ // Server-side render
             'html' => view('admin.ppdb-arsip', compact('data'))->render(),
 			'pagination' => $data->links('components.my-pagination')->render(),
@@ -153,7 +188,7 @@ class PPDBArsipController extends Controller
             $batch->delete(); // allow skip to enable status change, residue from pendaftaran delete but works just okay
         }
 
-        return redirect()->route('ppdb.')->with('success', 'Data berhasil dihapus.');
+        return redirect()->route('admin.ppdb.index')->with('success', 'Data berhasil dihapus.');
     }
 
     /**

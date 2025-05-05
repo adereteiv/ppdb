@@ -31,19 +31,23 @@ class Pendaftaran extends Model
             $gelombang = $batch->gelombang;
             $prefix = $tahunAjaran . $gelombang;
 
-            $latestId = self::where('id', 'like', "$prefix%")
-                ->orderByDesc('id')
-                ->value('id');
+            do{ //Refined using do-while block, refer to Models/User
+                $latestId = self::where('id', 'like', "$prefix%")
+                    ->orderByDesc('id')
+                    ->value('id');
 
-            if ($latestId) {
-                $lastNumber = (int) substr($latestId, -3);
-                $nextNumber = $lastNumber + 1;
-            } else {
-                $nextNumber = 1;
-            }
+                if ($latestId) {
+                    $lastNumber = (int) substr($latestId, -3);
+                    $nextNumber = $lastNumber + 1;
+                } else {
+                    $nextNumber = 1;
+                }
 
-            $sequence = str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-            $pendaftaran->id = $prefix . $sequence;
+                $sequence = str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+                $newId = $prefix . $sequence;
+            } while ((self::where('id', $newId)->exists()));
+
+            $pendaftaran->id = $newId;
         });
     }
 

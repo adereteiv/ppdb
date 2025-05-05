@@ -53,6 +53,6 @@ class DashboardAdminController extends Controller
         $key = $request->validate(['periode' => 'string|required']);
         Cookie::queue('arsip_key', $key['periode'], 60 * 24 * 7); // 7 days
 
-        return redirect()->route('ppdb.arsip.index');
+        return redirect()->route('admin.ppdb.arsip.index');
     }
 }

@@ -10,7 +10,7 @@
         <hr style="border: 1px solid rgba(0, 0, 0, .15); margin: 0 1rem;">
         <div class="scrollable">
             <div class="content-padding-side-rem constrict">
-                <form id="docsForm" method="POST" action="/pendaftar/dokumen" enctype="multipart/form-data"> @method('PUT') @csrf
+                <form id="docsForm" method="POST" action="{{ route('pendaftar.dokumen.update') }}" enctype="multipart/form-data"> @method('PUT') @csrf
                     @foreach ($syaratDokumen as $syarat)
                         @php $dokumen = $dokumenPersyaratan?->where('tipe_dokumen_id', $syarat->tipe_dokumen_id)->first(); @endphp
                         <div class="margin-vertical">

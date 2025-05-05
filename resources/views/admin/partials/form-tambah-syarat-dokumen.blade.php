@@ -1,4 +1,4 @@
-<form id="tambahSyaratDokumenForm" method="POST" action="{{ url('/admin/ppdb/buat/syarat-dokumen') }}">@csrf
+<form id="tambahSyaratDokumenForm" method="POST" action="{{ route('admin.ppdb.buat.syaratDokumen.store') }}">@csrf
     <div class="content-padding-rem">
         <x-inputbox class="padding-10" for="dokumen">
             <x-slot:label><h6>Tambah Syarat Dokumen Baru</h6></x-slot>

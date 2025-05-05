@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
@@ -120,6 +121,7 @@ class AuthController extends Controller
 
         session()->invalidate();
         session()->regenerateToken();
+        Cookie::queue(Cookie::forget('arsip_key'));
 
         return redirect($user?->role_id == 1 ? '/pintuadmin' : '/login');
     }

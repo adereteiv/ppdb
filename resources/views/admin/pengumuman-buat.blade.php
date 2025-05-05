@@ -9,28 +9,24 @@
         {{-- <div class="content-title margin-vertical">Buat Pengumuman</div> --}}
         <div class="content-padding-rem">
             <div class="constrict">
-                <form method="POST" action="/admin/pengumuman/buat">@csrf
+                <form method="POST" action="{{ route('admin.pengumuman.store') }}" enctype="multipart/form-data">@csrf
                     <div>
                         <x-inputbox class="padding-10" for="judul">
-                            <x-slot:label><h6 class="flex">Judul Pengumuman</h6></x-slot>
+                            <x-slot:label><b class="flex">Judul Pengumuman</b></x-slot>
                             <x-input type="text" name="judul" required/>
                         </x-inputbox>
-
                         <x-inputbox class="padding-10" for="keterangan">
-                            <x-slot:label><h6 class="flex">Keterangan Pengumuman</h6></x-slot:label>
+                            <x-slot:label><b class="flex">Keterangan Pengumuman</b></x-slot:label>
                             <x-input-textarea name="keterangan" rows="5" placeholder="" required/>
                         </x-inpubox>
-
-                        <x-inputbox-file label="Dokumen Pelengkap" fileType="pelengkap"/>
-
-                        <x-inputbox class="padding-10" for="jadwal_pengumuman">
-                            <x-slot:label><h6 class="flex">Jadwalkan<font class="subtext" color="#FF6D00">(opsional)</font>
-                            </h6></x-slot:label>
-                            <x-input type="datetime-local" name="jadwal_pengumuman" placeholder=""/>
+                        <x-inputbox-file label="Dokumen Pelengkap" fileType="lampiran"/>
+                        <x-inputbox class="padding-10" for="jadwal_posting">
+                            <x-slot:label><b class="flex">Jadwalkan<font class="subtext" color="#FF6D00">(opsional)</font></b></x-slot:label>
+                            <x-input type="datetime-local" name="jadwal_posting" placeholder=""/>
                         </x-inputbox>
                     </div>
                     <div class="content-padding-vertical text-align-center">
-                        <input id="" class="tombol-besar tombol-netral" type="submit" value="Buat Pengumuman">
+                        <input class="tombol-besar tombol-netral" type="submit" value="Buat Pengumuman">
                     </div>
                 </form>
             </div>

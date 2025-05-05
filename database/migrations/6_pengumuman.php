@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('posted_by')->references('id')->on('users')->onDelete('restrict');
             $table->string('judul');
             $table->text('keterangan');
-            $table->string('file_path');
+            $table->string('file_path')->nullable();
             $table->datetime('jadwal_posting');
             $table->timestamps();
         });

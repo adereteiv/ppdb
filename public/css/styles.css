@@ -112,7 +112,7 @@ p{font: var(--p);}
 .scrollable{overflow: auto;}
 .overflow-hidden{overflow: hidden;}
 
-.cursor-pointer{cursor: pointer;}
+.cursor-pointer, .sortable{cursor: pointer;}
 
 /* --- !color-related items--- */
 .teks-negatif{color: var(--red);}
@@ -1245,11 +1245,11 @@ table.fixed{
     td:nth-child(5){text-overflow: clip;}
 }
 .pengumuman-riwayat{
-    col:first-child{width: 3%;}
-    col:nth-child(2){width: 15%;}
-    col:nth-child(3){width: 50%;}
-    col:nth-child(4){width: 10%;}
-    col:last-child{width: 10%;}
+    col:first-child{width: 16px;}
+    col:nth-child(2){width: 150px;}
+    col:nth-child(3){width: 150px;}
+    col:nth-child(4){width: 150px;}
+    col:last-child{width: 80px;}
 }
 .ppdb-list-table, .pengumuman-riwayat{
     th:first-child,td:first-child{

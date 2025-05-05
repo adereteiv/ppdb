@@ -34,12 +34,12 @@ Route::get('/pintuadmin', [AuthController::class, 'showAdminLogin']);
 Route::post('/pintuadmin', [AuthController::class, 'loginAdmin']);
 
 Route::middleware('auth.secure')->group(function () {
-    Route::prefix('admin')->middleware('role:1')->group(function () {
-        Route::get('/dashboard', [DashboardAdminController::class, 'showDashboard']);
+    Route::prefix('admin')->middleware('role:1')->name('admin.')->group(function () {
+        Route::get('/dashboard', [DashboardAdminController::class, 'showDashboard'])->name('dashboard');
 
         Route::prefix('/ppdb')->name('ppdb.')->group(function (){
-            Route::get('/', [DashboardAdminController::class, 'showPPDB']);
-            Route::post('/', [DashboardAdminController::class, 'setArsipKey']);
+            Route::get('/', [DashboardAdminController::class, 'showPPDB'])->name('index');
+            Route::post('/', [DashboardAdminController::class, 'setArsipKey'])->name('arsipKey');
 
             Route::prefix('/arsip')->name('arsip.')->group(function() {
                 Route::get('/data', [PPDBArsipController::class, 'passData'])->middleware('throttle:30,1')->name('data'); // Route for AJAX request
@@ -55,33 +55,33 @@ Route::middleware('auth.secure')->group(function () {
                 Route::resource('/', PPDBAktifController::class)->parameters(['' => 'id']);
             });
 
-            Route::prefix('/buat')->group(function (){
-                Route::get('/', [BatchPPDBController::class, 'index']);
-                Route::post('/', [BatchPPDBController::class, 'store']);
-                Route::get('/syarat-dokumen', [SyaratDokumenController::class, 'create']);
-                Route::post('/syarat-dokumen', [SyaratDokumenController::class, 'store']);
+            Route::prefix('/buat')->name('buat.')->group(function (){
+                Route::get('/', [BatchPPDBController::class, 'index'])->name('index');
+                Route::post('/', [BatchPPDBController::class, 'store'])->name('store');
+                Route::get('/syarat-dokumen', [SyaratDokumenController::class, 'create'])->name('syaratDokumen');
+                Route::post('/syarat-dokumen', [SyaratDokumenController::class, 'store'])->name('syaratDokumen.store');
             });
         });
 
-        Route::prefix('/pengumuman')->group(function (){
-            Route::get('/', [KelolaPengumumanController::class, 'index']);
-            Route::get('/buat', [KelolaPengumumanController::class, 'create']);
-            Route::post('/buat', [KelolaPengumumanController::class, 'store']);
+        Route::prefix('/pengumuman')->name('pengumuman.')->group(function (){
+            Route::get('/', [KelolaPengumumanController::class, 'index'])->name('index');
+            Route::get('/data', [KelolaPengumumanController::class, 'passData'])->middleware('throttle:30,1')->name('data');;
+            Route::resource('/', KelolaPengumumanController::class)->parameters(['' => 'id'])->except(['edit', 'update']);
         });
     });
 
-    Route::prefix('pendaftar')->middleware(['role:2'])->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'showDashboard']);
-        Route::get('/profil', [DashboardController::class, 'showProfil']);
+    Route::prefix('pendaftar')->middleware(['role:2'])->name('pendaftar.')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'showDashboard'])->name('dashboard');
+        Route::get('/profil', [DashboardController::class, 'showProfil'])->name('profil');
 
-        Route::get('/formulir', [PendaftarFormController::class, 'index']);
-        Route::put('/formulir', [PendaftarFormController::class, 'update']);
+        Route::get('/formulir', [PendaftarFormController::class, 'index'])->name('formulir');
+        Route::put('/formulir', [PendaftarFormController::class, 'update'])->name('formulir.update');
 
-        Route::get('/dokumen', [PendaftarUnggahDokumenController::class, 'index']);
-        Route::put('/dokumen', [PendaftarUnggahDokumenController::class, 'update']);
+        Route::get('/dokumen', [PendaftarUnggahDokumenController::class, 'index'])->name('dokumen');
+        Route::put('/dokumen', [PendaftarUnggahDokumenController::class, 'update'])->name('dokumen.update');
 
-        Route::get('/buktibayar', [PendaftarUnggahBuktiBayarController::class, 'index']);
-        Route::put('/buktibayar', [PendaftarUnggahBuktiBayarController::class, 'update']);
+        Route::get('/buktibayar', [PendaftarUnggahBuktiBayarController::class, 'index'])->name('buktiBayar');
+        Route::put('/buktibayar', [PendaftarUnggahBuktiBayarController::class, 'update'])->name('buktiBayar.update');
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

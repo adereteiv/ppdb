@@ -26,9 +26,16 @@ export async function fetchData(overrideParams = {}) {
 	tableState = { ...tableState, ...overrideParams };
 
     const query = new URLSearchParams(tableState).toString();
-    const url = window.location.pathname === '/admin/ppdb/aktif'
-        ? `/admin/ppdb/aktif/data?${query}`
-        : `/admin/ppdb/arsip/data?${query}`;
+    // const url = window.location.pathname === '/admin/ppdb/aktif'
+    //     ? `/admin/ppdb/aktif/data?${query}`
+    //     : `/admin/ppdb/arsip/data?${query}`;
+    const urlMapping = {
+        '/admin/ppdb/aktif': '/admin/ppdb/aktif/data',
+        '/admin/ppdb/arsip': '/admin/ppdb/arsip/data',
+        '/admin/pengumuman': '/admin/pengumuman/data'
+    };
+    const base = urlMapping[window.location.pathname];
+    const url = base ? `${base}?${query}` : null;
 
     const response = await fetchContent(url);
 
@@ -60,7 +67,7 @@ function renderTable(html) {
         const text = activeHeader.textContent.trim().replace(/[↑↓]/g, '');
 		const arrow = tableState.order === "asc" ? "↑" : "↓";
 	    activeHeader.setAttribute("data-order", tableState.order);
-	    activeHeader.innerHTML = `${text} ${arrow}`;
+	    activeHeader.innerHTML = `${arrow} ${text}`;
 	}
 }
 
@@ -119,7 +126,7 @@ function tableInteractions() {
             const text = header.textContent.trim().replace(/[↑↓]/g, '');
             const arrow = newOrder === "asc" ? "↑" : "↓";
             header.setAttribute("data-order", newOrder);
-            header.innerHTML = `${text} ${arrow}`;
+            header.innerHTML = `${arrow} ${text}`;
 
             fetchData({ sort, order: newOrder, page: 1 });
         });

@@ -9,7 +9,7 @@
         <hr style="border: 1px solid rgba(0, 0, 0, .15); margin: 0 1rem;">
         <div class="content-padding-side-rem content-padding-bottom-rem">
             <div class="constrict">
-                <form method="POST" action="{{ route('ppdb.aktif.store') }}" enctype="multipart/form-data">@csrf
+                <form method="POST" action="{{ route('admin.ppdb.aktif.store') }}" enctype="multipart/form-data">@csrf
                     <div class="biodata scrollable">
                         {{-- Form User --}}
                         <div>

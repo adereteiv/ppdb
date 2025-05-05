@@ -9,7 +9,7 @@
         <x-partials.app-content-title :hideBackLink="true"><h6>Unggah Bukti Pembayaran</h6></x-partials.app-content-title>
         <hr style="border: 1px solid rgba(0, 0, 0, .15); margin: 0 1rem;">
         <div class="content-padding-side-rem constrict">
-            <form id="payForm" method="POST" action="/pendaftar/buktibayar" enctype="multipart/form-data"> @method('PUT') @csrf
+            <form id="payForm" method="POST" action="{{ route('pendaftar.buktiBayar.update') }}" enctype="multipart/form-data"> @method('PUT') @csrf
                 <div class="margin-vertical">
                     <x-inputbox-file
                         label="Bukti Bayar"

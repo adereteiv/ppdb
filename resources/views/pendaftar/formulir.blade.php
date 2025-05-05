@@ -9,7 +9,7 @@
         <x-partials.app-content-title :hideBackLink="true"><h6>Formulir Pendaftaran</h6></x-partials.app-content-title>
         <hr style="border: 1px solid rgba(0, 0, 0, .15); margin: 0 1rem;">
         <div class="content-padding content-padding-side-rem">
-            <form id="mainForm" method="POST" action="/pendaftar/formulir">@csrf @method('PUT')
+            <form id="mainForm" method="POST" action="{{ route('pendaftar.formulir') }}">@csrf @method('PUT')
                 <div class="biodata flex gap">
                     <div class="flex-1 content-padding-side-rem">
                         <div class="flex flex-col">

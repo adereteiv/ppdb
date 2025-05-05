@@ -12,10 +12,10 @@
             <x-slot:title>
                 @if ($batch->status)
                     <h6>Kelola Pendaftaran Aktif</h6></x-slot:title>
-                    <a class="sublink tombol-none" href="/admin/ppdb/aktif/rincian">
+                    <a class="sublink tombol-none" href="{{ route('admin.ppdb.aktif.rincian') }}">
                 @else
                     <h6>Kelola Arsip Pendaftaran</h6></x-slot:title>
-                    <a class="sublink tombol-none" href="/admin/ppdb/arsip/rincian">
+                    <a class="sublink tombol-none" href="{{ route('admin.ppdb.arsip.rincian') }}">
                 @endif
                 <span class="norm tooltip" tooltip="top">
                     <i>PPDB {{ $batch->tahun_ajaran }} Gel. {{ $batch->gelombang }}</i>
@@ -39,7 +39,7 @@
                     </button>
                 @if ($batch->status)
                     <!-- create -->
-                    <a href="{{ route('ppdb.aktif.create') }}" class="tombol tombol-netral tooltip" tooltip="top">
+                    <a href="{{ route('admin.ppdb.aktif.create') }}" class="tombol tombol-netral tooltip" tooltip="top">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20" width="20"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
                         <div class="tooltiptext">Tambah</div>
                     </a>

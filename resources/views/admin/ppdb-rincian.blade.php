@@ -27,14 +27,14 @@
                     </a>
                     @if ($batch->status)
                     <!-- PPDB-Aktif Only -->
-                    <form action="{{ route('ppdb.aktif.tutup') }}" method="POST"> @csrf
+                    <form action="{{ route('admin.ppdb.aktif.tutup') }}" method="POST"> @csrf
                         <button type="submit" class="dropdown-menu tombol-none margin-unset" onclick="return confirm('Yakin ingin menutup gelombang ini? (Tindakan tidak dapat diurung!)')">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20" width="20"><path d="M438-226 296-368l58-58 84 84 168-168 58 58-226 226ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
                             <span class="padding-left-10">Tutup PPDB</span>
                         </button>
                     @else
                     <!-- PPDB-Arsip Only , harus ditutup dulu baru bisa delete -->
-                    <form action="{{ route('ppdb.arsip.destroy', $batch->id) }}" method="POST"> @csrf
+                    <form action="{{ route('admin.ppdb.arsip.destroy', $batch->id) }}" method="POST"> @csrf
                         <button type="submit" class="dropdown-menu tombol-none margin-unset">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20" width="20"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
                             <span class="padding-left-10">Hapus PPDB</span>
