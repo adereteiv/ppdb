@@ -26,8 +26,7 @@ class PPDBAktifController extends Controller
     private function getData($key = null)
     {
         $batch = BatchPPDB::where('status', true)->firstOrFail();
-        // for sorting
-        $pendaftaran = $batch
+        $pendaftaran = $batch // for sorting
             ? Pendaftaran::where('batch_id', $batch->id) // query builder instance
                 ->leftJoin('info_anak', 'pendaftaran.id', '=', 'info_anak.pendaftaran_id') // join table, include related data, eager load infoAnak
                 ->select('pendaftaran.*') // link it to Pendaftaran model
@@ -36,12 +35,7 @@ class PPDBAktifController extends Controller
             ? SyaratDokumen::where('batch_id', $batch->id)->with('tipeDokumen')->orderBy('id', 'desc')->get()
             : collect(); //looped
 
-        $data = [
-            'batch' => $batch,
-            'pendaftaran' => $pendaftaran,
-            'syaratDokumen' => $syaratDokumen,
-        ];
-
+        $data = compact(['batch', 'pendaftaran', 'syaratDokumen']);
         return $key ? ($data[$key] ?? null) : $data ;
     }
 
@@ -80,9 +74,7 @@ class PPDBAktifController extends Controller
                 : ['Terverifikasi', 'Lengkap', 'Belum Lengkap'];
             $query->orderByRaw("FIELD(status, '" . implode("','", $statusOrder) . "')");
         } elseif ($sort === 'nama_anak') {
-            $query->leftJoin('info_anak', 'info_anak.pendaftaran_id', '=', 'pendaftaran.id')
-                ->orderBy('info_anak.nama_anak', $order)
-                ->select('pendaftaran.*');
+            $query->orderBy('info_anak.nama_anak', $order)->select('pendaftaran.*');
         } else {
             $query->orderBy($sort, $order);
         }

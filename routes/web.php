@@ -37,16 +37,17 @@ Route::middleware('auth.secure')->group(function () {
     Route::prefix('admin')->middleware('role:1')->group(function () {
         Route::get('/dashboard', [DashboardAdminController::class, 'showDashboard']);
 
-        Route::prefix('/ppdb')->group(function (){
+        Route::prefix('/ppdb')->name('ppdb.')->group(function (){
             Route::get('/', [DashboardAdminController::class, 'showPPDB']);
-            Route::post('/', [DashboardAdminController::class, 'setAksesArsip']);
+            Route::post('/', [DashboardAdminController::class, 'setArsipKey']);
 
-            Route::prefix('/arsip')->name('ppdb.arsip.')->group(function() {
-                Route::get('/rincian', [PPDBArsipController::class, 'show']);
-                Route::resource('/', PPDBArsipController::class)->parameters(['' => 'id'])->except(['create', 'store', 'update', 'edit']);
+            Route::prefix('/arsip')->name('arsip.')->group(function() {
+                Route::get('/data', [PPDBArsipController::class, 'passData'])->middleware('throttle:30,1')->name('data'); // Route for AJAX request
+                Route::get('/rincian', [PPDBArsipController::class, 'showRincian'])->name('rincian');
+                Route::resource('/', PPDBArsipController::class)->parameters(['' => 'id'])->except(['create', 'store', 'edit', 'update']);
             });
 
-            Route::prefix('/aktif')->name('ppdb.aktif.')->group(function() {
+            Route::prefix('/aktif')->name('aktif.')->group(function() {
                 Route::get('/data', [PPDBAktifController::class, 'passData'])->middleware('throttle:30,1')->name('data'); // Route for AJAX request
                 Route::get('/rincian', [PPDBAktifController::class, 'showRincian'])->name('rincian');
                 Route::post('/tutup', [PPDBAktifController::class, 'tutupPPDB'])->name('tutup');

@@ -2,18 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BatchPPDB;
+use App\Models\BuktiBayar;
 use App\Models\Pendaftaran;
+use App\Models\OrangTuaWali;
 use Illuminate\Http\Request;
 use App\Models\SyaratDokumen;
+use App\Models\DokumenPersyaratan;
 
 class PPDBArsipController extends Controller
 {
+    private function getArsipKey() {
+        $key = request()->cookie('arsip_key');
+
+        if (!$key || !preg_match('/Periode (.+) - Gel\. (\d+)/', $key, $matches)) {
+            return null;
+        }
+        $tahunAjaran = $matches[1];
+        $gelombang = (int) $matches[2];
+
+        return BatchPPDB::where('tahun_ajaran', $tahunAjaran)
+            ->where('gelombang', $gelombang)
+            ->where('status', false)
+            ->first();
+    }
+
     private function getData($key = null)
     {
-        $batch = session('akses_arsip');
-        $pendaftaran = Pendaftaran::where('batch_id', $batch->id)->with('infoAnak', 'user')->orderBy('created_at', 'desc')->get();
-        $syaratDokumen = SyaratDokumen::where('batch_id', $batch->id)->with('tipeDokumen')->orderBy('id', 'desc')->get(); // Sesuaikan dengan BatchPPDBController
-
+        $batch = $this->getArsipKey();
+        $pendaftaran = $batch // for sorting
+            ? Pendaftaran::where('batch_id', $batch->id) // query builder instance
+                ->leftJoin('info_anak', 'pendaftaran.id', '=', 'info_anak.pendaftaran_id') // join table, include related data, eager load infoAnak
+                ->select('pendaftaran.*') // link it to Pendaftaran model
+            : collect(); //looped
+        $syaratDokumen = $batch
+            ? SyaratDokumen::where('batch_id', $batch->id)->with('tipeDokumen')->orderBy('id', 'desc')->get()
+            : collect(); //looped
         $data = compact(['batch', 'pendaftaran', 'syaratDokumen']);
         return $key ? ($data[$key] ?? null) : $data ;
     }
@@ -50,7 +74,7 @@ class PPDBArsipController extends Controller
                 : ['Terverifikasi', 'Lengkap', 'Belum Lengkap'];
             $query->orderByRaw("FIELD(status, '" . implode("','", $statusOrder) . "')");
         } elseif ($sort === 'nama_anak') {
-            $query->orderBy('info_anak.nama_anak', $order);
+            $query->orderBy('info_anak.nama_anak', $order)->select('pendaftaran.*');
         } else {
             $query->orderBy($sort, $order);
         }
@@ -60,16 +84,6 @@ class PPDBArsipController extends Controller
         return response()->json([ // Server-side render
             'html' => view('admin.ppdb-arsip', compact('data'))->render(),
 			'pagination' => $data->links('components.my-pagination')->render(),
-            // 'pagination' => [
-            //     'total' => $data->total(),
-            //     'per_page' => $data->perPage(),
-            //     'current_page' => $data->currentPage(),
-            //     'last_page' => $data->lastPage(),
-            //     'from' => $data->firstItem(),
-	        //     'to' => $data->lastItem(),
-            //     'next_page' => $data->nextPageUrl(),
-            //     'prev_page' => $data->previousPageUrl(),
-            // ],
         ]);
     }
 
@@ -79,6 +93,67 @@ class PPDBArsipController extends Controller
     public function index()
     {
         return view('admin.ppdb-rekam', ['batch' => $this->getData('batch')]);
+    }
+
+    public function showRincian()
+    {
+        return view('admin.ppdb-rincian', ['batch' => $this->getData('batch')]);
+    }
+
+    private function getEntry($id, $view)
+    {
+        $syaratDokumen = $this->getData('syaratDokumen');
+        $pendaftaran = $this->getData('pendaftaran')->findOrFail($id);
+        $infoAnak = $pendaftaran->infoAnak;
+
+        /*
+        $orangTuaWali = collect();
+        $dokumenPersyaratan = collect();
+        $buktiBayar = null;
+
+        if ($infoAnak) {
+            $orangTuaWali = OrangTuaWali::where('anak_id', $infoAnak->id)->get();
+            $dokumenPersyaratan = DokumenPersyaratan::where('anak_id', $infoAnak->id)->get();
+            $buktiBayar = BuktiBayar::where('anak_id', $infoAnak->id)->first();
+        }
+        */
+
+        $orangTuaWali = $infoAnak
+            ? OrangTuaWali::where('anak_id', $infoAnak->id)->get()
+            : collect();
+        $ayah = $infoAnak ? $infoAnak->orangTuaWali()->where('relasi', 'ayah')->first() : null;
+        $ibu = $infoAnak ? $infoAnak->orangTuaWali()->where('relasi', 'ibu')->first() : null;
+        $wali = $infoAnak ? $infoAnak->orangTuaWali()->where('relasi', 'wali')->first() : null;
+
+        $dokumenPersyaratan = $infoAnak
+            ? DokumenPersyaratan::where('anak_id', $infoAnak->id)->get()
+            : collect();
+        $buktiBayar = $infoAnak
+            ? BuktiBayar::where('anak_id', $infoAnak->id)->first()
+            : null;
+
+        return view($view, compact( 'syaratDokumen', 'pendaftaran', 'infoAnak', 'orangTuaWali', 'ayah', 'ibu', 'wali', 'dokumenPersyaratan', 'buktiBayar'));
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        return $this->getEntry($id, 'admin.ppdb-profil');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $batch = $this->getData('batch');
+        if ($batch) {
+            $batch->delete(); // allow skip to enable status change, residue from pendaftaran delete but works just okay
+        }
+
+        return redirect()->route('ppdb.')->with('success', 'Data berhasil dihapus.');
     }
 
     /**
@@ -98,14 +173,6 @@ class PPDBArsipController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        return view('admin.ppdb-rincian', ['batch' => $this->getData('batch')]);
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
@@ -117,14 +184,6 @@ class PPDBArsipController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
     {
         //
     }

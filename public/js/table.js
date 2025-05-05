@@ -26,7 +26,10 @@ export async function fetchData(overrideParams = {}) {
 	tableState = { ...tableState, ...overrideParams };
 
     const query = new URLSearchParams(tableState).toString();
-    const url = `/admin/ppdb/aktif/data?${query}`;
+    const url = window.location.pathname === '/admin/ppdb/aktif'
+        ? `/admin/ppdb/aktif/data?${query}`
+        : `/admin/ppdb/arsip/data?${query}`;
+
     const response = await fetchContent(url);
 
     if (response) {

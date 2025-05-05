@@ -17,7 +17,7 @@
                     @if ($arsipPPDB->isNotEmpty())
                         <form action="/admin/ppdb" method="POST" class="flex flex-col gap">@csrf
                             <div>
-                                <x-input-select name="periode" :options="$arsipOptions" required/>
+                                <x-input-select name="periode" :options="$arsipOptions" :value="request()->cookie('arsip_key')"/>
                             </div>
                             <div><button type="submit" class="tombol-besar tombol-netral">Akses Arsip</button></div>
                         </form>
