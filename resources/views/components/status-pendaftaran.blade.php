@@ -1,15 +1,16 @@
-@props(['value' => 'Belum Lengkap'])
+@props(['value' => 'Menunggu'])
 
 @php
     $statuses = [
-        'Belum Lengkap' => 'tombol-orange',
+        'Menunggu' => 'tombol-orange',
+        'Mengisi' => 'tombol-yellowdark',
         'Lengkap' => 'tombol-positif',
         'Terverifikasi' => 'tombol-netral',
     ];
-    $value = $value ?? 'Belum Lengkap';
+    $value = $value ?? 'Menunggu';
 @endphp
 
-<span {{ $attributes->merge(['class' => "status $statuses[$value]"]) }}>{{ $value }}</span>
+<span {{ $attributes->merge(['class' => "badge round cursor-pointer $statuses[$value]"]) }}>{{ $value }}</span>
 
 {{--
 <x-status-pendaftaran class="flex" :status="$pendaftaran->status ?? null" />

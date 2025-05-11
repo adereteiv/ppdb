@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreign('posted_by')->references('id')->on('users')->onDelete('restrict');
             $table->string('judul');
             $table->text('keterangan');
-            $table->string('file_path')->nullable();
+            $table->enum('tipe_pengumuman', ['Umum', 'Khusus Pendaftar'])->default('Umum');
+            $table->json('file_paths')->nullable();
             $table->datetime('jadwal_posting');
             $table->timestamps();
         });

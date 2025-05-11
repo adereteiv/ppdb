@@ -1,15 +1,16 @@
 <x-layouts.app-layout>
 
-@if (session()->has('success'))
-<x-flash-message alert="green">{{ session('success') }}</x-flash-message>
-@endif
-
 <div id="pendaftar-kirim-dokumen" class="app-content">
     <div class="wrapper">
         <x-partials.app-content-title :hideBackLink="true"><h6>Unggah Dokumen Persyaratan</h6></x-partials.app-content-title>
         <hr style="border: 1px solid rgba(0, 0, 0, .15); margin: 0 1rem;">
         <div class="scrollable">
             <div class="content-padding-side-rem constrict">
+                <div class="content-padding-side">
+                    <x-flash-message flash='blue'>
+                        Harap mengunggah dokumen persyaratan sesuai yang tertera pada formulir berikut. Ukuran maksimal berkas sebesar 1MB.
+                    </x-flash-message>
+                </div>
                 <form id="docsForm" method="POST" action="{{ route('pendaftar.dokumen.update') }}" enctype="multipart/form-data"> @method('PUT') @csrf
                     @foreach ($syaratDokumen as $syarat)
                         @php $dokumen = $dokumenPersyaratan?->where('tipe_dokumen_id', $syarat->tipe_dokumen_id)->first(); @endphp

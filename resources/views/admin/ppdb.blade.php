@@ -1,9 +1,5 @@
 <x-layouts.app-layout>
 
-@if (session()->has('success'))
-<x-flash-message alert="green">{{ session('success') }}</x-flash-message>
-@endif
-
 <div class="app-content
 {{-- height-100 flex flex-center --}}
 ">

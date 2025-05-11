@@ -16,7 +16,8 @@ class DashboardAdminController extends Controller
                 'batch' => 'Belum ada pembukaan gelombang PPDB',
                 'pendaftaran' => collect(),
                 'pendaftaranTotal' => 0,
-                'pendaftaranBelumLengkap' => 0,
+                'pendaftaranMenunggu' => 0,
+                'pendaftaranMengisi' => 0,
                 'pendaftaranLengkap' => 0,
                 'pendaftaranTerverifikasi' => 0,
             ]);
@@ -28,7 +29,8 @@ class DashboardAdminController extends Controller
             'batch' => 'Periode ' . $batch->tahun_ajaran . ' - Gel. ' . $batch->gelombang,
             'pendaftaran' => $pendaftaran,
             'pendaftaranTotal' => $pendaftaran->count(),
-            'pendaftaranBelumLengkap' => $pendaftaran->where('status','Belum Lengkap')->count(),
+            'pendaftaranMenunggu' => $pendaftaran->where('status','Menunggu')->count(),
+            'pendaftaranMengisi' => $pendaftaran->where('status','Mengisi')->count(),
             'pendaftaranLengkap' => $pendaftaran->where('status','Lengkap')->count(),
             'pendaftaranTerverifikasi' => $pendaftaran->where('status','Terverifikasi')->count(),
         ]);

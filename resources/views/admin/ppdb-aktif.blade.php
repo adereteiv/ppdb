@@ -5,7 +5,14 @@
         <td>{{ ($entry->created_at)->translatedFormat('d F Y') }}</td>
         <td>{{ $entry->id }}</td>
         <td>{{ $entry->infoAnak?->nama_anak ?? 'null' }}</td>
-        <td><x-status-pendaftaran :value="$entry->status ?? null"/></td>
+        <td>
+            <div class="flex justify-items-center">
+                <x-status-pendaftaran :value="$entry->status ?? null"/>
+                @if ($entry->status === 'Menunggu' && $entry->infoAnak?->buktiBayar->first())
+                    <span style="color:green">(✔)</span>
+                @endif
+            </div>
+        </td>
         <td>
             <div class="flex justify-center">
                 <button class="tombol tombol-netral tooltip" tooltip="top" data-url="{{ route('admin.ppdb.aktif.show', $entry->id) }}">

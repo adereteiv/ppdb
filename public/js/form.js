@@ -76,12 +76,39 @@ export function toggleKelompokUmur() {
     updateKelompokUmur();
 }
 // [✓] Yang Mendaftarkan
-export function toggleRequiredFields() {
+export function toggleYangMendaftarkan() {
     const selected = document.querySelector('input[name="yang_mendaftarkan"]:checked');
     const isOrangTua = selected && selected.value === "Orang Tua";
 
-    document.querySelectorAll(".ayah-input, .ibu-input").forEach(input => input.required = isOrangTua);
-    document.querySelectorAll(".wali-input").forEach(input => input.required = !isOrangTua);
+    const ayahInputs = document.querySelectorAll(".ayah-input");
+    const ibuInputs = document.querySelectorAll(".ibu-input");
+    [...ayahInputs, ...ibuInputs].forEach(input => input.required = isOrangTua);
+
+    const waliInputs = document.querySelectorAll(".wali-input");
+    waliInputs.forEach(input => input.required = !isOrangTua);
+
+    const allRelevantInputs = [...ayahInputs, ...ibuInputs, ...waliInputs];
+    allRelevantInputs.forEach(input => {
+        const isRequired = input.required;
+        let label = null;
+
+        if (input.id) {
+            label = document.querySelector(`label[for="${input.id}"]`);
+        }
+        if (!label) {
+            label = input.closest('label');
+        }
+
+        const existingAsterisk = label?.querySelector('sup.subtext');
+
+        if (label) {
+            if (isRequired && !existingAsterisk) {
+                label.insertAdjacentHTML('beforeend', '<sup class="subtext" style="color:#FF0000;">*</sup>');
+            } else if (!isRequired && existingAsterisk) {
+                existingAsterisk.remove();
+            }
+        }
+    });
 }
 // [✓] Sanitize Phone Input
 export function initAdjustPhoneInput() {
@@ -206,22 +233,39 @@ export function initAutosave() {
     function updateStatusDisplay(status) {
         statusInput.value = status;
         statusDisplay.textContent = status;
-        statusDisplay.classList.remove('tombol-positif', 'tombol-netral');
+        statusDisplay.classList.remove('tombol-yellowdark', 'tombol-positif', 'tombol-netral');
 
-        if (status === 'Lengkap') {
+        if (status === 'Mengisi') {
+            statusDisplay.classList.add('tombol-yellowdark');
+        } else if (status === 'Lengkap') {
             statusDisplay.classList.add('tombol-positif');
         } else if (status === 'Terverifikasi') {
             statusDisplay.classList.add('tombol-netral');
         }
     }
 
-    document.getElementById('statusLengkap').addEventListener('click', () => {
-        updateStatusDisplay('Lengkap');
-        autosave();
-    });
+    const statusMengisi = document.getElementById('statusMengisi')
+    if (statusMengisi) {
+        statusMengisi.addEventListener('click', () => {
+            updateStatusDisplay('Mengisi');
+            autosave();
+            document.getElementById('statusInput').remove();
+            document.querySelector('.dropdown-list').remove();
+        });
+    }
 
-    document.getElementById('statusTerverifikasi').addEventListener('click', () => {
-        updateStatusDisplay('Terverifikasi');
-        autosave();
-    });
+    const statusLengkap = document.getElementById('statusLengkap');
+    const statusTerverifikasi = document.getElementById('statusTerverifikasi');
+    if (statusLengkap && statusTerverifikasi) {
+
+        statusLengkap.addEventListener('click', () => {
+            updateStatusDisplay('Lengkap');
+            autosave();
+        });
+
+        statusTerverifikasi.addEventListener('click', () => {
+            updateStatusDisplay('Terverifikasi');
+            autosave();
+        });
+    }
 }

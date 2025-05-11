@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\MaatExport;
 use App\Models\Pengumuman;
-use App\Services\DataTableService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Services\DataTableService;
+use Mews\Purifier\Facades\Purifier;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class KelolaPengumumanController extends Controller
 {
@@ -20,9 +24,7 @@ class KelolaPengumumanController extends Controller
             function($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('judul', 'LIKE', "%{$search}%")
-                      ->or(function ($q) use ($search) {
-                          $q->where('keterangan', 'LIKE', "%{$search}%");
-                      });
+                      ->orWhere('keterangan', 'LIKE', "%{$search}%");
                 });
             },
             function($query, $sort, $order) {
@@ -43,8 +45,8 @@ class KelolaPengumumanController extends Controller
 
     public function show(string $id)
     {
-        $entry = Pengumuman::where('id', $id);
-        return view('admin.pengumuman-rincian', compact('entry'));
+        $pengumuman = Pengumuman::where('id', $id)->with('user')->first();
+        return view('admin.pengumuman-rincian', compact('pengumuman'));
     }
 
     public function create()
@@ -55,36 +57,46 @@ class KelolaPengumumanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'tipe_pengumuman' => 'required|in:Umum,Khusus Pendaftar',
             'judul' => 'required|string|max:255',
-            'keterangan' => 'required|string|max:255',
+            'keterangan' => 'required|string',
             'jadwal_posting' => 'nullable|date|after_or_equal:today',
-            'lampiran' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:1024',
+            'lampiran.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:1024',
         ],[
+            'tipe_pengumuman.required' => 'Tipe pengumuman wajib dipilih.',
             'judul.required' => 'Judul wajib diisi untuk membuat pengumuman',
             'keterangan.required' => 'Keterangan pengumuman wajib diisi',
         ]);
-
-        $sanitize = [
-            'judul' => trim(strip_tags($request->input('judul'))),
-            'keterangan' => trim(strip_tags($request->input('keterangan'))),
-        ];
+        $judul = trim(strip_tags($request->input('judul')));
+        $keterangan = Purifier::clean($request->input('keterangan'));
         $jadwalPosting = $request->input('jadwal_posting');
-        $filePath = null;
+
+        $paths = [];
+        // $filePath = null;
         if ($request->hasFile('lampiran')) {
-            $file = $request->file('lampiran');
+            $files = $request->file('lampiran');
 
-            $judulSlug = Str::slug($sanitize['judul']);
-            $dateSlug = $jadwalPosting ? Carbon::parse($jadwalPosting)->format('Ymd_His') : now()->format('Ymd_His');
+            foreach ($files as $file) {
+                $slug = Str::slug($judul);
+                $date = $jadwalPosting ? Carbon::parse($jadwalPosting)->format('Ymd_His') : now()->format('Ymd_His');
+                $fileName = "lampiran-{$slug}-{$date}-" . uniqid() . '.' . $file->getClientOriginalExtension();
+                $paths[] = $file->storeAs('lampiran', $fileName, 'public');
+            }
+            // $judulSlug = Str::slug($judul);
+            // $dateSlug = $jadwalPosting ? Carbon::parse($jadwalPosting)->format('Ymd_His') : now()->format('Ymd_His');
 
-            $fileName = "lampiran-{$judulSlug}-{$dateSlug}." . $file->getClientOriginalExtension();
-            $filePath = $file->storeAs('lampiran', $fileName, 'public');
+            // $fileName = "lampiran-{$judulSlug}-{$dateSlug}." . $files->getClientOriginalExtension();
+            // $filePath = $files->storeAs('lampiran', $fileName, 'public');
+            // dd($filePath);
         }
 
         Pengumuman::create([
             'posted_by' => auth()->id(),
-            'judul' => $sanitize['judul'],
-            'keterangan' => $sanitize['keterangan'],
-            'file_path' => $filePath,
+            'tipe_pengumuman' => $request->tipe_pengumuman,
+            'judul' => $judul,
+            'keterangan' => $keterangan,
+            // 'file_path' => $filePath,
+            'file_paths' => $paths,
             'jadwal_posting' => $jadwalPosting ?? now(),
         ]);
 
@@ -97,5 +109,26 @@ class KelolaPengumumanController extends Controller
         if ($pengumuman) {$pengumuman->delete();}
 
         return back()->with('success', 'Pengumuman berhasil dihapus.');
+    }
+
+    public function export(Request $request)
+    {
+        $data = Pengumuman::with('user')->latest()->get()->map(function($r) {
+            return[
+                'judul' => $r->judul,
+                'keterangan' => $r->keterangan,
+                'jadwal_posting' => $r->jadwal_posting->translatedFormat('d F Y'),
+                'tujuan' => $r->tipe_pengumuman,
+                'direktori_penyimpanan' => $r->file_paths
+                    ? implode(PHP_EOL, $r->file_paths ?? [])
+                    : '—',
+            ];
+        });
+        $headings = ['Judul', 'Keterangan', 'Jadwal Posting', 'Tujuan', 'Direktori Penyimpanan'];
+        $range = 'A1:E1';
+        $widths = ['A' => 25, 'B' => 50, 'C' => 25, 'D' => 20, 'E' => 50];
+        $formats = ['C' => NumberFormat::FORMAT_DATE_DDMMYYYY];
+
+        return Excel::download(new MaatExport($data, $range, $headings, $widths, $formats), 'daftar-pengumuman.xlsx');
     }
 }

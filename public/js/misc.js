@@ -23,12 +23,18 @@ export async function fetchContent(url, targetSelector = null) {
 
 // [✓] Alert
 export function alert(selector='.alert', delay=10000, fade=2000 ) {
+    const alert = document.querySelector(selector);
+    if (!alert) return;
+
+    requestAnimationFrame(() => {
+        alert.style.opacity = '1';
+        alert.style.top = '0';
+        alert.style.transition = 'opacity 0.5s ease, top 0.5s ease';
+    });
+
     setTimeout(() => {
-        let alert = document.querySelector(selector);
-        if(alert) {
-            alert.style.opacity = "0";
-            setTimeout(() => alert.remove(), fade);
-        }
+        alert.style.opacity = "0";
+        setTimeout(() => alert.remove(), fade);
     }, delay);
 }
 
@@ -111,7 +117,8 @@ export function tooltip() {
 }
 
 // [✓] Handling simple .open ⇄ .close behavior
-/* Penggunaan
+/*
+Penggunaan (di dalam satu scope)
     <!-- Toggle (Default Behavior) -->
     <element data-toggle-target="#target"/>
 
@@ -123,6 +130,8 @@ export function tooltip() {
 
     <!-- Target Element -->
     <element id="target" data-persistent/>
+Penggunaan (di beda scope)
+
 */
 export function toggleShow(element, open = true) {
     if(!element) return;
@@ -131,9 +140,9 @@ export function toggleShow(element, open = true) {
 }
 export function toggleStaticOpen() {
     document.querySelectorAll('[data-toggle-target]').forEach(item => {
-        const mode = item.getAttribute('data-toggle-mode');
-        const targetSelector = item.getAttribute('data-toggle-target');
         const group = item.getAttribute('data-toggle-group');
+        const targetSelector = item.getAttribute('data-toggle-target');
+        const mode = item.getAttribute('data-toggle-mode');
 
         if(!targetSelector) return;
         const target = document.querySelector(targetSelector);
@@ -151,12 +160,12 @@ export function toggleStaticOpen() {
             e.stopPropagation();
 
             if(group) {
-                document.querySelectorAll(`[data-toggle-group="${group}"]`).forEach(shell => {
-                    const shellTargetSelector = shell.getAttribute('data-toggle-target');
-                    const shellTarget = document.querySelector(shellTargetSelector);
-                    if(shell !== item) {
-                        shell.classList.remove('active');
-                        if (shellTarget) toggleShow(shellTarget, false);
+                document.querySelectorAll(`[data-toggle-group="${group}"]`).forEach(el => {
+                    const elTargetSelector = el.getAttribute('data-toggle-target');
+                    const elTarget = document.querySelector(elTargetSelector);
+                    if(el !== item) {
+                        el.classList.remove('active');
+                        if (elTarget) toggleShow(elTarget, false);
                     }
                 });
             }

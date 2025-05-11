@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\AuthSecureMiddleware;
+use App\Http\Middleware\PendaftarAccessMiddleware;
 use Illuminate\Auth\AuthenticationException;
 // use App\Http\Middleware\ThrottleRequestHandler;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.secure' => AuthSecureMiddleware::class,
             'role' => RoleMiddleware::class,
+            'pendaftar' => PendaftarAccessMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
@@ -28,7 +30,9 @@ return Application::configure(basePath: dirname(__DIR__))
                 ? gmdate("i:s", $retryAfter) . " menit."
                 : $retryAfter . " detik.";
             if ($request->is('daftar')) {
-                return back()->with('error', "Terlalu banyak percobaan registrasi. Silakan menyelesaikan tahap pendaftaran pada registrasi sebelumnya terlebih dahulu. Coba lagi dalam " . $time)->withInput();
+                return back()
+                    ->with('error', "Terlalu banyak percobaan registrasi. Sembari menunggu, silakan menyelesaikan tahap pendaftaran pada registrasi sebelumnya terlebih dahulu.")->withInput()
+                    ->with('retryAfter', $retryAfter); // for live timer, view('daftar')
             }
             return back()->with('error', "Terlalu banyak percobaan. Coba lagi dalam " . $time)->withInput();
         });

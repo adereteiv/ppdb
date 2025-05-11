@@ -22,7 +22,8 @@ class User extends Authenticatable
      */
     protected $table = 'users';
 
-    protected $fillable = ['name','email','password','role_id'];
+    protected $guarded = ['id'];
+    // protected $fillable = ['name','email','password','role_id'];
 
     // https://medium.com/@online-web-tutor/laravel-how-to-disable-primary-key-auto-increment-in-model-ee6416b49871
     protected $keyType = 'string';

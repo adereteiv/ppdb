@@ -15,5 +15,6 @@ return [
     'pendidikan'        => ['Tidak Sekolah','Paket A','Paket B','Paket C','SD/MI','SMP/MTs','SMA/SMK/MA','D-1','D-2','D-3','D-4','S-1','S-2','S-3'],
     'pekerjaan'         => ['Sudah Meninggal','Mengurus Rumah Tangga','Petani','Nelayan','Peternak','Buruh','Pedagang Kecil','Pedagang Besar','Pegawai Swasta','Guru','PNS','Dokter','TNI','Polisi','Dosen','Karyawan BUMN','Wiraswasta','Tenaga Kerja Indonesia'],
     'per_page'          => ['10','25','50','100'],
+    'tipe_pengumuman'   => ['Umum','Khusus Pendaftar'],
 ];
 

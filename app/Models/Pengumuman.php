@@ -10,7 +10,10 @@ class Pengumuman extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = ['jadwal_posting' => 'datetime'];
+    protected $casts = [
+        'jadwal_posting' => 'datetime',
+        'file_paths' => 'array',
+    ];
 
     public function user()
     {

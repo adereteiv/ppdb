@@ -2,36 +2,35 @@
 
 @php
 $name = Str::slug($label, '_');
-$nameFormat = $fileType === 'dokumen' ? "dokumen[$name]" : "$name" ;
+$nameFormat = $fileType === 'dokumen' ? "dokumen[$name]" : ($fileType === 'lampiran' ? 'lampiran[]' : $name) ;
 $error = $fileType === 'dokumen' ? str_replace(['[', ']'], ['.', ''], $nameFormat) : $nameFormat; // dokumen[akta_kelahiran] → dokumen.akta_kelahiran
 @endphp
 
 <x-inputbox class="padding-10" for="{{ $name }}">
     <x-slot:label>
-        <b class="flex">
-            {{ $label }}
+        <div>
+            <b>{{ $label }}</b>
             <span class="subtext">
                 @if ($dokumen)
-                <font class="subtext" color="green">(✔ sudah diunggah)</font>
+                <sup class="subtext" style="color:green;">(✔ sudah diunggah)</s>
                 @elseif ($isWajib)
-                <font class="subtext" color="#FF0000">(* wajib)</font>
+                <sup class="subtext" style="color:#FF0000;">(* wajib)</s>
                 @else
-                <font class="subtext" color="#2962ff">(opsional)</font>
+                <sup class="subtext" style="color:#2962ff;">(opsional)</s>
                 @endif
             </span>
-        </b>
+        </div>
         @if ($keterangan)
             <span class="subtext">{{ $keterangan }}</span>
         @endif
     </x-slot>
     <x-preview class="inputbox" :dokumen="$dokumen"/>
-    <input
+    <input {{ $attributes->merge(['class' => 'form-item']) }}
         type="file"
         id="{{ $name }}"
         name="{{ $nameFormat }}"
         accept=".jpg,.jpeg,.png,.pdf"
-        @if ($dokumen) @elseif ($isWajib) required @endif
-    >
+        @if ($dokumen) @elseif ($isWajib) required @endif/>
 </x-inputbox>
 
 @error($error)

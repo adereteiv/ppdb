@@ -11,31 +11,31 @@
         </div>
     </div>
     <div class="wrapper beranda-item text-align-center bg-blue">
-        <div class="padding-10">
-            <h3>Gelombang PPDB Terbaru: </h3>
-            <h6>{{ $batch }}</h6>
+        <div class="content-padding-rem">
+            <h6 class="margin-vertical">Gelombang PPDB Terbaru: {{ $batch }}</h6>
+            <h6 class="margin-vertical">Total Pendaftar: {{ $pendaftaranTotal }}</h6>
         </div>
     </div>
     <div class="admin-summary gap-rem">
-        <div class="wrapper beranda-item reminder mid">
-            <div class="flex flex-col justify-between padding-10 height-100">
-                <p>Jumlah Pendaftar</p>
-                <h5>{{ $pendaftaranTotal }}</h5>
-            </div>
-        </div>
         <div class="wrapper beranda-item reminder must">
             <div class="flex flex-col justify-between padding-10 height-100">
-                <p>Persyaratan Belum Lengkap</p>
-                <h5>{{ $pendaftaranBelumLengkap }}</h5>
+                <p>Menunggu Verifikasi</p>
+                <h5>{{ $pendaftaranMenunggu }}</h5>
             </div>
         </div>
         <div class="wrapper beranda-item reminder warn">
+            <div class="flex flex-col justify-between padding-10 height-100">
+                <p>Pendaftaran Belum Lengkap</p>
+                <h5>{{ $pendaftaranMengisi }}</h5>
+            </div>
+        </div>
+        <div class="wrapper beranda-item reminder mild">
             <div class="flex flex-col justify-between padding-10 height-100">
                 <p>Persyaratan Lengkap</p>
                 <h5>{{ $pendaftaranLengkap }}</h5>
             </div>
         </div>
-        <div class="wrapper beranda-item reminder mild">
+        <div class="wrapper beranda-item reminder mid">
             <div class="flex flex-col justify-between padding-10 height-100">
                 <p>Pendaftaran Terverifikasi</p>
                 <h5>{{ $pendaftaranTerverifikasi }}</h5>

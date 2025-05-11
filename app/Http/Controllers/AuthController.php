@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\BatchPPDB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -11,6 +12,11 @@ use Illuminate\Support\Facades\Cookie;
 class AuthController extends Controller
 {
     public function showLogin(){
+        $activeBatch = BatchPPDB::where('status', true)->first();
+        if (!$activeBatch || now() >= $activeBatch->waktu_tenggat) {
+            return redirect()->route('home');
+        }
+
         return view('auth.login');
     }
 
@@ -96,6 +102,13 @@ class AuthController extends Controller
             [$authField, '=', $credentials[$authField]],
             ['role_id', '=', $roleId]
         ])->first();
+        $activeBatch = BatchPPDB::where('status', true)->first();
+
+        if ($user && $user->role_id === 2) {
+            if ($user->pendaftaran && $user->pendaftaran->batch_id !== optional($activeBatch)->id) {
+                return back()->with('error', 'Anda sudah memiliki rekam pendaftaran pada gelombang PPDB sebelumnya. Silakan buat Akun baru untuk melanjutkan proses pendaftaran.');
+            }
+        }
 
         if (!$user || !Auth::attempt([
             $authField => $credentials[$authField],
@@ -106,6 +119,10 @@ class AuthController extends Controller
             Cache::put($lockoutKey, time() + $wait, $wait); // $value requires time() to check $lockoutKey, expires according to $wait seconds
             // dd("Key: ". $key, "Key Value: " . $attempts, "Lockout Key: " . $lockoutKey, "Lockout Key Value: " . Cache::get($lockoutKey));
             return back()->with('error', 'Login gagal. Periksa kembali '. ($isAdmin ? 'email' : 'ID') . ' dan kata sandi Anda.')->onlyInput($authField);
+        }
+
+        if ($user->role_id === 2 && !$user->pendaftaran) {
+            return redirect()->route('pendaftar.recovery');
         }
 
         Cache::forget($key);

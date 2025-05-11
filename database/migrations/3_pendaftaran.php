@@ -29,7 +29,7 @@ return new class extends Migration
             $table->foreignId('batch_id')->constrained('batch_ppdb')->onDelete('cascade');
             $table->string('user_id')->nullable()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->enum('status', ['Belum Lengkap', 'Lengkap', 'Terverifikasi'])->default('Belum Lengkap');
+            $table->enum('status', ['Menunggu', 'Mengisi', 'Lengkap', 'Terverifikasi'])->default('Menunggu');
             $table->text('catatan_admin')->nullable();
             $table->timestamps();
         });

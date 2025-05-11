@@ -1,37 +1,29 @@
-<x-layouts.home-layout :hideHeader='true' :hideFooter='true'>
-<section id="section-login" class="">
-    <div class="text-align-center margin-vertical">
-        <h1>Login Admin</h1>
-    </div>
+<x-layouts.home-layout :hideHeader='true' :hideFooter='true' :hideContact='true'>
+<section id="section-login" class="home-section">
     <div class="container">
-        <div class="form-login margin-vertical">
-
+        <div class="content-padding-side-rem">
+            <div class="text-align-center margin-vertical">
+                <h1>Login Admin</h1>
+            </div>
             @if (session()->has('error'))
-            <x-flash-message flash>
-                <div class="flex flex-nowrap">
-                        <span class="reminder-icon">
-                        <i class="bi bi-exclamation-circle"></i>
-                    </span>
-                    <span>
-                        {{ session('error') }}
-                    </span>
-                </div>
-            </x-flash-message>
+            <x-flash-message button flash>{{ session('error') }}</x-flash-message>
             @endif
 
-            @error('email')
-            <x-flash-message flash>{{ $message }}</x-flash-message>
-            @enderror
+            {{-- @error('email') // handled in <x-input/>
+            <x-flash-message button flash>{{ $message }}</x-flash-message>
+            @enderror --}}
 
-            <form method="POST" action="/pintuadmin">@csrf
-                <div class="gap">
-                    <x-input type="email" name="email" class="form-login_item" placeholder="Email Admin" autofocus required/>
-                </div>
-                <div class="gap">
-                    <x-input type="password" name="password" class="form-login_item" placeholder="Kata sandi" required/>
-                </div>
-                <div class="margin-vertical">
-                    <button type="submit" class="form-login_item tombol-besar tombol-netral">Log In</button>
+            <form method="POST" action="{{ route('loginAdmin') }}">@csrf
+                <div>
+                    <div class="margin-vertical">
+                        <x-input type="email" name="email" placeholder="Email Admin" autofocus required/>
+                    </div>
+                    <div class="margin-vertical">
+                        <x-input type="password" name="password" placeholder="Kata sandi" required/>
+                    </div>
+                    <div class="margin-vertical">
+                        <button type="submit" class="tombol-besar tombol-netral">Log In</button>
+                    </div>
                 </div>
             </form>
         </div>

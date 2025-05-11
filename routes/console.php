@@ -11,4 +11,4 @@ Artisan::command('inspire', function () {
 /* Commit 6.5, for email validation from propaganistas/laravel-disposable-email  */
 Schedule::command('disposable:update')->weekly();
 /* Commit 9, periodic check for BatchPPDB from artisan app/Console/Commands, complementing app/Models/BatchPPDB@boot */
-Schedule::command('batch-ppdb:regulate-status')->everyMinute();
+Schedule::command('batch-ppdb:regulate-status')->everyFiveSeconds();

@@ -11,7 +11,7 @@
         <x-inputbox for="{{ $checkboxId }}">
             <x-slot:label><b class="number">{{ $label }}</b></x-slot>
             <p>Keterangan :</p>
-            <textarea id="{{ $keteranganId }}" name="{{ $keteranganName }}">{{ $keterangan }}</textarea>
+            <textarea {{ $attributes->merge(['class' => 'form-item']) }} id="{{ $keteranganId }}" name="{{ $keteranganName }}">{{ $keterangan }}</textarea>
         </x-inputbox>
         <div>
             <input id="{{ $wajibId }}" type="checkbox" name="{{ $wajibName }}" value="1" {{ $wajibChecked ? 'checked' : ''}}>

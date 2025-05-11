@@ -1,17 +1,16 @@
-<x-layouts.home-layout :hideFooter='true'>
+<x-layouts.home-layout :hideFooter='true' :hideContact='true'>
 <section id="section-login" class="home-section">
     <div class="container">
-        <div class="text-align-center margin-vertical">
-            <h2>Masuk</h2>
-        </div>
-        <div class="form-login margin-vertical">
-
+        <div class="content-padding-side-rem">
+            <div class="text-align-center margin-vertical">
+                <h2>Masuk</h2>
+            </div>
             @if (session()->has('loginDulu'))
-            <x-flash-message flash="blue">{{ session('loginDulu') }}</x-flash-message>
+            <x-flash-message button flash="blue">{{ session('loginDulu') }}</x-flash-message>
             @endif
 
             @if (session()->has('success'))
-            <x-flash-message flash="green">
+            <x-flash-message button flash="green">
                 {{ session('success') }}
             </x-flash-message>
             <x-flash-message flash="blue">
@@ -66,22 +65,25 @@
             @endif
 
             @if (session()->has('error'))
-            <x-flash-message flash>{{ session('error') }}</x-flash-message>
+            <x-flash-message button flash>{{ session('error') }}</x-flash-message>
             @endif
 
-            <form method="POST" action="/login">@csrf
-                <div class="gap">
-                    <x-input type="text" name="id" class="form-login_item" placeholder="ID Pengguna" autofocus required/>
-                </div>
-                <div class="gap">
-                    <x-input type="password" name="password" class="form-login_item" placeholder="Kata Sandi" required/>
-                </div>
-                <div class="margin-vertical">
-                    <button type="submit" class="form-login_item tombol-besar tombol-netral">Log In</button>
+            <form method="POST" action="{{ route('loginPendaftar') }}">@csrf
+                <div>
+                    <div class="margin-vertical">
+                        <x-input type="text" name="id" placeholder="ID Pengguna" autofocus required/>
+                    </div>
+                    <div class="margin-vertical">
+                        <x-input type="password" name="password" placeholder="Kata Sandi" required/>
+                    </div>
+                    <div class="margin-vertical">
+                        <button type="submit" class="tombol-besar tombol-netral">Log In</button>
+                    </div>
                 </div>
             </form>
-
-            <p class="form-login_item text-align-center">Belum punya Akun? <a href="/daftar">Silakan daftar</a></p>
+            <div class="margin-vertical">
+                <p class="text-align-center">Buat Akun baru? <a href="/daftar">Silakan daftar</a></p>
+            </div>
         </div>
     </div>
 </section>

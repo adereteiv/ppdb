@@ -19,47 +19,47 @@ class PendaftaranService
     {
         if (!$pendaftaran) return;
         $infoAnak = $pendaftaran->infoAnak;
-        // immediately updates to Belum Lengkap in case of missing infoAnak
-        if (!$infoAnak) { return $pendaftaran->update(['status' =>'Belum Lengkap']);}
-        $batch = $pendaftaran->batchPPDB;
-        $syaratDokumen = $batch->syaratDokumen;
+        if (!$infoAnak) return $pendaftaran->update(['status' =>'Menunggu']);
 
-        $orangTuaWali = $infoAnak->orangTuaWali;
-        $dokumenPersyaratan = $infoAnak->dokumenPersyaratan;
+        // $buktiBayarLengkap check, belum bayar = Menunggu
         $buktiBayar = $infoAnak->buktiBayar->first();
+        if (!$buktiBayar) return $pendaftaran->update(['status' =>'Menunggu']);
+        $buktiBayarLengkap = optional($buktiBayar)->exists();
 
+        // Admin has to manually update $pendaftaran->status, kalau tidak, statusnya akan tetap Menunggu kamu >o<
+        if (!$buktiBayarLengkap && !$pendaftaran->status === 'Mengisi') return;
+
+        // $formulirLengkap check
+        $orangTuaWali = $infoAnak->orangTuaWali;
         $requiredInfoAnak = [
             'nama_anak', 'panggilan_anak', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir',
             'alamat_anak', 'kewarganegaraan', 'bahasa_di_rumah', 'agama', 'status_tinggal',
             'yang_mendaftarkan', 'status_anak', 'anak_ke', 'berat_badan', 'tinggi_badan', 'golongan_darah'
         ];
-
         if (optional($infoAnak)->mendaftar_sebagai === 'Pindahan') {
             $requiredInfoAnak = array_merge($requiredInfoAnak, [
                 'sekolah_lama', 'tanggal_pindah', 'dari_kelompok', 'ke_kelompok'
             ]);
         }
-
         $infoAnakLengkap = $infoAnak && collect($requiredInfoAnak)->every(fn($field) => !empty($infoAnak->$field));
-
         if ($infoAnak && $infoAnak->yang_mendaftarkan === 'Orang Tua') {
             $requiredRelasi = ['ayah', 'ibu'];
         } else {
             $requiredRelasi = ['wali'];
         }
-
         $orangTuaWaliLengkap = collect($requiredRelasi)->every(fn($relasi) => $orangTuaWali->contains('relasi', $relasi));
-
         $formulirLengkap = $infoAnakLengkap && $orangTuaWaliLengkap;
+
+        // $dokumenLengkap check
+        $batch = $pendaftaran->batchPPDB;
+        $syaratDokumen = $batch->syaratDokumen;
+        $dokumenPersyaratan = $infoAnak->dokumenPersyaratan;
         $dokumenUnggahan = $dokumenPersyaratan->pluck('tipe_dokumen_id');
         $filterDokumen  = $syaratDokumen->where('is_wajib', true)->pluck('tipe_dokumen_id');
         $dokumenLengkap = $filterDokumen->diff($dokumenUnggahan)->isEmpty();
 
-        // Indicator bit: $buktiBayarLengkap check
-        $buktiBayarLengkap = optional($buktiBayar)->exists();
-
         // Update $pendaftaran->status jika seluruh requirement Lengkap
-        if ($formulirLengkap && $dokumenLengkap && $buktiBayarLengkap && ($pendaftaran->status === 'Belum Lengkap')) {
+        if ($formulirLengkap && $dokumenLengkap && $buktiBayarLengkap && ($pendaftaran->status === 'Mengisi')) {
             $pendaftaran->update(['status' => 'Lengkap']);
         }
 
@@ -90,7 +90,7 @@ class PendaftaranService
             'saudara_tiri'      =>  'nullable|numeric|min:0|max:20',
             'saudara_angkat'    =>  'nullable|numeric|min:0|max:20',
             'berat_badan'       =>  'required|numeric|min:10|max:200',
-            'tinggi_badan'      =>  'required|numeric|min:10|max:200',
+            'tinggi_badan'      =>  'required|numeric|min:50|max:200',
             'golongan_darah'    =>  'required|in:Belum Periksa,O,AB,A,B',
             'riwayat_penyakit'  =>  'nullable|string',
             'mendaftar_sebagai' =>  'required|in:Murid Baru,Pindahan',

@@ -45,6 +45,11 @@
                                 <td>:</td>
                                 <td>{{ $pendaftaran->user->email }}</td>
                             </tr>
+                            <tr>
+                                <td>Nomor HP/WA</td>
+                                <td>:</td>
+                                <td>{{ $pendaftaran->user->nomor_hp }}</td>
+                            </tr>
                         </table>
                     </div>
                 </div>

@@ -2,11 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\BatchPPDB;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AuthSecureMiddleware
 {
@@ -17,17 +19,35 @@ class AuthSecureMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Handles cases when user attempts to access restricted url if not logged in
         if(!Auth::check())
         {
             throw new AuthenticationException();
         }
 
+        // Handles case when, a user is logged in during batch closing, especially for user with role == 2, deduced from the requested url
+        $batch = BatchPPDB::where('status', true)->first();
+        if (request()->is('pendaftar*')) {
+            if (!$batch && Auth::user() && Auth::user()->role_id == 2) {
+                Auth::logout();
+                session()->invalidate();
+                session()->regenerateToken();
+
+                return redirect()->route('home');
+            }
+        }
+
         $response = $next($request);
 
-        return $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-                        ->header('Pragma', 'no-cache')
-                        ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT')
-                        ->header('X-Frame-Options', 'DENY')
-                        ->header('X-Content-Type-Options', 'nosniff');
+        // Handles cases for exporting resources and page expiry by setting the HTTP headers
+        if (!($response instanceof BinaryFileResponse)) {
+            $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+            $response->header('Pragma', 'no-cache');
+            $response->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
+            $response->header('X-Frame-Options', 'DENY');
+            $response->header('X-Content-Type-Options', 'nosniff');
+        }
+
+        return $response;
     }
 }

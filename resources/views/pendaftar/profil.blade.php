@@ -45,17 +45,22 @@
                                 <td>:</td>
                                 <td>{{ $user->email }}</td>
                             </tr>
+                            <tr>
+                                <td>Nomor HP/WA</td>
+                                <td>:</td>
+                                <td>{{ $user->nomor_hp }}</td>
+                            </tr>
                         </table>
                     </div>
                 </div>
                 <div class="margin-vertical" x-data="{ activeTab: 'tabA' }">
                     <div class="flex">
-                        <span class="biodata-head" :class="{ 'active' : activeTab === 'tabA' }" @click="activeTab = 'tabA'">Data Formulir</span>
-                        <span class="biodata-head" :class="{ 'active' : activeTab === 'tabB' }" @click="activeTab = 'tabB'">Dokumen Unggahan</span>
-                        <span class="biodata-head" :class="{ 'active' : activeTab === 'tabC' }" @click="activeTab = 'tabC'">Bukti Pembayaran</span>
+                        <span class="tab-head" :class="{ 'active' : activeTab === 'tabA' }" @click="activeTab = 'tabA'">Data Formulir</span>
+                        <span class="tab-head" :class="{ 'active' : activeTab === 'tabB' }" @click="activeTab = 'tabB'">Dokumen Unggahan</span>
+                        <span class="tab-head" :class="{ 'active' : activeTab === 'tabC' }" @click="activeTab = 'tabC'">Bukti Pembayaran</span>
                     </div>
                     <div class="biodata frame scrollable content-padding-rem">
-                        <div class="biodata-body" x-show="{ activeTab: 'tabA' }" :class="{ 'show' : activeTab === 'tabA' }">
+                        <div class="tab-panel" x-show="{ activeTab: 'tabA' }" :class="{ 'show' : activeTab === 'tabA' }">
                             <div class="">
                                 <h6 class="">Data Anak</h6>
                                 <table class="alternate fixed detail margin-vertical">
@@ -87,7 +92,7 @@
                                 </div>
                             @endforeach
                         </div>
-                        <div class="biodata-body" x-show="{ activeTab: 'tabB' }" :class="{ 'show' : activeTab === 'tabB' }">
+                        <div class="tab-panel" x-show="{ activeTab: 'tabB' }" :class="{ 'show' : activeTab === 'tabB' }">
                             <h6 class="">Dokumen Unggahan</h6>
                             <table class="alternate fixed detail margin-vertical">
                                 @forelse ( $syaratDokumen as $syarat)
@@ -110,7 +115,7 @@
                                 @endforelse
                             </table>
                         </div>
-                        <div class="biodata-body" x-show="{ activeTab: 'tabC' }" :class="{ 'show' : activeTab === 'tabC' }">
+                        <div class="tab-panel" x-show="{ activeTab: 'tabC' }" :class="{ 'show' : activeTab === 'tabC' }">
                             <h6 class="">Bukti Pembayaran</h6>
                             <table class="alternate fixed detail margin-vertical">
                                 <tr>

@@ -27,7 +27,10 @@ class SyaratDokumenController extends Controller
             $existingDokumen = TipeDokumen::where('tipe', $dokumen)->first();
 
             if ($existingDokumen) {
-                return response()->json(['error' => 'Persyaratan ini sudah ada'], 422);
+                return response()->json(
+                    ['error' => 'Persyaratan ini sudah ada'],
+                    // 422
+                );
             }
 
             $tipeDokumen = TipeDokumen::create(['tipe' => $dokumen]);

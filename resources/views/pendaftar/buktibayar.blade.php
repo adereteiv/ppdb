@@ -1,14 +1,24 @@
 <x-layouts.app-layout>
 
-@if (session()->has('success'))
-<x-flash-message alert="green">{{ session('success') }}</x-flash-message>
-@endif
-
 <div id="pendaftar-buktibayar" class="app-content">
     <div class="wrapper">
         <x-partials.app-content-title :hideBackLink="true"><h6>Unggah Bukti Pembayaran</h6></x-partials.app-content-title>
         <hr style="border: 1px solid rgba(0, 0, 0, .15); margin: 0 1rem;">
         <div class="content-padding-side-rem constrict">
+            <div class="content-margin">
+                @if ($pendaftaran->status == 'Menunggu' && $buktiBayar)
+                    <x-flash-message flash='yellow' button>
+                        Menunggu verifikasi pembayaran dari admin.
+                    </x-flash-message>
+                @elseif ($pendaftaran->status !== 'Menunggu' && $buktiBayar)
+                    <x-flash-message flash='green' button>
+                        Pembayaran terverifikasi.
+                    </x-flash-message>
+                @endif
+                <x-flash-message flash='blue' button>
+                    Harap mengunggah bukti pembayaran Anda. Ukuran maksimal berkas sebesar 1MB.
+                </x-flash-message>
+            </div>
             <form id="payForm" method="POST" action="{{ route('pendaftar.buktiBayar.update') }}" enctype="multipart/form-data"> @method('PUT') @csrf
                 <div class="margin-vertical">
                     <x-inputbox-file

@@ -1,6 +1,6 @@
 import { fetchContent, alert, copyToClipboard, tooltip, toggleStaticOpen } from './misc.js';
 import modalControl from "./modal.js";
-import { togglePindahanBit, toggleRequiredFields, toggleKelompokUmur, initAdjustPhoneInput, initGelombangSelection, appendSyaratDokumen, initAutosave } from './form.js';
+import { togglePindahanBit, toggleYangMendaftarkan, toggleKelompokUmur, initAdjustPhoneInput, initGelombangSelection, appendSyaratDokumen, initAutosave } from './form.js';
 import { restoreTableState } from './table.js';
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /** form.js
      * [✓] togglePindahanBit
-     * [✓] toggleRequiredFields
+     * [✓] toggleYangMendaftarkan
      * [✓] toggleKelompokUmur
      * [✓] initAdjustPhoneInput
      * [✓] initGelombangSelection
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
         radio.addEventListener("change", togglePindahanBit);
     });
     document.querySelectorAll('input[name="yang_mendaftarkan"]').forEach(radio => {
-        radio.addEventListener("change", toggleRequiredFields);
+        radio.addEventListener("change", toggleYangMendaftarkan);
     });
     toggleKelompokUmur();
     initAdjustPhoneInput();

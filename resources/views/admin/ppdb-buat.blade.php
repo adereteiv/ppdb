@@ -1,9 +1,5 @@
 <x-layouts.app-layout>
 
-@if (session()->has('success'))
-<x-flash-message alert="green">{{ session('success') }}</x-flash-message>
-@endif
-
 <div id="admin-ppdb-buat" class="app-content">
     <div class="wrapper">
         <x-partials.app-content-title>
@@ -18,11 +14,14 @@
                     <div>
                         <x-inputbox for="tahun_ajaran" class="content-padding-bottom">
                             <x-slot:label><b>Tahun Ajaran</b></x-slot>
-                            <x-input-select name="tahun_ajaran" :options="$options" id="tahun_ajaran" required/>
+                            <x-input-select class="form-item" name="tahun_ajaran" :options="$options" id="tahun_ajaran" required/>
                         </x-inputbox>
                         <x-inputbox for="gelombang" class="content-padding-top content-padding-bottom">
                             <x-slot:label><b>Gelombang</b></x-slot>
-                            <x-input type="text" name="gelombang" id="gelombang" readonly required/>
+                            <x-input class="form-item" type="text" name="gelombang" id="gelombang" readonly required/>
+                            @if (session('gelombangAda'))
+                                <br><p style="color: red">{{ session('gelombangAda') }}</p>
+                            @endif
                         </x-inputbox>
                         <script type="application/json" id="gelombangData">
                             {!! json_encode($gelombang) !!}
@@ -81,7 +80,7 @@
                                 {{-- x-bind:max="maxMulai" --}}
                                 />
                                 <span style="margin:5px;">&nbsp;sampai dengan&nbsp;</span>
-                                <x-input type="datetime-local" name="waktu_tenggat" id="jadwal" required
+                                <x-input class="form-item" type="datetime-local" name="waktu_tenggat" id="jadwal" required
                                 x-model="waktuTenggat"
                                 x-bind:min="minTenggat"
                                 x-bind:max="maxTenggat"
@@ -89,16 +88,12 @@
                             </div>
                         </x-inputbox>
                         <x-inputbox for="waktu_tutup" class="content-padding-top">
-                            <x-slot:label><b>Periode Evaluasi<font color="#ff6d00"> (PPDB otomatis tertutup)</font></b></x-slot>
-                            <x-input type="datetime-local" name="waktu_tutup" id="waktu_tutup"
-                            x-model="waktuTutup"
-                            x-bind:min="waktuTenggat"
-                            x-bind:disabled="!waktuTenggat"
-                            />
+                            <x-slot:label><b>Periode Evaluasi<span style="color:#ff6d00"> (PPDB otomatis tertutup)</span></b></x-slot>
+                            <x-input class="form-item" type="datetime-local" name="waktu_tutup" id="waktu_tutup" x-model="waktuTutup" x-bind:min="waktuTenggat" x-bind:disabled="!waktuTenggat" />
                         </x-inputbox>
                     </div>
                 </div>
-                <section class="flex-1 content-padding flex flex-nowrap flex-col">
+                <div class="flex-1 content-padding flex flex-nowrap flex-col">
                     <div class="flex justify-between">
                         <b>Atur Syarat Dokumen</b>
                         <div class="flex">
@@ -128,7 +123,7 @@
                             />
                         @endforeach
                     </div>
-                </section>
+                </div>
             </form>
             <div class="margin-vertical text-align-center">
                 <button type="submit" class="tombol-besar tombol-netral" form="ppdbBuat">Simpan</button>

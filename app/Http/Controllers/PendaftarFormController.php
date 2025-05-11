@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BuktiBayar;
 use App\Models\InfoAnak;
 use App\Models\BatchPPDB;
 use App\Models\Pendaftaran;
@@ -25,6 +26,14 @@ class PendaftarFormController extends Controller
         $user = Auth::user();
         $pendaftaran = Pendaftaran::where('user_id', $user->id)->first();
         $infoAnak = $pendaftaran ? InfoAnak::where('pendaftaran_id', $pendaftaran->id)->first() : null;
+        $buktiBayar = BuktiBayar::where('anak_id', $infoAnak->id)->exists();
+        // flow, pay first
+        // if (!$buktiBayar || $pendaftaran->status === 'Menunggu') return back()->with('warn', 'Silakan menyelesaikan tahap pembayaran dan mengunggah bukti pembayaran. Admin akan melakukan verifikasi secepatnya.');
+        if (!$buktiBayar && $pendaftaran->status === 'Menunggu') {
+            return back()->with('warn', 'Silakan menyelesaikan tahap pembayaran dan mengunggah bukti pembayaran. Admin akan melakukan verifikasi secepatnya.');
+        } elseif ($buktiBayar && $pendaftaran->status === 'Menunggu') {
+            return back()->with('warn', 'Admin akan melakukan verifikasi pembayaran secepatnya.');
+        }
 
         $ayah = $infoAnak ? $infoAnak->orangTuaWali()->where('relasi', 'ayah')->first() : null;
         $ibu = $infoAnak ? $infoAnak->orangTuaWali()->where('relasi', 'ibu')->first() : null;
@@ -37,6 +46,9 @@ class PendaftarFormController extends Controller
     {
         $user = Auth::user();
         $activeBatch = BatchPPDB::where('status', true)->latest()->first();
+        if (now() >= $activeBatch->waktu_tenggat) {
+            return back()->with('error', 'Tidak dapat melakukan perubahan. Melewati masa tenggat periode PPDB.');
+        }
 
         $pendaftaran = Pendaftaran::updateOrCreate(
             ['user_id' => $user->id],

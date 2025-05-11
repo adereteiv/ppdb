@@ -37,6 +37,12 @@ class BatchPPDBController extends Controller
     }
 
     public function store(Request $request) {
+        // BAM!!! problem solved, ya can't fool me bruv, this is a foolproof check and it's just got patched with `flex-tape`
+        $existingBatch = BatchPPDB::where('tahun_ajaran', $request->tahun_ajaran)->where('gelombang', $request->gelombang)->exists();
+        if ($existingBatch) {
+            return back()->with('gelombangAda', 'Gelombang pendaftaran ini sudah ada.')->withInput();
+        }
+
         $rules = [
             'tahun_ajaran'  => 'required|string',
             'gelombang'     => 'required|integer|min:1',
@@ -95,9 +101,9 @@ class BatchPPDBController extends Controller
 
         $alertMessage = 'Periode PPDB berhasil dibuat!';
         if($batch->status) {
-            return redirect('admin/ppdb/aktif')->with('success', $alertMessage );
+            return redirect()->route('admin.ppdb.aktif.index')->with('success', $alertMessage );
         } else {
-            return redirect('admin/ppdb')->with('success', $alertMessage);
+            return redirect()->route('admin.ppdb.index')->with('success', $alertMessage);
         }
     }
 }

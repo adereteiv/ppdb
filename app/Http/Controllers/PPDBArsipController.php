@@ -9,7 +9,10 @@ use App\Models\OrangTuaWali;
 use App\Models\SyaratDokumen;
 use App\Models\DokumenPersyaratan;
 use App\Services\DataTableService;
+use App\Exports\MaatExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class PPDBArsipController extends Controller
 {
@@ -64,8 +67,8 @@ class PPDBArsipController extends Controller
                 switch($sort){
                     case 'status':
                         $statusOrder = $order === 'desc'
-                            ? ['Belum Lengkap', 'Lengkap', 'Terverifikasi']
-                            : ['Terverifikasi', 'Lengkap', 'Belum Lengkap'];
+                            ? ['Menunggu', 'Mengisi', 'Lengkap', 'Terverifikasi']
+                            : ['Terverifikasi', 'Lengkap', 'Mengisi', 'Menunggu'];
                         $query->orderByRaw("FIELD(status, '" . implode("','", $statusOrder) . "')");
                         break;
                     case 'nama_anak':
@@ -79,43 +82,7 @@ class PPDBArsipController extends Controller
                 }
             }
         );
-        /*
-        $query = $this->getData('pendaftaran');
 
-        $perPage = $request->input('perPage', 10);
-        $search = $request->input('search');
-
-        $allowedSorts = ['created_at', 'id', 'nama_anak', 'status'];
-        $sort = $request->input('sort', 'created_at');
-        $sort = in_array($sort, $allowedSorts) ? $sort : 'created_at';
-
-        $order = $request->input('order', 'desc');
-        $order = in_array($order, ['asc', 'desc']) ? $order : 'desc';
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('pendaftaran.id', 'LIKE', "%{$search}%")
-                  ->orWhereHas('infoAnak', function ($q) use ($search) {
-                      $q->where('nama_anak', 'LIKE', "%{$search}%");
-                  });
-            });
-        }
-
-        if ($sort === 'status') {
-            $statusOrder = $order === 'desc'
-                ? ['Belum Lengkap', 'Lengkap', 'Terverifikasi']
-                : ['Terverifikasi', 'Lengkap', 'Belum Lengkap'];
-            $query->orderByRaw("FIELD(status, '" . implode("','", $statusOrder) . "')");
-        } elseif ($sort === 'nama_anak') {
-            $query->leftJoin('info_anak', 'pendaftaran.id', '=', 'info_anak.pendaftaran_id') // join table, include related data, eager load infoAnak
-                ->orderBy('info_anak.nama_anak', $order)
-                ->select('pendaftaran.*');
-        } else {
-            $query->orderBy($sort, $order);
-        }
-
-        $data = $query->paginate($perPage)->appends($request->all());
-        */
         return response()->json([ // Server-side render
             'html' => view('admin.ppdb-arsip', compact('data'))->render(),
 			'pagination' => $data->links('components.my-pagination')->render(),
@@ -140,18 +107,6 @@ class PPDBArsipController extends Controller
         $syaratDokumen = $this->getData('syaratDokumen');
         $pendaftaran = $this->getData('pendaftaran')->findOrFail($id);
         $infoAnak = $pendaftaran->infoAnak;
-
-        /*
-        $orangTuaWali = collect();
-        $dokumenPersyaratan = collect();
-        $buktiBayar = null;
-
-        if ($infoAnak) {
-            $orangTuaWali = OrangTuaWali::where('anak_id', $infoAnak->id)->get();
-            $dokumenPersyaratan = DokumenPersyaratan::where('anak_id', $infoAnak->id)->get();
-            $buktiBayar = BuktiBayar::where('anak_id', $infoAnak->id)->first();
-        }
-        */
 
         $orangTuaWali = $infoAnak
             ? OrangTuaWali::where('anak_id', $infoAnak->id)->get()
@@ -189,6 +144,70 @@ class PPDBArsipController extends Controller
         }
 
         return redirect()->route('admin.ppdb.index')->with('success', 'Data berhasil dihapus.');
+    }
+
+    public function export()
+    {
+        $batch = $this->getData('batch');
+        $tahunAjaranRaw = explode('/', $batch->tahun_ajaran);
+        $tahunAjaran = implode('', array_map(fn($t) => substr($t, 2), $tahunAjaranRaw));
+
+        $gelombang = $batch->gelombang;
+        $prefix = $tahunAjaran . $gelombang;
+
+        $data = $this->getData('pendaftaran')->get()->map(function($r) {
+            return[
+                'id_pendaftaran'        => $r->id,
+                'status_pendaftaran'    => $r->status,
+                'tanggal_mendaftar'     => $r->created_at->translatedFormat('d F Y'),
+                'nama_anak'             => $r->infoAnak->nama_anak,
+                'tempat_lahir'          => $r->infoAnak->tempat_lahir,
+                'tanggal_lahir'         => $r->infoAnak->tanggal_lahir,
+                'alamat'                => $r->infoAnak->alamat_anak,
+                'jenis_kelamin'         => $r->infoAnak->jenis_kelamin,
+                'kewarganegaraan'       => $r->infoAnak->kewarganegaraan,
+                'agama'                 => $r->infoAnak->agama,
+                'status_tinggal'        => $r->infoAnak->status_tinggal,
+                'yang_mendaftarkan'     => $r->infoAnak->yang_mendaftarkan,
+                'status_anak'           => $r->infoAnak->status_anak,
+                'bahasa_di_rumah'       => $r->infoAnak->bahasa_di_rumah,
+                'anak_ke'               => $r->infoAnak->anak_ke,
+                'saudara_kandung'       => $r->infoAnak->saudara_kandung,
+                'saudara_tiri'          => $r->infoAnak->saudara_tiri ?? '—',
+                'saudara_angkat'        => $r->infoAnak->saudara_angkat ?? '—',
+                'berat_badan'           => $r->infoAnak->berat_badan,
+                'tinggi_badan'          => $r->infoAnak->tinggi_badan,
+                'golongan_darah'        => $r->infoAnak->golongan_darah,
+                'riwayat_penyakit'      => $r->infoAnak->riwayat_penyakit ?? '—',
+                'mendaftar_sebagai'     => $r->infoAnak->mendaftar_sebagai,
+                'sekolah_lama'          => $r->infoAnak->sekolah_lama ?? '—',
+                'tanggal_pindah'        => $r->infoAnak->tanggal_pindah ?? '—',
+                'dari_kelompok'         => $r->infoAnak->dari_kelompok ?? '—',
+                'ke_kelompok'           => $r->infoAnak->ke_kelompok ?? '—',
+            ];
+        });
+        $headings = [
+            'ID Pendaftaran', 'Status Pendaftaran', 'Tanggal Mendaftar', 'Nama Anak',
+            'Tempat Lahir', 'Tanggal Lahir', 'Alamat', 'Jenis Kelamin', 'Kewarganegaraan',
+            'Agama', 'Status Tinggal', 'Yang Mendaftarkan', 'Status Anak', 'Bahasa di Rumah',
+            'Anak ke-', 'Saudara Kandung', 'Saudara Tiri', 'Saudara Angkat', 'Berat Badan', 'Tinggi Badan',
+            'Gol. Darah', 'Riwayat Penyakit', 'Mendaftar Sebagai', 'Sekolah Lama', 'Tanggal Pindah', 'Dari Kelompok', 'Ke Kelompok',
+        ];
+        $widths = [
+            'A' => 15, 'B' => 15, 'C' => 20, 'D' => 20,
+            'E' => 30, 'F' => 15, 'G' => 30, 'H' => 15, 'I' => 15,
+            'J' => 20, 'K' => 10, 'L' => 15, 'M' => 15, 'N' => 15,
+            'O' => 10, 'P' => 10, 'Q' => 10, 'R' => 10, 'S' => 10, 'T' => 10,
+            'U' => 10, 'V' => 10, 'W' => 25, 'X' => 15, 'Y' => 20, 'Z' => 20, 'AA' => 15,
+        ];
+        $range = 'A1:AA1';
+        $formats = [
+            'C' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+            'F' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+            'Y' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+        ];
+
+        return Excel::download(new MaatExport($data, $range, $headings, $widths, $formats), 'ppdb_periode-gelombang_'."$prefix".'.xlsx');
     }
 
     /**

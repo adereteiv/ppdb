@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BatchPPDB;
 use App\Models\BuktiBayar;
 use App\Models\Pendaftaran;
-use App\Services\PendaftaranService;
 use Illuminate\Http\Request;
+use App\Services\PendaftaranService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -27,7 +28,7 @@ class PendaftarUnggahBuktiBayarController extends Controller
         $pendaftaran = Pendaftaran::where('user_id', $user->id)->firstOrFail();
         $buktiBayar = BuktiBayar::where('anak_id', optional($pendaftaran->infoAnak)->id)->first();
 
-        return view('pendaftar.buktibayar', compact('buktiBayar'));
+        return view('pendaftar.buktibayar', compact('pendaftaran', 'buktiBayar'));
     }
 
     /**
@@ -36,11 +37,12 @@ class PendaftarUnggahBuktiBayarController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-        $pendaftaran = Pendaftaran::where('user_id', $user->id)->with('user')->firstOrFail();
+        $activeBatch = BatchPPDB::where('status', true)->latest()->first();
+        if (now() >= $activeBatch->waktu_tenggat) {
+            return back()->with('error', 'Tidak dapat melakukan perubahan. Melewati masa tenggat periode PPDB.');
+        }
 
-        // if ($pendaftaran->user_id !== $user->id) {
-        //     abort(403, 'Unauthorized action.');
-        // }
+        $pendaftaran = Pendaftaran::where('user_id', $user->id)->with('user')->firstOrFail();
 
         $this->pendaftaranService->saveBuktiBayar($request, $pendaftaran);
 

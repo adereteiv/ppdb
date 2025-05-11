@@ -76,22 +76,26 @@ class RegulateBatchPPDBStatus extends Command
         // refer to sacred note
         // without try catch block, it will keep returning error alert
         try {
+            $now = now();
             $batches = BatchPPDB::orderBy('waktu_mulai', 'desc')->get();
 
-            $now = now();
+            // check if any batch is due to close
+            $expiredActive = $batches->first(function ($batch) use ($now) {
+                return $batch->status && $now >= $batch->waktu_tutup;
+            });
+            if ($expiredActive) {
+                $expiredActive->update(['status' => false,'waktu_tutup' => $now]);
+                $this->info("BatchPPDB:ID:{$expiredActive->id} expired and deactivated.");
+            }
 
-            // check if the target batch isn't active + hasn't started + has waktu_tutup in the future = planned to be activated
+            // check if any batch is due to activate ((isn't active = hasn't started) + has waktu_tutup in the future) = planned to be activated
             $x = $batches->first(function ($batch) use ($now) {
                 return !$batch->status && $batch->waktu_mulai <= $now && $now < $batch->waktu_tutup;
             });
-
             if ($x) {
                 $activeBatch = $batches->firstWhere('status', true);
                 if ($activeBatch && $activeBatch->id !== $x->id) {
-                    $activeBatch->update([
-                        'status' => false,
-                        'waktu_tutup' => $now,
-                    ]);
+                    $activeBatch->update(['status' => false, 'waktu_tutup' => $now,]);
                 }
                 $x->update(['status' => true]);
 

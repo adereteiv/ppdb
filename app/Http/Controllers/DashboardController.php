@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\InfoAnak;
 use App\Models\BatchPPDB;
 use App\Models\BuktiBayar;
+use App\Models\Pengumuman;
 use App\Models\Pendaftaran;
 use App\Models\OrangTuaWali;
 use App\Models\SyaratDokumen;
 use App\Models\DokumenPersyaratan;
-use App\Http\Controllers\Controller;
 use App\Services\PendaftaranService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -44,57 +46,9 @@ class DashboardController extends Controller
     public function showDashboard(){
         $user = $this->getData('user');
         $pendaftaran = $this->getData('pendaftaran');
+        $pengumuman = Pengumuman::where(['tipe_pengumuman'=> 'Khusus Pendaftar'])->latest()->first();
 
-        // Indicator bit
-        if (!$pendaftaran) {
-            return view('pendaftar.dashboard', ['formulirLengkap' => false, 'dokumenLengkap' => false, 'buktiBayarLengkap' => false]);
-        }
-
-        /* MOVED TO SERVICE CLASS FOR REUASABILITY
-        // Indicator bit: $formulirLengkap check
-        $infoAnak = $this->getData('infoAnak');
-        $orangTuaWali = $this->getData('orangTuaWali');
-
-        $requiredInfoAnak = [
-            'nama_anak', 'panggilan_anak', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir',
-            'alamat_anak', 'kewarganegaraan', 'bahasa_di_rumah', 'agama', 'status_tinggal',
-            'yang_mendaftarkan', 'status_anak', 'anak_ke', 'berat_badan', 'tinggi_badan', 'golongan_darah'
-        ];
-
-        if (optional($infoAnak)->mendaftar_sebagai === 'Pindahan') {
-            $requiredInfoAnak = array_merge($requiredInfoAnak, [
-                'sekolah_lama', 'tanggal_pindah', 'dari_kelompok', 'ke_kelompok'
-            ]);
-        }
-
-        $infoAnakLengkap = $infoAnak && collect($requiredInfoAnak)->every(fn($field) => !empty($infoAnak->$field));
-
-        if ($infoAnak && $infoAnak->yang_mendaftarkan === 'Orang Tua') {
-            $requiredRelasi = ['ayah', 'ibu'];
-        } else {
-            $requiredRelasi = ['wali'];
-        }
-
-        $orangTuaWaliLengkap = collect($requiredRelasi)->every(fn($relasi) => $orangTuaWali->contains('relasi', $relasi));
-
-        $formulirLengkap = $infoAnakLengkap && $orangTuaWaliLengkap;
-
-        // Indicator bit: $dokumenLengkap check
-        $batch = $this->getData('batch');
-        $syaratDokumen = $this->getData('syaratDokumen')->where('is_wajib', true)->pluck('tipe_dokumen_id');
-        $dokumenUnggahan = $this->getData('dokumenPersyaratan')->pluck('tipe_dokumen_id');
-        $dokumenLengkap = $syaratDokumen->diff($dokumenUnggahan)->isEmpty();
-
-        // Indicator bit: $buktiBayarLengkap check
-        $buktiBayarLengkap = optional($this->getData('buktiBayar'))->exists();
-
-        // Update $pendaftaran->status jika seluruh requirement Lengkap
-        if ($formulirLengkap && $dokumenLengkap && $buktiBayarLengkap && ($pendaftaran->status === 'Belum Lengkap')) {
-            // $pendaftaran->status = 'Lengkap';
-            // $pendaftaran->save();
-            $pendaftaran->update(['status' => 'Lengkap']);
-        }
-        */
+        if (!$pendaftaran) return view('pendaftar.dashboard', ['formulirLengkap' => false, 'dokumenLengkap' => false, 'buktiBayarLengkap' => false]);
 
         $pendaftaranService = new PendaftaranService;
         $status = $pendaftaranService->checkStatusPendaftaran($pendaftaran);
@@ -105,7 +59,7 @@ class DashboardController extends Controller
         ] = $status;
         $pendaftaran->refresh();
 
-        return view('pendaftar.dashboard', compact('pendaftaran','formulirLengkap', 'dokumenLengkap', 'buktiBayarLengkap'));
+        return view('pendaftar.dashboard', compact('pendaftaran', 'pengumuman', 'formulirLengkap', 'dokumenLengkap', 'buktiBayarLengkap'));
     }
 
     public function showProfil(){
@@ -133,5 +87,60 @@ class DashboardController extends Controller
         $buktiBayar = $this->getData('buktiBayar');
 
         return view('pendaftar.profil', compact('user','pendaftaran', 'infoAnak', 'orangTuaWali', 'syaratDokumen', 'dokumenPersyaratan', 'buktiBayar'));
+    }
+
+    public function recovery() {
+        return view('pendaftar.form-recovery');
+    }
+
+    public function store(Request $request){
+        $activeBatch = BatchPPDB::where('status', true)->latest()->first();
+
+        $request->validate([
+                'nama_anak'         => 'required|string|max:255|regex:/^[a-zA-Z-\s]+$/',
+                'panggilan_anak'    => 'required|string|max:30|regex:/^[a-zA-Z-\s]+$/',
+                'tempat_lahir'      => 'required|string',
+                'tanggal_lahir'     => [
+                                        'required','date',
+                                        'before_or_equal:' . now()->subYears(4)->toDateString(),
+                                        'after:' . now()->subYears(7)->toDateString(),
+                                    ],
+                'alamat_anak'       => 'required|string|max:255',
+            ],
+            [
+                'nama_anak.required'            => 'Wajib diisi.',
+                'nama_anak.max'                 => 'Melebihi batas maksimal 255 karakter.',
+                'nama_anak.regex'               => 'Hanya huruf Aa-Zz dan tanda hubung (-) yang diperbolehkan.',
+                'panggilan_anak.required'       => 'Wajib diisi.',
+                'panggilan_anak.max'            => 'Melebihi batas maksimal 30 karakter.',
+                'panggilan_anak.regex'          => 'Hanya huruf Aa-Zz dan tanda hubung (-) yang diperbolehkan.',
+                'tanggal_lahir.required'        => 'Wajib diisi.',
+                'tanggal_lahir.before_or_equal' => 'Anak harus berusia minimal 4 tahun.',
+                'tanggal_lahir.after'           => 'Usia anak maksimal berada di bawah 7 tahun.',
+                'alamat_anak.required'          => 'Alamat wajib diisi.',
+                'alamat_anak.max'               => 'Melebihi batas maksimal 255 karakter.'
+            ],
+        );
+
+        $sanitize = [
+            'nama_anak' => Str::title(preg_replace('/\s+/', ' ', trim(strip_tags($request->input('nama_anak'))))),
+            'panggilan_anak' => Str::title(preg_replace('/\s+/', ' ', trim(strip_tags($request->input('panggilan_anak'))))),
+        ];
+
+        $pendaftaran = Pendaftaran::create([
+            'user_id' => Auth::user()->id,
+            'batch_id' => $activeBatch->id,
+        ]);
+
+        InfoAnak::create([
+            'pendaftaran_id' => $pendaftaran->id,
+            'nama_anak' => $sanitize['nama_anak'],
+            'panggilan_anak' => $sanitize['panggilan_anak'],
+            'tempat_lahir'=> $request->tempat_lahir,
+            'tanggal_lahir'=> $request->tanggal_lahir,
+            'alamat_anak'=> $request->alamat_anak,
+        ]);
+
+        return redirect()->route('pendaftar.dashboard')->with('success', 'Pembuatan rekam pendaftaran berhasil!');
     }
 }
