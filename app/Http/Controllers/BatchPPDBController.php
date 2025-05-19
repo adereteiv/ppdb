@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 
 class BatchPPDBController extends Controller
 {
+    /**
+     * Display batch creation form
+     */
     public function index() {
         $tahunAjaran = now()->year;
         $periodeNow = "$tahunAjaran/".($tahunAjaran+1);
@@ -19,7 +22,7 @@ class BatchPPDBController extends Controller
 
         $gelombang = [];
         foreach ($options as $periode) {
-            if(isset($existingBatch[$periode])) {
+            if (isset($existingBatch[$periode])) {
                 $periodeAjaran = $existingBatch[$periode];
                 $latestGelombang = $periodeAjaran->first()->gelombang;
                 $gelombang[$periode] = $latestGelombang + 1;
@@ -36,8 +39,10 @@ class BatchPPDBController extends Controller
         return view('admin.ppdb-buat', compact('options', 'existingBatch', 'tipeDokumen', 'gelombang'));
     }
 
+    /**
+     * Stores newly created batch, watch out for BatchPPDB model and Commands/RegulateBatchPPDBStatus
+     */
     public function store(Request $request) {
-        // BAM!!! problem solved, ya can't fool me bruv, this is a foolproof check and it's just got patched with `flex-tape`
         $existingBatch = BatchPPDB::where('tahun_ajaran', $request->tahun_ajaran)->where('gelombang', $request->gelombang)->exists();
         if ($existingBatch) {
             return back()->with('gelombangAda', 'Gelombang pendaftaran ini sudah ada.')->withInput();
@@ -78,8 +83,6 @@ class BatchPPDBController extends Controller
         ];
 
         $validatedData = $request->validate($rules, $messages);
-        // dd($request->all());
-        // dd($request->input('include'));
 
         $batch = BatchPPDB::create([
             'tahun_ajaran' => $validatedData['tahun_ajaran'],
@@ -100,7 +103,7 @@ class BatchPPDBController extends Controller
         }
 
         $alertMessage = 'Periode PPDB berhasil dibuat!';
-        if($batch->status) {
+        if ($batch->status) {
             return redirect()->route('admin.ppdb.aktif.index')->with('success', $alertMessage );
         } else {
             return redirect()->route('admin.ppdb.index')->with('success', $alertMessage);

@@ -5,7 +5,6 @@ use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\AuthSecureMiddleware;
 use App\Http\Middleware\PendaftarAccessMiddleware;
 use Illuminate\Auth\AuthenticationException;
-// use App\Http\Middleware\ThrottleRequestHandler;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;

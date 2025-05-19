@@ -6,12 +6,25 @@
             <h5>Status Pendaftaran :&nbsp;</h5>
             <x-status-pendaftaran class="flex align-items-center" :value="$pendaftaran->status ?? null"/>
         </x-partials.app-content-title>
-        <div class="stepper scrollable content-padding-side-rem content-padding-bottom-rem">
-            <li class="content-padding {{ $buktiBayarLengkap ? 'active' : '' }}">Bukti Pembayaran</li>
-            <li class="content-padding {{ $formulirLengkap ? 'active' : '' }}">Formulir Pendaftaran</li>
-            <li class="content-padding {{ $dokumenLengkap ? 'active' : '' }}">Dokumen Persyaratan</li>
+        <div class="content-padding-side-rem">
+            @if ($pendaftaran->status === 'Lengkap')
+                <x-flash-message flash='green' icon='success'>Pendaftaran Anda sudah lengkap, kami akan segera melakukan validasi kebenaran data Anda.</x-flash-message>
+            @elseif ($pendaftaran->status === 'Terverifikasi')
+                <x-flash-message flash='blue' icon='success'>Pendaftaran Anda sudah divalidasi, silakan menunggu pengumuman daftar peserta didik dan tanggal masuk akan segera diumumkan.</x-flash-message>
+            @endif
+            <x-flash-message class="bg-blue" icon>
+                <p>Silakan menekan pilihan tombol berikut untuk melengkapi pendaftaran Anda.</p>
+                <p>Indikator akan menyala ketika data sudah tersimpan.</p>
+            </x-flash-message>
+        </div>
+        <div class="list-stepper flex gap scrollable content-padding-side-rem content-padding-bottom-rem">
+            <a class="flex-1 {{ $buktiBayarLengkap ? 'active' : '' }}" href="{{ route('pendaftar.buktiBayar') }}"><li class="content-padding {{ $buktiBayarLengkap ? 'active' : '' }}">1. Bukti Pembayaran</li></a>
+            <a class="flex-1 {{ $formulirLengkap ? 'active' : '' }}" href="{{ route('pendaftar.formulir') }}"><li class="content-padding {{ $formulirLengkap ? 'active' : '' }}">2. Formulir Pendaftaran</li></a>
+            <a class="flex-1 {{ $dokumenLengkap ? 'active' : '' }}" href="{{ route('pendaftar.dokumen') }}"><li class="content-padding {{ $dokumenLengkap ? 'active' : '' }}">3. Dokumen Persyaratan</li></a>
         </div>
     </div>
+
+    {{-- Pengumuman refer to DashboardController, where status = 'Khusus Pendaftar' --}}
     @isset($pengumuman)
         <div class="wrapper">
             <x-pengumuman-preview
@@ -25,7 +38,7 @@
     <div class="flex gap">
         <div class="wrapper flex-1">
             <x-partials.app-content-title :hideBackLink="true">
-                <h5>Prosedur Pendaftaran</h5>
+                <h5>Tata Cara Pendaftaran</h5>
             </x-partials.app-content-title>
             <div class="content-padding-side-rem content-padding-bottom">
                 <x-partials.list-alur-pendaftaran/>

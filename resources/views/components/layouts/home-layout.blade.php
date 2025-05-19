@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal PPDB TK Negeri Pembina Sungai Kakap</title>
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script defer type="module" src="{{ asset('js/app.js') }}"></script>
+    {{-- Commit 15 - Used Vite bundling, limiting js exposure based on role --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
     <div class="home-layout">
         @php
+            // Checks for active batch, if exists then enables daftar and login menu on header, based on isOpen
             use App\Models\BatchPPDB;
             $periodeAktif = BatchPPDB::where('status', true)->exists();
         @endphp
-        @if (empty($hideHeader))
+        @if (empty($hideHeader)) {{-- Enables hiding header, works for mobile header as well --}}
             <x-partials.home-header :isOpen="$periodeAktif"/>
         @endif
         <main class="home-main flex-1 flex flex-col">
@@ -24,7 +25,7 @@
             @endif
             {{ $slot }}
         </main>
-        @if (empty($hideContact))
+        @if (empty($hideContact))  {{-- Enables hiding `contact` overlay --}}
             <a class="whatsapp" href="https://wa.me/+62NO-HP-DISINI?text=Selamat%20Pagi/%20Siang/%20Sore%20Admin,%20saya%20butuh%20bantuan%20tentang%20pendaftaran%20murid%20baru%20ke%20TK%20Negeri%20Pembina%20Sungai%20Kakap.%20Apakah%20bisa%20dibantu?%20Terima%20kasih." target="_blank" rel="noopener">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation:isolate" viewBox="0 0 800 800" width="72" height="72">
                     <defs><clipPath id="_clipPath_A3g8G5hPEGG2L0B6hFCxamU4cc8rfqzQ"><rect width="800" height="800"/></clipPath></defs>
@@ -37,9 +38,10 @@
                 </svg>
             </a>
         @endif
-        @if (empty($hideFooter))
+        @if (empty($hideFooter))  {{-- Enables hiding footer --}}
             <x-partials.home-footer/>
         @endif
     </div>
+    <x-modal id="data-modal" class="scrollable"/>
 </body>
 </html>

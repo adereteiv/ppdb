@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\BatchPPDB;
 use App\Models\BuktiBayar;
 use App\Models\Pendaftaran;
-use App\Models\OrangTuaWali;
 use App\Models\SyaratDokumen;
 use App\Models\DokumenPersyaratan;
+use App\Models\OrangTuaWali;
 use App\Services\DataTableService;
 use App\Exports\MaatExport;
 use Illuminate\Http\Request;
@@ -16,6 +16,10 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class PPDBArsipController extends Controller
 {
+    /**
+     * arsip_key getter, set from DashboardAdminController@setArsipKey, removed during log out.
+     * @return BatchPPDB|null
+     */
     private function getArsipKey() {
         $key = request()->cookie('arsip_key');
 
@@ -31,6 +35,10 @@ class PPDBArsipController extends Controller
             ->first();
     }
 
+    /**
+     * Centralized data getter.
+     * @param mixed $key
+     */
     private function getData($key = null)
     {
         $batch = $this->getArsipKey();
@@ -45,6 +53,9 @@ class PPDBArsipController extends Controller
         return $key ? ($data[$key] ?? null) : $data ;
     }
 
+    /**
+     * Pass queried data as an ajax response, uses DataTableService.
+     */
     public function passData(Request $request)
     {
         $batch = $this->getData('batch');
@@ -92,16 +103,19 @@ class PPDBArsipController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        return view('admin.ppdb-rekam', ['batch' => $this->getData('batch')]);
-    }
+    public function index(){return view('admin.ppdb-rekam', ['batch' => $this->getData('batch')]);}
 
-    public function showRincian()
-    {
-        return view('admin.ppdb-rincian', ['batch' => $this->getData('batch')]);
-    }
+    /**
+     * Display batch detail.
+     */
+    public function showRincian(){return view('admin.ppdb-rincian', ['batch' => $this->getData('batch')]);}
 
+    /**
+     * Centralized entry fetching.
+     * @param mixed $id
+     * @param mixed $view
+     * @return \Illuminate\Contracts\View\Factory
+     */
     private function getEntry($id, $view)
     {
         $syaratDokumen = $this->getData('syaratDokumen');
@@ -128,13 +142,10 @@ class PPDBArsipController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        return $this->getEntry($id, 'admin.ppdb-profil');
-    }
+    public function show(string $id){return $this->getEntry($id, 'admin.ppdb-profil');}
 
     /**
-     * Remove the specified resource from storage.
+     * Remove archived admission batch.
      */
     public function destroy(string $id)
     {
@@ -146,6 +157,10 @@ class PPDBArsipController extends Controller
         return redirect()->route('admin.ppdb.index')->with('success', 'Data berhasil dihapus.');
     }
 
+    /**
+     * Export the data, based on defined headers as stated below.
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function export()
     {
         $batch = $this->getData('batch');
@@ -155,35 +170,53 @@ class PPDBArsipController extends Controller
         $gelombang = $batch->gelombang;
         $prefix = $tahunAjaran . $gelombang;
 
-        $data = $this->getData('pendaftaran')->get()->map(function($r) {
+        $data = $this->getData('pendaftaran')->with('infoAnak.orangTuaWali')->get()->map(function($p) {
             return[
-                'id_pendaftaran'        => $r->id,
-                'status_pendaftaran'    => $r->status,
-                'tanggal_mendaftar'     => $r->created_at->translatedFormat('d F Y'),
-                'nama_anak'             => $r->infoAnak->nama_anak,
-                'tempat_lahir'          => $r->infoAnak->tempat_lahir,
-                'tanggal_lahir'         => $r->infoAnak->tanggal_lahir,
-                'alamat'                => $r->infoAnak->alamat_anak,
-                'jenis_kelamin'         => $r->infoAnak->jenis_kelamin,
-                'kewarganegaraan'       => $r->infoAnak->kewarganegaraan,
-                'agama'                 => $r->infoAnak->agama,
-                'status_tinggal'        => $r->infoAnak->status_tinggal,
-                'yang_mendaftarkan'     => $r->infoAnak->yang_mendaftarkan,
-                'status_anak'           => $r->infoAnak->status_anak,
-                'bahasa_di_rumah'       => $r->infoAnak->bahasa_di_rumah,
-                'anak_ke'               => $r->infoAnak->anak_ke,
-                'saudara_kandung'       => $r->infoAnak->saudara_kandung,
-                'saudara_tiri'          => $r->infoAnak->saudara_tiri ?? '—',
-                'saudara_angkat'        => $r->infoAnak->saudara_angkat ?? '—',
-                'berat_badan'           => $r->infoAnak->berat_badan,
-                'tinggi_badan'          => $r->infoAnak->tinggi_badan,
-                'golongan_darah'        => $r->infoAnak->golongan_darah,
-                'riwayat_penyakit'      => $r->infoAnak->riwayat_penyakit ?? '—',
-                'mendaftar_sebagai'     => $r->infoAnak->mendaftar_sebagai,
-                'sekolah_lama'          => $r->infoAnak->sekolah_lama ?? '—',
-                'tanggal_pindah'        => $r->infoAnak->tanggal_pindah ?? '—',
-                'dari_kelompok'         => $r->infoAnak->dari_kelompok ?? '—',
-                'ke_kelompok'           => $r->infoAnak->ke_kelompok ?? '—',
+                'id_pendaftaran'        => $p->id,
+                'status_pendaftaran'    => $p->status,
+                'tanggal_mendaftar'     => $p->created_at->translatedFormat('d F Y'),
+                'nama_anak'             => $p->infoAnak->nama_anak,
+                'tempat_lahir'          => $p->infoAnak->tempat_lahir,
+                'tanggal_lahir'         => $p->infoAnak->tanggal_lahir,
+                'alamat'                => $p->infoAnak->alamat_anak,
+                'jenis_kelamin'         => $p->infoAnak->jenis_kelamin,
+                'kewarganegaraan'       => $p->infoAnak->kewarganegaraan,
+                'agama'                 => $p->infoAnak->agama,
+                'status_tinggal'        => $p->infoAnak->status_tinggal,
+                'yang_mendaftarkan'     => $p->infoAnak->yang_mendaftarkan,
+                'status_anak'           => $p->infoAnak->status_anak,
+                'bahasa_di_rumah'       => $p->infoAnak->bahasa_di_rumah,
+                'anak_ke'               => $p->infoAnak->anak_ke,
+                'saudara_kandung'       => $p->infoAnak->saudara_kandung,
+                'saudara_tiri'          => $p->infoAnak->saudara_tiri ?? '—',
+                'saudara_angkat'        => $p->infoAnak->saudara_angkat ?? '—',
+                'berat_badan'           => $p->infoAnak->berat_badan,
+                'tinggi_badan'          => $p->infoAnak->tinggi_badan,
+                'golongan_darah'        => $p->infoAnak->golongan_darah,
+                'riwayat_penyakit'      => $p->infoAnak->riwayat_penyakit ?? '—',
+                'mendaftar_sebagai'     => $p->infoAnak->mendaftar_sebagai,
+                'sekolah_lama'          => $p->infoAnak->sekolah_lama ?? '—',
+                'tanggal_pindah'        => $p->infoAnak->tanggal_pindah ?? '—',
+                'dari_kelompok'         => $p->infoAnak->dari_kelompok ?? '—',
+                'ke_kelompok'           => $p->infoAnak->ke_kelompok ?? '—',
+
+                'nama_ayah'             => $p->infoAnak->orangTuaByWali('ayah')->nama ?? '—',
+                'pendidikan_ayah'       => $p->infoAnak->orangTuaByWali('ayah')->pendidikan ?? '—',
+                'pekerjaan_ayah'        => $p->infoAnak->orangTuaByWali('ayah')->pekerjaan ?? '—',
+                'penghasilan_ayah'      => $p->infoAnak->orangTuaByWali('ayah')->penghasilan ?? '—',
+                'nomor_hp_ayah'         => $p->infoAnak->orangTuaByWali('ayah')->nomor_hp ?? '—',
+
+                'nama_ibu'              => $p->infoAnak->orangTuaByWali('ibu')->nama ?? '—',
+                'pendidikan_ibu'        => $p->infoAnak->orangTuaByWali('ibu')->pendidikan ?? '—',
+                'pekerjaan_ibu'         => $p->infoAnak->orangTuaByWali('ibu')->pekerjaan ?? '—',
+                'penghasilan_ibu'       => $p->infoAnak->orangTuaByWali('ibu')->penghasilan ?? '—',
+                'nomor_hp_ibu'          => $p->infoAnak->orangTuaByWali('ibu')->nomor_hp ?? '—',
+
+                'nama_wali'             => $p->infoAnak->orangTuaByWali('wali')->nama ?? '—',
+                'pendidikan_wali'       => $p->infoAnak->orangTuaByWali('wali')->pendidikan ?? '—',
+                'pekerjaan_wali'        => $p->infoAnak->orangTuaByWali('wali')->pekerjaan ?? '—',
+                'penghasilan_wali'      => $p->infoAnak->orangTuaByWali('wali')->penghasilan ?? '—',
+                'nomor_hp_wali'         => $p->infoAnak->orangTuaByWali('wali')->nomor_hp ?? '—',
             ];
         });
         $headings = [
@@ -192,6 +225,9 @@ class PPDBArsipController extends Controller
             'Agama', 'Status Tinggal', 'Yang Mendaftarkan', 'Status Anak', 'Bahasa di Rumah',
             'Anak ke-', 'Saudara Kandung', 'Saudara Tiri', 'Saudara Angkat', 'Berat Badan', 'Tinggi Badan',
             'Gol. Darah', 'Riwayat Penyakit', 'Mendaftar Sebagai', 'Sekolah Lama', 'Tanggal Pindah', 'Dari Kelompok', 'Ke Kelompok',
+            'Nama Ayah', 'Pendidikan Ayah', 'Pekerjaan Ayah', 'Penghasilan Ayah', 'No. HP Ayah',
+            'Nama Ibu', 'Pendidikan Ibu', 'Pekerjaan Ibu', 'Penghasilan Ibu', 'No. HP Ibu',
+            'Nama Wali', 'Pendidikan Wali', 'Pekerjaan Wali', 'Penghasilan Wali', 'No. HP Wali',
         ];
         $widths = [
             'A' => 15, 'B' => 15, 'C' => 20, 'D' => 20,
@@ -199,8 +235,11 @@ class PPDBArsipController extends Controller
             'J' => 20, 'K' => 10, 'L' => 15, 'M' => 15, 'N' => 15,
             'O' => 10, 'P' => 10, 'Q' => 10, 'R' => 10, 'S' => 10, 'T' => 10,
             'U' => 10, 'V' => 10, 'W' => 25, 'X' => 15, 'Y' => 20, 'Z' => 20, 'AA' => 15,
+            'AB'=> 10, 'AC'=> 10, 'AD'=> 10, 'AE'=> 10, 'AF'=> 10,
+            'AG'=> 10, 'AH'=> 10, 'AI'=> 10, 'AJ'=> 10, 'AK'=> 10,
+            'AL'=> 10, 'AM'=> 10, 'AN'=> 10, 'AO'=> 10, 'AP'=> 10,
         ];
-        $range = 'A1:AA1';
+        $range = 'A1:AP1';
         $formats = [
             'C' => NumberFormat::FORMAT_DATE_DDMMYYYY,
             'F' => NumberFormat::FORMAT_DATE_DDMMYYYY,
@@ -208,37 +247,5 @@ class PPDBArsipController extends Controller
         ];
 
         return Excel::download(new MaatExport($data, $range, $headings, $widths, $formats), 'ppdb_periode-gelombang_'."$prefix".'.xlsx');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
     }
 }

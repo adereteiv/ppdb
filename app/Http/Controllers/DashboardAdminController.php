@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Cookie;
 
 class DashboardAdminController extends Controller
 {
+    /**
+     * Display summary from recent admission batch
+     */
     public function showDashboard(){
         $batch = BatchPPDB::where('status', true)->latest()->first() ?? BatchPPDB::latest()->first();
         if (!$batch) {
@@ -36,8 +39,11 @@ class DashboardAdminController extends Controller
         ]);
     }
 
+    /**
+     * Display Kelola PPDB menu
+     * Fetch BatchPPDB records by 'tahun_ajaran' and 'gelombang', pay attention to the arrangement order
+     */
     public function showPPDB(){
-        // Fetch BatchPPDB records by 'tahun_ajaran' and 'gelombang', pay attention to the arrangement order
         $arsipPPDB = BatchPPDB::where('status', false)
             ->orderBy('tahun_ajaran', 'desc')
             ->orderBy('gelombang', 'desc')
@@ -51,6 +57,9 @@ class DashboardAdminController extends Controller
         return view('admin.ppdb', compact('arsipPPDB', 'aktifPPDB', 'arsipOptions'));
     }
 
+    /**
+     * arsip_key setter, used in PPDBArsipController, removed during log out
+     */
     public function setArsipKey(Request $request) {
         $key = $request->validate(['periode' => 'string|required']);
         Cookie::queue('arsip_key', $key['periode'], 60 * 24 * 7); // 7 days

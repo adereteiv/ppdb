@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('id')->primary();
             $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
             $table->string('name');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->string('nomor_hp');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

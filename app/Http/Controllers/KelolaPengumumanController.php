@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\MaatExport;
 use App\Models\Pengumuman;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use App\Services\DataTableService;
+use App\Exports\MaatExport;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 use Mews\Purifier\Facades\Purifier;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class KelolaPengumumanController extends Controller
 {
+    /**
+     * Pass queried data as an ajax response, uses DataTableService.
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function passData(Request $request)
     {
         $dataTable = new DataTableService;
@@ -38,22 +43,35 @@ class KelolaPengumumanController extends Controller
         ]);
     }
 
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
         return view('admin.pengumuman');
     }
 
+    /**
+     * Display pengumuman detail.
+     */
     public function show(string $id)
     {
         $pengumuman = Pengumuman::where('id', $id)->with('user')->first();
         return view('admin.pengumuman-rincian', compact('pengumuman'));
     }
 
+    /**
+     * Show the form for creating a new `pengumuman`.
+     * @return \Illuminate\Contracts\View\View
+     */
     public function create()
     {
         return view('admin.pengumuman-buat');
     }
 
+    /**
+     * Store newly created `pengumuman`.
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -72,7 +90,6 @@ class KelolaPengumumanController extends Controller
         $jadwalPosting = $request->input('jadwal_posting');
 
         $paths = [];
-        // $filePath = null;
         if ($request->hasFile('lampiran')) {
             $files = $request->file('lampiran');
 
@@ -82,12 +99,6 @@ class KelolaPengumumanController extends Controller
                 $fileName = "lampiran-{$slug}-{$date}-" . uniqid() . '.' . $file->getClientOriginalExtension();
                 $paths[] = $file->storeAs('lampiran', $fileName, 'public');
             }
-            // $judulSlug = Str::slug($judul);
-            // $dateSlug = $jadwalPosting ? Carbon::parse($jadwalPosting)->format('Ymd_His') : now()->format('Ymd_His');
-
-            // $fileName = "lampiran-{$judulSlug}-{$dateSlug}." . $files->getClientOriginalExtension();
-            // $filePath = $files->storeAs('lampiran', $fileName, 'public');
-            // dd($filePath);
         }
 
         Pengumuman::create([
@@ -95,7 +106,6 @@ class KelolaPengumumanController extends Controller
             'tipe_pengumuman' => $request->tipe_pengumuman,
             'judul' => $judul,
             'keterangan' => $keterangan,
-            // 'file_path' => $filePath,
             'file_paths' => $paths,
             'jadwal_posting' => $jadwalPosting ?? now(),
         ]);
@@ -103,6 +113,9 @@ class KelolaPengumumanController extends Controller
         return redirect()->route('admin.pengumuman.index')->with('success', "Berhasil membuat pengumuman");
     }
 
+    /**
+     * Remove `pengumuman` entry.
+     */
     public function destroy(string $id)
     {
         $pengumuman = Pengumuman::findOrFail($id);
@@ -111,6 +124,9 @@ class KelolaPengumumanController extends Controller
         return back()->with('success', 'Pengumuman berhasil dihapus.');
     }
 
+    /**
+     * Export the data, based on defined headers as stated below.
+     */
     public function export(Request $request)
     {
         $data = Pengumuman::with('user')->latest()->get()->map(function($r) {

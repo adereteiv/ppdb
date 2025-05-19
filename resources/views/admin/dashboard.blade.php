@@ -1,6 +1,6 @@
 <x-layouts.app-layout>
 <div class="app-content gap-rem">
-    <div class="admin-welcome wrapper">
+    {{-- <div class="admin-welcome wrapper">
         <x-partials.app-content-title class="beranda-item bg-blue" :hideBackLink="true">
             <x-slot:title><h6>Beranda</h6></x-slot:title>
         </x-partials.app-content-title>
@@ -9,8 +9,15 @@
             Di Sistem Informasi Penerimaan Peserta Didik Baru <br>
             TK Negeri Pembina Sungai Kakap</h3>
         </div>
+    </div> --}}
+    <div class="admin-welcome wrapper">
+        <div class="flex flex-center text-align-center content-padding-rem margin-vertical">
+            <h6>Selamat Datang <br>
+            Di Sistem Informasi Penerimaan Peserta Didik Baru <br>
+            TK Negeri Pembina Sungai Kakap</h6>
+        </div>
     </div>
-    <div class="wrapper beranda-item text-align-center bg-blue">
+    <div class="wrapper teks-putih text-align-center bg-blue">
         <div class="content-padding-rem">
             <h6 class="margin-vertical">Gelombang PPDB Terbaru: {{ $batch }}</h6>
             <h6 class="margin-vertical">Total Pendaftar: {{ $pendaftaranTotal }}</h6>

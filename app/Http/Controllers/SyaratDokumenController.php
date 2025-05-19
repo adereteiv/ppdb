@@ -3,17 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\TipeDokumen;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 class SyaratDokumenController extends Controller
 {
-    public function create() {
-        return view('admin.partials.form-tambah-syarat-dokumen');
-    }
+    /**
+     * Displays tambah-syarat-dokumen form in a modal via [data-url] attribute
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function create() {return view('admin.partials.form-tambah-syarat-dokumen');}
 
-    // AJAX maka data perlu diubah ke format json
+    /**
+     * Refer to form.js@appendSyaratDokumen
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function store(Request $request) {
         try {
             $request->validate([
@@ -25,13 +30,7 @@ class SyaratDokumenController extends Controller
 
             $dokumen = preg_replace('/[^\p{L}\p{N}\/\s()]+/u', '', trim(strip_tags($request->input('nama_dokumen'))));
             $existingDokumen = TipeDokumen::where('tipe', $dokumen)->first();
-
-            if ($existingDokumen) {
-                return response()->json(
-                    ['error' => 'Persyaratan ini sudah ada'],
-                    // 422
-                );
-            }
+            if ($existingDokumen) {return response()->json(['error' => 'Persyaratan ini sudah ada']);}
 
             $tipeDokumen = TipeDokumen::create(['tipe' => $dokumen]);
 
@@ -52,7 +51,6 @@ class SyaratDokumenController extends Controller
                 'success' => 'Berhasil menambah syarat dokumen baru!',
                 'html' => $html, //json key passed to syaratDokumen.js
             ]);
-            // return back()->with('success', 'Berhasil menambah syarat dokumen baru!')->withInput();
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->validator->errors()->first()], 422);
         }

@@ -20,7 +20,7 @@ class AuthSecureMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // Handles cases when user attempts to access restricted url if not logged in
-        if(!Auth::check())
+        if (!Auth::check())
         {
             throw new AuthenticationException();
         }

@@ -10,13 +10,14 @@ use App\Models\DokumenPersyaratan;
 use App\Services\PendaftaranService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Str;
-// use Illuminate\Support\Facades\Storage;
 
 class PendaftarUnggahDokumenController extends Controller
 {
+    /**
+     * Moved DokumenPersyaratan saving to PendaftaranService
+     * @param \App\Services\PendaftaranService $pendaftaranService
+     */
     protected $pendaftaranService;
-
     public function __construct(PendaftaranService $pendaftaranService)
     {
         $this->pendaftaranService = $pendaftaranService;
@@ -46,7 +47,7 @@ class PendaftarUnggahDokumenController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Uses update for easier naming, representing it's logic inside PendaftaranService
      */
     public function update(Request $request)
     {

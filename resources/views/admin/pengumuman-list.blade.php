@@ -1,4 +1,4 @@
-@forelse($data as $entry)
+@forelse ($data as $entry)
     <tr>
         {{-- Use $data as memberi numerasi based on the whole collection, not as a single [$data as $entry] item in the looping --}}
         <td>{{ $data->firstItem() + $loop->index }}</td>
@@ -10,7 +10,7 @@
         <td>
             <ul class="unset">
                 @foreach ($entry->file_paths as $lampiran)
-                    <li><a href="{{ asset('storage/' . $lampiran) }}">{{ basename($lampiran) }}</a></li>
+                    <li><a href="{{ asset('storage/' . $lampiran) }}" target="_blank">{{ basename($lampiran) }}</a></li>
                 @endforeach
             </ul>
             {{-- <x-preview class="inputbox" :dokumen="$entry"/> --}}

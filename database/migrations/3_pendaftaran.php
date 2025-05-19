@@ -43,7 +43,8 @@ return new class extends Migration
             $table->string('panggilan_anak');
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
-            $table->text('alamat_anak');
+            $table->unsignedInteger('jarak_tempuh');
+            $table->text('alamat_anak')->nullable();
             $table->enum('jenis_kelamin', ['Laki-Laki','Perempuan'])->nullable();
             $table->enum('kewarganegaraan', ['WNI','WNA Keturunan'])->nullable();
             $table->enum('agama', ['Buddha','Hindu','Islam','Katolik','Khonghucu','Kristen Protestan'])->nullable();
@@ -58,6 +59,7 @@ return new class extends Migration
             $table->decimal('berat_badan', 5, 2)->unsigned()->nullable();
             $table->decimal('tinggi_badan', 5, 2)->unsigned()->nullable();
             $table->enum('golongan_darah',['Belum Periksa','O','AB','A','B'])->nullable();
+            $table->enum('ukuran_baju',['M', 'L', 'XL', 'XXL'])->nullable();
             $table->string('riwayat_penyakit')->nullable();
             // Asal muasal anak
             $table->enum('mendaftar_sebagai', ['Murid Baru','Pindahan'])->nullable();

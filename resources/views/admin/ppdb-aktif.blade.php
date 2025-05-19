@@ -1,4 +1,4 @@
-@forelse($data as $entry)
+@forelse ($data as $entry)
     <tr>
         {{-- Use $data as memberi numerasi based on the whole collection, not as a single [$data as $entry] item in the looping --}}
         <td>{{ $data->firstItem() + $loop->index }}</td>

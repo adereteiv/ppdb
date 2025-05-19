@@ -19,6 +19,11 @@
                                 <td>{{ $pendaftaran->user->id }}</td>
                             </tr>
                             <tr>
+                                <td width="25%">Nama Pengguna</td>
+                                <td width="5%">:</td>
+                                <td>{{ $pendaftaran->user->name }}</td>
+                            </tr>
+                            <tr>
                                 <td>ID Pendaftaran</td>
                                 <td>:</td>
                                 <td>
@@ -34,7 +39,7 @@
                                 <td>:</td>
                                 <td>
                                     @if ($pendaftaran)
-                                        {{ ($pendaftaran->created_at)->translatedFormat('l, d F Y') }}
+                                        {{ ($pendaftaran->created_at)->translatedFormat('l, d F Y, H:m:i') }}
                                     @else
                                         <i class="teks-netral">Data tidak ditemukan</i>
                                     @endif
@@ -43,7 +48,13 @@
                             <tr>
                                 <td>Email</td>
                                 <td>:</td>
-                                <td>{{ $pendaftaran->user->email }}</td>
+                                <td>
+                                    @if ($pendaftaran->user->email)
+                                        {{ $pendaftaran->user->email }}
+                                    @else
+                                        <i class="teks-netral">Data tidak ditemukan</i>
+                                    @endif
+                                </td>
                             </tr>
                             <tr>
                                 <td>Nomor HP/WA</td>

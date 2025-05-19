@@ -73,16 +73,16 @@
                     </tr>
                     <tr><td>Tanggal Mulai</td>
                         <td>:</td>
-                        <td>{{ $batch->waktu_mulai->translatedFormat('d F Y, H:i') }}</td>
+                        <td>{{ $batch->waktu_mulai->translatedFormat('d F Y, H:m:i') }}</td>
                     </tr>
                     <tr><td>Tanggal Berakhir</td>
                         <td>:</td>
-                        <td>{{ $batch->waktu_tenggat->translatedFormat('d F Y, H:i') }}</td>
+                        <td>{{ $batch->waktu_tenggat->translatedFormat('d F Y, H:m:i') }}</td>
                     </tr>
                     @if (!$batch->status)
                     <tr><td>Tanggal Tutup</td>
                         <td>:</td>
-                        <td>{{ $batch->waktu_tutup->translatedFormat('d F Y, H:i') }}</td>
+                        <td>{{ $batch->waktu_tutup->translatedFormat('d F Y, H:m:i') }}</td>
                     </tr>
                     @endif
                 </table>

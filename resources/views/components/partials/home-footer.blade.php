@@ -6,7 +6,7 @@
                 <div class="text-align-center">
                     <p>Silakan hubungi kami melalui :</p>
                     <p>
-                        {{-- <img src="{{ asset('img/wa.png') }}" alt=""> --}}
+                        {{-- <img src="{{ asset('static/wa.png') }}" alt=""> --}}
                         <a style="text-decoration:none; color: var(--blue);" href="https://wa.me/+62NO-HP-DISINI?text=Selamat%20Pagi/%20Siang/%20Sore%20Admin,%20saya%20butuh%20bantuan%20tentang%20pendaftaran%20murid%20baru%20ke%20TK%20Negeri%20Pembina%20Sungai%20Kakap.%20Apakah%20bisa%20dibantu?%20Terima%20kasih." target="_blank" rel="noopener">
                             <p class="cursor-pointer"><b>+62&nbsp;XXXX&nbsp;XXXX&nbsp;XXXX</b></p>
                         </a>
@@ -62,7 +62,7 @@
             </div>
         </div>
         <div class="footer-body text-align-center">
-            <p>&copy;TK Negeri Pembina Sungai Kakap</p>
+            <p>&copy;adereteiv 2025s</p>
         </div>
     </div>
 </footer>

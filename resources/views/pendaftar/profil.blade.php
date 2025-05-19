@@ -8,7 +8,12 @@
             <div class="constrict">
                 <div class="flex gap justify-center">
                     <div class="scrollable">
-                        <img class="biodata-brief" src="{{ $dokumenPersyaratan->firstWhere('tipe_dokumen_id', 1) ? Storage::url($dokumenPersyaratan->firstWhere('tipe_dokumen_id', 1)->file_path) : 'https://placehold.co/188x120?text=No+Image' }}" alt="Foto Anak">
+                        <img class="biodata-brief" alt="Foto Anak"
+                        src="{{ $dokumenPersyaratan->firstWhere('tipe_dokumen_id', 1)
+                        ? Storage::url($dokumenPersyaratan->firstWhere('tipe_dokumen_id', 1)->file_path)
+                        : asset('static/user.png') }}"
+                        {{-- : 'https://placehold.co/188x120?text=No+Image' }}" --}}
+                        >
                     </div>
                     <div class="flex-1">
                         <h6 class="content-padding-bottom-rem">Data Pendaftar</h6>
@@ -34,7 +39,18 @@
                                 <td>:</td>
                                 <td>
                                     @if ($pendaftaran)
-                                        {{ ($pendaftaran->created_at)->translatedFormat('l, d F Y') }}
+                                        {{ ($pendaftaran->created_at)->translatedFormat('l, d F Y, H:m:i') }}
+                                    @else
+                                        <i class="teks-netral">Data tidak ditemukan</i>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Status Pendaftaran</td>
+                                <td>:</td>
+                                <td>
+                                    @if ($pendaftaran)
+                                        <x-status-pendaftaran :value="$pendaftaran->status ?? null"/>
                                     @else
                                         <i class="teks-netral">Data tidak ditemukan</i>
                                     @endif

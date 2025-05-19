@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     HomeController,
     RegisterController,
+    PasswordResetController,
     AuthController,
     DashboardController,
     PendaftarFormController,
@@ -17,24 +18,26 @@ use App\Http\Controllers\{
     KelolaPengumumanController,
 };
 
-// Route::get('/beranda', function () {
-//     $pengumuman = Pengumuman::latest()->first();
-//     return view('beranda', compact('pengumuman'));
-// });
-// Route::get('/profil', function () {return view('profil');});
-// Route::get('/struktur', function () {return view('struktur');});
-Route::get('/beranda', [HomeController::class, 'beranda'])->name('home');
+Route::get('/', [HomeController::class, 'beranda'])->name('home');
+Route::redirect('/beranda', '/');
+
 Route::get('/profil',[HomeController::class, 'profil']);
 Route::get('/struktur',[HomeController::class, 'struktur']);
 
 Route::get('/daftar', [RegisterController::class, 'showRegister']);
-Route::post('/daftar', [RegisterController::class, 'store'])->name('register')->middleware('throttle:1,5');
+Route::post('/daftar', [RegisterController::class, 'store'])->name('register')->middleware('throttle:2,5');
+Route::get('/konfirmasi/{key}/{token}', [RegisterController::class, 'cred'])->name('cred');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'loginPendaftar'])->name('loginPendaftar');
 
 Route::get('/pintuadmin', [AuthController::class, 'showAdminLogin']);
 Route::post('/pintuadmin', [AuthController::class, 'loginAdmin'])->name('loginAdmin');
+
+Route::get('/password-reset/{token}', [PasswordResetController::class, 'index'])->name('passwordReset');
+Route::post('/password-reset/{token}', [PasswordResetController::class, 'confirm'])->name('passwordResetPIN');
+Route::get('/password-reset/{token}/{id}', [PasswordResetController::class, 'edit'])->name('changePassword');
+Route::post('/password-reset/{token}/{id}', [PasswordResetController::class, 'update'])->name('newPassword');
 
 Route::middleware('auth.secure')->group(function () {
     Route::prefix('admin')->middleware('role:1')->name('admin.')->group(function () {
@@ -57,6 +60,8 @@ Route::middleware('auth.secure')->group(function () {
                 Route::get('/export', [PPDBAktifController::class, 'export'])->name('export');
                 Route::post('/tutup', [PPDBAktifController::class, 'tutupPPDB'])->name('tutup');
                 Route::patch('/patch/{id}', [PPDBAktifController::class, 'patch'])->name('patch');
+                Route::get('/ganti-password/{id}', [PasswordResetController::class, 'setToken'])->name('setToken');
+                Route::get('/ganti-password/link/{token}', [PasswordResetController::class, 'getLink'])->name('getPasswordResetLink');
                 Route::resource('/', PPDBAktifController::class)->parameters(['' => 'id']);
             });
 
@@ -93,5 +98,4 @@ Route::middleware('auth.secure')->group(function () {
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('/logout', function() {return redirect('login');});
 });

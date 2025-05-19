@@ -1,4 +1,4 @@
-@forelse($data as $entry)
+@forelse ($data as $entry)
     <tr>
         <td>{{ $data->firstItem() + $loop->index }}</td>
         <td>{{ ($entry->created_at)->translatedFormat('d F Y') }}</td>

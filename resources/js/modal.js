@@ -62,18 +62,29 @@ const modalControl = {
         let firstElement = this.focusElement[0];
         let lastElement = this.focusElement[this.focusElement.length-1];
 
-        if (event.key == 'Tab') {
-            if (event.shiftKey && document.activeElement === firstElement) {
-                event.preventDefault();
-                lastElement.focus();
-            } else if (!event.shiftKey && document.activeElement === lastElement) {
-                event.preventDefault();
-                firstElement.focus();
-            }
-        } else if (event.key == 'Escape') {
-            this.close();
+        //  Commit 15 - refactored to support lighbox on mobile devices
+        switch (event.key) {
+            case 'Tab':
+                if (event.shiftKey && document.activeElement === firstElement) {
+                    event.preventDefault();
+                    lastElement.focus();
+                } else if (!event.shiftKey && document.activeElement === lastElement) {
+                    event.preventDefault();
+                    firstElement.focus();
+                }
+                break;
+            case 'Escape':
+                this.close();
+                break;
+
+            // match the selector with the one defined in lightbox.js
+            case 'ArrowLeft':
+                document.querySelector('.lightbox-prev')?.click();
+                break;
+            case 'ArrowRight':
+                document.querySelector('.lightbox-next')?.click();
+                break;
         }
     }
 };
-
 export default modalControl;

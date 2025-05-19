@@ -7,6 +7,9 @@ use App\Models\Pengumuman;
 
 class HomeController extends Controller
 {
+    /**
+     * Display beranda, includes `batch` & `pengumuman`
+     */
     public function beranda()
     {
         $batch = BatchPPDB::where('status', true)->latest()->first();
@@ -14,13 +17,13 @@ class HomeController extends Controller
         return view('beranda', compact('batch', 'pengumuman'));
     }
 
-    public function profil()
-    {
-        return view('profil');
-    }
+    /**
+     * Display profil
+     */
+    public function profil(){return view('profil');}
 
-    public function struktur()
-    {
-        return view('struktur');
-    }
+    /**
+     * Display struktur
+     */
+    public function struktur(){return view('struktur');}
 }

@@ -1,4 +1,4 @@
-@props(['flash' => false, 'alert' => false, 'button' => false, 'mode' => false])
+@props(['flash' => false, 'alert' => false, 'button' => false, 'mode' => false, 'icon' => false])
 
 @php
     $bgFlash = match($flash) {
@@ -16,7 +16,12 @@
         'green' => 'alert bg-green',
     };
 
-    $icon = '<i class="bi bi-info-circle"></i>';
+    $icon = match($icon) {
+        default => $icon ? '<i class="bi bi-info-circle"></i>' : '',
+        'warn' => '<i class="bi bi-exclamation-circle"></i>',
+        'success' => '<i class="bi bi-check2-circle"></i>',
+        'error' => '<i class="bi bi-x-circle"></i>'
+    };
 
     if ($mode) {
         [$bgFlash, $bgAlert, $icon] = match($mode) {
@@ -39,10 +44,10 @@
             <span class="reminder-icon">
                 {!! $icon !!}
             </span>
-        @elseif (isset($icon))
+        {{-- @elseif (isset($icon))
             <span class="reminder-icon">
                 <i class="bi bi-info-circle"></i>
-            </span>
+            </span> --}}
         @endisset
         <span>{{ $slot }}</span>
     </div>

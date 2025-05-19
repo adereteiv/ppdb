@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Dokumen;
 use App\Models\BuktiBayar;
 use App\Models\Pendaftaran;
+use App\Models\DokumenPersyaratan;
 use App\Models\OrangTuaWali;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

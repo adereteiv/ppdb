@@ -8,7 +8,7 @@
     content-padding-side-rem content-padding">
         <div class="flex-1 flex flex-col justify-around {{-- justify-center --}} text-align-center">
             <div class="flex flex-col gap content-padding-vertical">
-                <h5>Arsip PPDB</h5>
+                <h5>Kelola Arsip PPDB</h5>
                 <div>
                     @if ($arsipPPDB->isNotEmpty())
                         <form action="{{ route('admin.ppdb.arsipKey') }}" method="POST" class="flex flex-col gap">@csrf
@@ -24,7 +24,7 @@
             </div>
 
             <div class="flex flex-col gap content-padding-vertical">
-                <h5>PPDB Aktif</h5>
+                <h5>Kelola PPDB Aktif</h5>
                 <div>
                     @if ($aktifPPDB)
                         <a href="{{ route('admin.ppdb.aktif.index') }}" class="tombol-besar tombol-netral">Periode {{ $aktifPPDB->tahun_ajaran }} - Gel. {{ $aktifPPDB->gelombang }}</a>

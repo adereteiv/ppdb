@@ -26,14 +26,23 @@
                                         <tr><td>ID Pengguna<p>{{ $pendaftaran->user->id }}</p></td></tr>
                                         <tr><td>ID Pendaftaran<p>{{ $pendaftaran->id }}</p></td></tr>
                                         <tr><td>Mendaftar Pada<p>{{ ($pendaftaran->created_at)->translatedFormat('l, d F Y') }}</p></td></tr>
-                                        <tr><td>Email<p>{{ $pendaftaran->user->email }}</p></td></tr>
+                                        <tr><td>Nomor HP/WA<p>{{ $pendaftaran->user->nomor_hp }}</p></td></tr>
+                                        <tr><td>Email<p>
+                                            @if ($pendaftaran->user->email)
+                                                {{ $pendaftaran->user->email }}
+                                            @else
+                                                <i class="teks-netral">Data tidak ditemukan</i>
+                                            @endif
+                                            </p></td></tr>
                                     </table>
                                 </div>
                             </div>
                             <div class="flex-1 content-padding-side-rem">
                                 <div class="padding-side-10">
                                     <table>
-                                        <tr><td>Nomor HP/WA<p>{{ $pendaftaran->user->nomor_hp }}</p></td></tr>
+                                        <tr><td><p>Ubah Kata Sandi Pengguna</p>
+                                            <p><a class="badge round tombol-netral" style="text-decoration: none;" href="{{ route('admin.ppdb.aktif.setToken', $pendaftaran->user->id) }}" onclick="this.style.pointerEvents='none'">Dapatkan Link dan PIN</a></p>
+                                        </td></tr>
                                         <tr><td>Status Pendaftaran <span style="color:#2962ff">(klik status untuk mengubah)</span>
                                                 @if ($pendaftaran->status == 'Mengisi' || !$pendaftaran->infoAnak->buktiBayar->first())
                                                     <p><x-status-pendaftaran :value="$pendaftaran->status"/></p>
@@ -102,12 +111,10 @@
                                                         });
                                                     </script>
                                                 @endif
-                                            </td>
-                                        </tr>
+                                        </td></tr>
                                         <tr><td>Catatan Admin <span style="color:#2962ff">(Perbarui catatan)</span>
                                                 <x-input-textarea class="form-item" name="catatan_admin" rows="4" cols="23" :value="old('catatan_admin', $pendaftaran->catatan_admin ?? '')" placeholder="Catatan mengenai pendaftaran ini, contoh: 'Berkas kurang jelas', 'Segera hubungi orang tua', dsb. "/>
-                                            </td>
-                                        </tr>
+                                        </td></tr>
                                     </table>
                                 </div>
                             </div>
@@ -143,6 +150,7 @@
                                         <tr><td>Nama Panggilan<x-input type="text" class="form-item" name="panggilan_anak" :value="old('panggilan_anak', $infoAnak->panggilan_anak ?? '')" placeholder="Nama Panggilan Anak" required/></td></tr>
                                         <tr><td>Tempat Lahir<x-input type="text" class="form-item" name="tempat_lahir" :value="old('tempat_lahir', $infoAnak->tempat_lahir ?? '')" placeholder="Tempat Lahir Anak" required/></td></tr>
                                         <tr><td>Tanggal Lahir<x-input type="date" class="form-item" name="tanggal_lahir" :value="old('tanggal_lahir', $infoAnak->tanggal_lahir ?? '')" required/></td></tr>
+                                        <tr><td>Jarak Tempuh (km)<x-input type="number" name="jarak_tempuh" class="form-item" :value="old('jarak_tempuh', $infoAnak->jarak_tempuh ?? '')" required/></td></tr>
                                         <tr><td>Alamat<x-input-textarea class="form-item" name="alamat_anak" rows="4" cols="23" :value="old('alamat_anak', $infoAnak->alamat_anak ?? '')" placeholder="Silakan tulis alamat disini" required/></td></tr>
                                         <tr><td>Jenis Kelamin<x-input-radio id="jk" name="jenis_kelamin" :options="config('form-options.jenis_kelamin')" :value="$infoAnak->jenis_kelamin ?? '' " required/></td></tr>
                                         <tr><td>Kewarganegaraan<x-input-radio id="kwn" name="kewarganegaraan" :options="config('form-options.kewarganegaraan')" :value="$infoAnak->kewarganegaraan ?? '' " required/></td></tr>
@@ -157,6 +165,7 @@
                                         <tr><td>Saudara Angkat<x-input type="number" class="form-item" name="saudara_angkat" min="0" :value="old('saudara_angkat', $infoAnak->saudara_angkat ?? '')"/></td></tr>
                                         <tr><td>Berat Badan (kg)<x-input type="number" class="form-item" name="berat_badan" :value="old('berat_badan', $infoAnak->berat_badan ?? '')" required/></td></tr>
                                         <tr><td>Tinggi Badan (cm)<x-input type="number" class="form-item" name="tinggi_badan" :value="old('tinggi_badan', $infoAnak->tinggi_badan ?? '')" required/></td></tr>
+                                        <tr><td>Ukuran Baju<x-input-select name="ukuran_baju" class="form-item" :options="config('form-options.ukuran_baju')" :value="$infoAnak->ukuran_baju ?? '' " required/></td></tr>
                                         <tr><td>Golongan Darah<x-input-select class="form-item" name="golongan_darah" :options="config('form-options.golongan_darah')" :value="$infoAnak->golongan_darah ?? '' " required/></td></tr>
                                         <tr><td>Riwayat Penyakit<x-input-textarea class="form-item" name="riwayat_penyakit" rows="4" cols="23" :value="old('riwayat_penyakit', $infoAnak->riwayat_penyakit ?? '')" placeholder="Silakan diisi bila ada" /></td></tr>
                                         <tr><td>Mendaftar Sebagai<x-input-radio id="mendaftar_sebagai" name="mendaftar_sebagai" :options="config('form-options.mendaftar_sebagai')" :value="$infoAnak->mendaftar_sebagai ?? '' " required/></td></tr>
@@ -179,6 +188,7 @@
                                         <tr><td><label for="nama_ayah">Nama</label><x-input type="text" id="nama_ayah" name="nama_ayah" class="ayah-input form-item" :value="old('nama_ayah', $ayah->nama ?? '')"/></td></tr>
                                         <tr><td><label for="pendidikan_ayah">Pendidikan</label><x-input-select id="pendidikan_ayah" name="pendidikan_ayah" class="ayah-input form-item" :options="config('form-options.pendidikan')" :value="old('pendidikan_ayah',$ayah->pendidikan ?? '' )"/></td></tr>
                                         <tr><td><label for="pekerjaan_ayah">Pekerjaan</label><x-input-select id="pekerjaan_ayah" name="pekerjaan_ayah" class="ayah-input form-item" :options="config('form-options.pekerjaan')" :value="old('pekerjaan_ayah',$ayah->pekerjaan ?? '' )"/></td></tr>
+                                        <tr><td><label for="penghasilan_ayah">Penghasilan</label><x-input-select id="penghasilan_ayah" name="penghasilan_ayah" class="ayah-input form-item" :options="config('form-options.penghasilan')" :value="old('penghasilan_ayah',$ayah->penghasilan ?? '' )"/></td></tr>
                                         <tr><td><label for="alamat_ayah">Alamat</label><x-input-textarea id="alamat_ayah" name="alamat_ayah" class="ayah-input form-item" rows="4" cols="23" :value="old('alamat_ayah', $ayah->alamat ?? '' )" placeholder="Silakan tulis alamat disini"/></td></tr>
                                         <tr><td><label for="nomor_hp_ayah">Nomor HP</label><x-input type="tel" id="nomor_hp_ayah" name="nomor_hp_ayah" class="ayah-input form-item" :value="old('nomor_hp_ayah', $ayah->nomor_hp ?? '' )"/></td></tr>
                                     </table>
@@ -189,6 +199,7 @@
                                         <tr><td><label for="nama_ibu">Nama</label><x-input type="text" id="nama_ibu" name="nama_ibu" class="ibu-input form-item" :value="old('nama_ibu', $ibu->nama ?? '' )"/></td></tr>
                                         <tr><td><label for="pendidikan_ibu">Pendidikan</label><x-input-select id="pendidikan_ibu" name="pendidikan_ibu" class="ibu-input form-item" :options="config('form-options.pendidikan')" :value="old('pendidikan_ibu', $ibu->pendidikan ?? '' )"/></td></tr>
                                         <tr><td><label for="pekerjaan_ibu">Pekerjaan</label><x-input-select id="pekerjaan_ibu" name="pekerjaan_ibu" class="ibu-input form-item" :options="config('form-options.pekerjaan')" :value="old('pekerjaan_ibu', $ibu->pekerjaan ?? '' )"/></td></tr>
+                                        <tr><td><label for="penghasilan_ibu">Penghasilan</label><x-input-select id="penghasilan_ibu" name="penghasilan_ibu" class="ibu-input form-item" :options="config('form-options.penghasilan')" :value="old('penghasilan_ibu', $ibu->penghasilan ?? '' )"/></td></tr>
                                         <tr><td><label for="alamat_ibu">Alamat</label><x-input-textarea id="alamat_ibu" name="alamat_ibu" class="ibu-input form-item" rows="4" cols="23" :value="old('alamat_ibu', $ibu->alamat ?? '' )" placeholder="Silakan tulis alamat disini"/></td></tr>
                                         <tr><td><label for="nomor_hp_ibu">Nomor HP</label><x-input type="tel" id="nomor_hp_ibu" name="nomor_hp_ibu" class="ibu-input form-item" :value="old('nomor_hp_ibu', $ibu->nomor_hp ?? '' )"/></td></tr>
                                     </table>
@@ -199,6 +210,7 @@
                                         <tr><td><label for="nama_wali">Nama</label><x-input type="text" id="nama_wali" name="nama_wali" class="wali-input form-item" :value="old('nama_wali', $wali->nama ?? '' )"/></td></tr>
                                         <tr><td><label for="pendidikan_wali">Pendidikan</label><x-input-select id="pendidikan_wali" name="pendidikan_wali" class="wali-input form-item" :options="config('form-options.pendidikan')" :value="old('pendidikan_wali', $wali->pendidikan ?? '' )"/></td></tr>
                                         <tr><td><label for="pekerjaan_wali">Pekerjaan</label><x-input-select id="pekerjaan_wali" name="pekerjaan_wali" class="wali-input form-item" :options="config('form-options.pekerjaan')" :value="old('pekerjaan_wali', $wali->pekerjaan ?? '' )"/></td></tr>
+                                        <tr><td><label for="penghasilan_wali">Penghasilan</label><x-input-select id="penghasilan_wali" name="penghasilan_wali" class="wali-input form-item" :options="config('form-options.penghasilan')" :value="old('penghasilan_wali', $wali->penghasilan ?? '' )"/></td></tr>
                                         <tr><td><label for="alamat_wali">Alamat</label><x-input-textarea id="alamat_wali" name="alamat_wali" class="wali-input form-item" rows="4" cols="23" :value="old('alamat_wali', $wali->alamat ?? '' )" placeholder="Silakan tulis alamat disini"/></td></tr>
                                         <tr><td><label for="nomor_hp_wali">Nomor HP</label><x-input type="tel" id="nomor_hp_wali" name="nomor_hp_wali" class="wali-input form-item" :value="old('nomor_hp_wali', $wali->nomor_hp ?? '' )"/></td></tr>
                                     </table>

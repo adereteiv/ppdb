@@ -1,12 +1,17 @@
-import './bootstrap';
-import { fetchContent, alert, initCopyToClipboard } from './misc.js';
-import { togglePindahanBit, toggleRequiredFields, initAdjustPhoneInput, initGelombangSelection } from './form.js';
-import ModalControl from "./modal.js";
+// import './bootstrap';
+import { fetchContent, alert, copyToClipboard, tooltip, toggleStaticOpen } from './misc.js';
+import modalControl from "./modal.js";
+import { initGalleryLightbox } from "./lightbox.js";
+import { togglePindahanBit, toggleKelompokUmur, toggleYangMendaftarkan, initAdjustPhoneInput } from './form.js';
 
 document.addEventListener("DOMContentLoaded", function () {
-    alert();
-    initCopyToClipboard();
-
+    /** misc.js
+     * [✓] fetchContent, fetch injected pre-rendered element
+     * [✓] alert
+     * [✓] copyToClipboard
+     * [✓] tooltip
+     * [✓] toggleStaticOpen
+     */
     document.body.addEventListener("click", async function (event) {
         if (event.target.matches(".load-content")) {
             event.preventDefault();
@@ -15,44 +20,54 @@ document.addEventListener("DOMContentLoaded", function () {
             await fetchContent(url, target);
         }
     });
+    alert();
+    copyToClipboard();
+    tooltip();
+    toggleStaticOpen();
 
+    /** modal.js
+     * [✓] modalControl regulates modal behavior
+     */
     document.body.addEventListener("click", async function (event) {
         const modalUrl = event.target.closest("[data-url]")?.dataset.url;
         if (modalUrl) {
             event.preventDefault();
-            ModalControl.loadModalContent(modalUrl);
+            modalControl.loadModalContent(modalUrl);
             return;
         }
 
         const modalContent = event.target.closest("[data-content]")?.dataset.content;
         if (modalContent) {
             event.preventDefault();
-            ModalControl.open(modalContent);
+            modalControl.open(modalContent);
             return;
         }
 
         if (event.target.closest(".modal-button")) {
-            ModalControl.close();
+            modalControl.close();
             return;
         }
 
         if (event.target.matches(".modal")) {
-            ModalControl.closeOnClick(event);
+            modalControl.closeOnClick(event);
             return;
         }
     });
+    initGalleryLightbox();
 
+    /** form.js
+     * [✓] togglePindahanBit
+     * [✓] toggleYangMendaftarkan
+     * [✓] toggleKelompokUmur
+     * [✓] initAdjustPhoneInput
+     */
     document.querySelectorAll('input[name="mendaftar_sebagai"]').forEach(radio => {
         radio.addEventListener("change", togglePindahanBit);
     });
     document.querySelectorAll('input[name="yang_mendaftarkan"]').forEach(radio => {
-        radio.addEventListener("change", toggleRequiredFields);
+        radio.addEventListener("change", toggleYangMendaftarkan);
     });
-    togglePindahanBit();
-    toggleRequiredFields();
-
+    toggleKelompokUmur();
     initAdjustPhoneInput();
-
-    initGelombangSelection();
 });
 

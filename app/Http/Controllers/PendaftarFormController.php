@@ -6,21 +6,25 @@ use App\Models\BuktiBayar;
 use App\Models\InfoAnak;
 use App\Models\BatchPPDB;
 use App\Models\Pendaftaran;
-use App\Models\OrangTuaWali;
 use App\Services\PendaftaranService;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PendaftarFormController extends Controller
 {
+    /**
+     * Moved InfoAnak and OrangTuaWali saving to PendaftaranService
+     * @param \App\Services\PendaftaranService $pendaftaranService
+     */
     protected $pendaftaranService;
-
     public function __construct(PendaftaranService $pendaftaranService)
     {
         $this->pendaftaranService = $pendaftaranService;
     }
 
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
         $user = Auth::user();
@@ -42,6 +46,9 @@ class PendaftarFormController extends Controller
         return view('pendaftar.formulir', compact('user','infoAnak', 'ayah', 'ibu', 'wali'));
     }
 
+    /**
+     * Uses update for easier naming, representing it's logic inside PendaftaranService
+     */
     public function update(Request $request)
     {
         $user = Auth::user();

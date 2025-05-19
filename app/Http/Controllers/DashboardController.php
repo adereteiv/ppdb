@@ -17,6 +17,15 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
+    protected $pendaftaranService;
+    public function __construct(PendaftaranService $pendaftaranService)
+    {
+        $this->pendaftaranService = $pendaftaranService;
+    }
+
+    /**
+     * Centralized data getter.
+     */
     private function getData($key = null) {
         $user = Auth::user();
         $pendaftaran = Pendaftaran::where('user_id', $user->id)->first();
@@ -43,6 +52,9 @@ class DashboardController extends Controller
         return $key ? ($data[$key] ?? null) : $data ;
     }
 
+    /**
+     * Display pendaftar dashboard, checks for `pendaftaran`->status, logic refer to PendaftaranService class
+     */
     public function showDashboard(){
         $user = $this->getData('user');
         $pendaftaran = $this->getData('pendaftaran');
@@ -50,8 +62,7 @@ class DashboardController extends Controller
 
         if (!$pendaftaran) return view('pendaftar.dashboard', ['formulirLengkap' => false, 'dokumenLengkap' => false, 'buktiBayarLengkap' => false]);
 
-        $pendaftaranService = new PendaftaranService;
-        $status = $pendaftaranService->checkStatusPendaftaran($pendaftaran);
+        $status = $this->pendaftaranService->checkStatusPendaftaran($pendaftaran);
         [
             'formulirLengkap' => $formulirLengkap,
             'dokumenLengkap' => $dokumenLengkap,
@@ -62,6 +73,9 @@ class DashboardController extends Controller
         return view('pendaftar.dashboard', compact('pendaftaran', 'pengumuman', 'formulirLengkap', 'dokumenLengkap', 'buktiBayarLengkap'));
     }
 
+    /**
+     * Display pendaftar profil, fetch all data related to the pendaftaran
+     */
     public function showProfil(){
         $user = $this->getData('user');
         $pendaftaran = $this->getData('pendaftaran');
@@ -89,10 +103,16 @@ class DashboardController extends Controller
         return view('pendaftar.profil', compact('user','pendaftaran', 'infoAnak', 'orangTuaWali', 'syaratDokumen', 'dokumenPersyaratan', 'buktiBayar'));
     }
 
+    /**
+     * Display pendaftaran recovery form in case pendaftaran is deleted refer to PPDBAktifController@destroy
+     */
     public function recovery() {
         return view('pendaftar.form-recovery');
     }
 
+    /**
+     * Stores initial `pendaftaran` record from form-recovery, a.k.a, back-up registration without creating user record
+     */
     public function store(Request $request){
         $activeBatch = BatchPPDB::where('status', true)->latest()->first();
 
@@ -105,6 +125,7 @@ class DashboardController extends Controller
                                         'before_or_equal:' . now()->subYears(4)->toDateString(),
                                         'after:' . now()->subYears(7)->toDateString(),
                                     ],
+                'jarak_tempuh'       => 'required|numeric|min:1|max:20',
                 'alamat_anak'       => 'required|string|max:255',
             ],
             [
@@ -117,8 +138,12 @@ class DashboardController extends Controller
                 'tanggal_lahir.required'        => 'Wajib diisi.',
                 'tanggal_lahir.before_or_equal' => 'Anak harus berusia minimal 4 tahun.',
                 'tanggal_lahir.after'           => 'Usia anak maksimal berada di bawah 7 tahun.',
+                'jarak_tempuh.required'         => 'Wajib diisi.',
+                'jarak_tempuh.min'              => 'Jarak tempuh dimulai dari 1km.',
+                'jarak_tempuh.max'              => 'Jarak rumah melebihi 20km.',
                 'alamat_anak.required'          => 'Alamat wajib diisi.',
-                'alamat_anak.max'               => 'Melebihi batas maksimal 255 karakter.'
+                'alamat_anak.max'               => 'Melebihi batas maksimal 255 karakter.',
+
             ],
         );
 
@@ -127,10 +152,10 @@ class DashboardController extends Controller
             'panggilan_anak' => Str::title(preg_replace('/\s+/', ' ', trim(strip_tags($request->input('panggilan_anak'))))),
         ];
 
-        $pendaftaran = Pendaftaran::create([
-            'user_id' => Auth::user()->id,
-            'batch_id' => $activeBatch->id,
-        ]);
+        // Enables username change, safe because nomor_hp and email is made via register where differentiation happens, refer to PendaftaranService
+        $user = Auth::user();
+        $user->update(['name' => $sanitize['nama_anak']]);
+        $pendaftaran = $this->pendaftaranService->savePendaftaran($user->id,$activeBatch->id);
 
         InfoAnak::create([
             'pendaftaran_id' => $pendaftaran->id,
@@ -138,6 +163,7 @@ class DashboardController extends Controller
             'panggilan_anak' => $sanitize['panggilan_anak'],
             'tempat_lahir'=> $request->tempat_lahir,
             'tanggal_lahir'=> $request->tanggal_lahir,
+            'jarak_tempuh'=> $request->jarak_tempuh,
             'alamat_anak'=> $request->alamat_anak,
         ]);
 

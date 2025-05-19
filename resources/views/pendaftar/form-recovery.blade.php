@@ -6,32 +6,38 @@
         <div class="content-padding content-padding-side-rem">
             <div class="biodata constrict">
                 <x-flash-message flash='blue'>
-                    Data pendaftaran Anda tidak ditemukan. Untuk melanjutkan, silakan isi data pada formulir berikut secara lengkap dan jelas sesuai kebenaran yang ada.
+                    Data pendaftaran Anda tidak ditemukan.
+                    Untuk melanjutkan, silakan isi data pada formulir berikut secara lengkap dan jelas sesuai kebenaran yang ada.
+                    Kolom isian dengan tajuk berbintang <span style="color:#FF0000;">*</span> wajib diisi.
                 </x-flash-message>
                 <form method="POST" action="{{ route('pendaftar.recovery.store') }}">@csrf
                     <div class="content-margin-bottom">
                         <table>
                             <tr>
-                                <td>Nama Lengkap
+                                <td>Nama Lengkap<sup style="color:#FF0000;">*</sup>
                                     <x-input type="text" name="nama_anak" placeholder="Nama lengkap anak" required/>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Nama Panggilan
+                                <td>Nama Panggilan<sup style="color:#FF0000;">*</sup>
                                     <x-input type="text" name="panggilan_anak" placeholder="Nama panggilan anak" required/>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Tempat Lahir
+                                <td>Tempat Lahir<sup style="color:#FF0000;">*</sup>
                                     <x-input type="text" name="tempat_lahir" placeholder="Tempat kelahiran anak" required/>
                                 </td>
                             </tr>
-                            <tr><td>Tanggal Lahir
+                            <tr><td>Tanggal Lahir<sup style="color:#FF0000;">*</sup>
                                     <x-input type="date" name="tanggal_lahir" required/>
                                 </td>
                             </tr>
+                            <tr><td>Jarak Tempuh (km)<sup style="color:#FF0000;">*</sup>
+                                    <x-input type="number" name="jarak_tempuh" placeholder="Jarak dari rumah ke sekolah" required/>
+                                </td>
+                            </tr>
                             <tr>
-                                <td colspan="3">Alamat
+                                <td colspan="3">Alamat<sup style="color:#FF0000;">*</sup>
                                     <x-input-textarea rows="4" type="text" name="alamat_anak" placeholder="Tempat Tinggal Anak" required></x-input-textarea>
                                 </td>
                             </tr>

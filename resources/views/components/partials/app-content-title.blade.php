@@ -1,6 +1,6 @@
 @props(['hideBackLink' => false, 'backLink' => null, 'title' => null])
 
-<div {{ $attributes->merge(['class'=>"scrollable content-title content-padding-vertical content-padding-side-rem"]) }}>
+<div {{ $attributes->merge(['class'=>"flex content-title content-padding-vertical content-padding-side-rem"]) }}>
     <span class="flex align-items-center gap">
         @if (empty($hideBackLink))
             <a class="flex flex-center tooltip" tooltip="bottom" href="{{ $backLink }}">

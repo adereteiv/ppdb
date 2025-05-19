@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('nama')->nullable();
             $table->enum('pendidikan',['Tidak Sekolah','Paket A','Paket B','Paket C','SD/MI','SMP/MTs','SMA/SMK/MA','D-1','D-2','D-3','D-4','S-1','S-2','S-3'])->nullable();
             $table->enum('pekerjaan',['Sudah Meninggal','Mengurus Rumah Tangga','Petani','Nelayan','Peternak','Buruh','Pedagang Kecil','Pedagang Besar','Pegawai Swasta','Guru','PNS','Dokter','TNI','Polisi','Dosen','Karyawan BUMN','Wiraswasta','Tenaga Kerja Indonesia'])->nullable();
+            $table->enum('penghasilan', ['Kurang dari Rp500.000','Rp500.000 - Rp1.000.000','Rp1.000.000 - Rp3.000.000','Rp3.000.000 - Rp5.000.000','Lebih dari Rp5.000.000'])->nullable();
             $table->text('alamat')->nullable();
             $table->string('nomor_hp')->nullable();
             $table->timestamps();

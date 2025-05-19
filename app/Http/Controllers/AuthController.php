@@ -6,32 +6,57 @@ use App\Models\User;
 use App\Models\BatchPPDB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
+    /**
+     * Summary of showLogin
+     * @return mixed|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
+     *
+     * Fetches active batch and determines access to login page
+     */
     public function showLogin(){
-        $activeBatch = BatchPPDB::where('status', true)->first();
-        if (!$activeBatch || now() >= $activeBatch->waktu_tenggat) {
+        $x = BatchPPDB::where('status', true)->first();
+        if (!$x || now() >= $x->waktu_tenggat) {
             return redirect()->route('home');
         }
 
         return view('auth.login');
     }
 
+    /**
+     * Summary of showAdminLogin
+     * @return \Illuminate\Contracts\View\View
+     */
     public function showAdminLogin(){
         return view('auth.pintuadmin');
     }
 
+    /**
+     * Summary of loginPendaftar
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\RedirectResponse
+     *
+     * Passes $request and $roleType to authenticate()
+     */
     public function loginPendaftar(Request $request){
         return $this->authenticate($request, 'pendaftar');
     }
-
     public function loginAdmin(Request $request){
        return $this->authenticate($request, 'admin');
     }
 
+    /**
+     * Summary of authenticate
+     * @param \Illuminate\Http\Request $request
+     * @param string $roleType
+     * @return mixed|\Illuminate\Http\RedirectResponse
+     *
+     * Joint helper for authentication purpose
+     */
     private function authenticate(Request $request, string $roleType) {
         $isAdmin = $roleType === 'admin';
         $authField = $isAdmin ? 'email' : 'id';
@@ -93,15 +118,28 @@ class AuthController extends Controller
             'email.email' => 'Mohon masukkan format email yang benar.',
             'email.regex' => 'Domain email tidak ditemukan. Harap masukkan alamat email Anda yang sebenarnya!',
             'email.indisposable' => 'Harap masukkan alamat email Anda yang sebenarnya.',
+            'password.required' => 'Kata sandi wajib diisi.',
         ];
         $credentials = $request->validate($rules, $messages);
 
         /* Authentication */
         // Check User record from table 'users'
-        $user = User::where([
-            [$authField, '=', $credentials[$authField]],
-            ['role_id', '=', $roleId]
-        ])->first();
+        $user = User::where(
+            function($q) use($isAdmin, $credentials){
+                if ($isAdmin) {
+                    $q->where('email', $credentials['email']);
+                } else {
+                    $q->where('id', $credentials['id'])
+                    ->orWhere('nomor_hp', $credentials['id']);
+                }
+            }
+            // [
+            //     [$authField, '=', $credentials[$authField]],
+            //     ['role_id', '=', $roleId]
+            // ]
+        )
+        ->where('role_id', $roleId)
+        ->first();
         $activeBatch = BatchPPDB::where('status', true)->first();
 
         if ($user && $user->role_id === 2) {
@@ -110,20 +148,21 @@ class AuthController extends Controller
             }
         }
 
-        if (!$user || !Auth::attempt([
-            $authField => $credentials[$authField],
-            'password' => $credentials['password'],
-            'role_id' => $roleId,
-        ])) {
+        if (!$user || !Hash::check($credentials['password'], $user->password))
+            // !Auth::attempt([
+            //     $authField => $credentials[$authField],
+            //     'password' => $credentials['password'],
+            //     'role_id' => $roleId,
+            // ]
+        {
             // CONSIDER USING REDIS CACHING ON DEPLOYMENT
             Cache::put($lockoutKey, time() + $wait, $wait); // $value requires time() to check $lockoutKey, expires according to $wait seconds
             // dd("Key: ". $key, "Key Value: " . $attempts, "Lockout Key: " . $lockoutKey, "Lockout Key Value: " . Cache::get($lockoutKey));
             return back()->with('error', 'Login gagal. Periksa kembali '. ($isAdmin ? 'email' : 'ID') . ' dan kata sandi Anda.')->onlyInput($authField);
         }
+        Auth::login($user);
 
-        if ($user->role_id === 2 && !$user->pendaftaran) {
-            return redirect()->route('pendaftar.recovery');
-        }
+        if ($user->role_id === 2 && !$user->pendaftaran) return redirect()->route('pendaftar.recovery');
 
         Cache::forget($key);
         Cache::forget($lockoutKey);
@@ -132,6 +171,12 @@ class AuthController extends Controller
         return redirect()->intended($isAdmin ? '/admin/dashboard' : '/pendaftar/dashboard');
     }
 
+    /**
+     * Summary of logout
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * Logs user out, cleanse all stored data such as cookies
+     */
     public function logout(){
         $user = Auth::user();
         Auth::logout();

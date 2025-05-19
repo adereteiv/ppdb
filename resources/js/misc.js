@@ -2,12 +2,12 @@
 export async function fetchContent(url, targetSelector = null) {
     try {
         const response = await fetch(url);
-		if(!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+		if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
         const content = await response.text();
-        if(targetSelector) {
+        if (targetSelector) {
             const targetElement = document.querySelector(targetSelector);
-            if(targetElement) {
+            if (targetElement) {
                 targetElement.innerHTML = content;
             } else {
                 console.error(`Target element '${targetSelector}' not found.`);
@@ -20,7 +20,6 @@ export async function fetchContent(url, targetSelector = null) {
         return null;
     }
 }
-
 // [✓] Alert
 export function alert(selector='.alert', delay=10000, fade=2000 ) {
     const alert = document.querySelector(selector);
@@ -28,7 +27,7 @@ export function alert(selector='.alert', delay=10000, fade=2000 ) {
 
     requestAnimationFrame(() => {
         alert.style.opacity = '1';
-        alert.style.top = '0';
+        alert.style.top = '4rem';
         alert.style.transition = 'opacity 0.5s ease, top 0.5s ease';
     });
 
@@ -37,18 +36,17 @@ export function alert(selector='.alert', delay=10000, fade=2000 ) {
         setTimeout(() => alert.remove(), fade);
     }, delay);
 }
-
 // [✓] Copy ID to Clipboard
 export function copyToClipboard() {
     const copyButton = document.getElementById("copyButton");
     const userIdElement = document.getElementById("userId");
     const tooltiptext = document.getElementById("tooltiptext");
 
-    if(!copyButton || !userIdElement || !tooltiptext) return;
+    if (!copyButton || !userIdElement || !tooltiptext) return;
     const copiedText = userIdElement.textContent.trim();
 
     copyButton.addEventListener("click", () => {
-        if(navigator.clipboard && navigator.clipboard.writeText) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(copiedText)
                 .then(() => { tooltiptext.textContent = `ID ${copiedText} disalin!`; })
                 .catch(() => { tooltiptext.textContent = `Gagal menyalin!`; });
@@ -68,7 +66,6 @@ export function copyToClipboard() {
         tooltiptext.textContent = "Salin";
     });
 }
-
 // [✓] Tooltip
 /* Penggunaan
     <element class="tooltip" tooltip="left">
@@ -81,7 +78,7 @@ export function tooltip() {
     tooltipElements.forEach(element => {
         const tooltipText = element.querySelector(".tooltiptext");
 
-        if(!tooltipText) return;
+        if (!tooltipText) return;
 
         element.addEventListener("mouseenter", () => {
             const rect = element.getBoundingClientRect();
@@ -115,10 +112,9 @@ export function tooltip() {
         // });
     });
 }
-
 // [✓] Handling simple .open ⇄ .close behavior
 /*
-Penggunaan (di dalam satu scope)
+    Penggunaan (di dalam satu scope)
     <!-- Toggle (Default Behavior) -->
     <element data-toggle-target="#target"/>
 
@@ -130,11 +126,9 @@ Penggunaan (di dalam satu scope)
 
     <!-- Target Element -->
     <element id="target" data-persistent/>
-Penggunaan (di beda scope)
-
 */
 export function toggleShow(element, open = true) {
-    if(!element) return;
+    if (!element) return;
     element.classList.remove(open ? 'close' : 'open');
     element.classList.add(open ? 'open' : 'close');
 }
@@ -144,26 +138,26 @@ export function toggleStaticOpen() {
         const targetSelector = item.getAttribute('data-toggle-target');
         const mode = item.getAttribute('data-toggle-mode');
 
-        if(!targetSelector) return;
+        if (!targetSelector) return;
         const target = document.querySelector(targetSelector);
-        if(!target) {return console.warn("Target element not found.");};
+        if (!target) {return console.warn("Target element not found.");};
 
-        if(!target.classList.contains('open') && !target.classList.contains('close')) {
+        if (!target.classList.contains('open') && !target.classList.contains('close')) {
             target.classList.add('close');
         }
 
-        if(item._toggleHandler) {
+        if (item._toggleHandler) {
             item.removeEventListener('click', item._toggleHandler);
         }
 
         item._toggleHandler = (e) => {
             e.stopPropagation();
 
-            if(group) {
+            if (group) {
                 document.querySelectorAll(`[data-toggle-group="${group}"]`).forEach(el => {
                     const elTargetSelector = el.getAttribute('data-toggle-target');
                     const elTarget = document.querySelector(elTargetSelector);
-                    if(el !== item) {
+                    if (el !== item) {
                         el.classList.remove('active');
                         if (elTarget) toggleShow(elTarget, false);
                     }
@@ -187,9 +181,9 @@ export function toggleStaticOpen() {
 
         item.addEventListener('click', item._toggleHandler);
 
-        // if(!target.dataset.persistent && !target._clickOutsideHandler) {
+        // if (!target.dataset.persistent && !target._clickOutsideHandler) {
         //     target._clickOutsideHandler = (e) => {
-        //         if(target.classList.contains('open') && !target.contains(e.target) && !item.contains(e.target)) {
+        //         if (target.classList.contains('open') && !target.contains(e.target) && !item.contains(e.target)) {
         //             toggleShow(target, false);
         //         }
         //     };

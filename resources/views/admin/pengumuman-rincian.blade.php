@@ -22,10 +22,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Dibuat Pada</td>
+                    <td>Diposting Pada</td>
                     <td>:</td>
                     <td>
-                        {{ ($pengumuman->jadwal_posting)->translatedFormat('l, d F Y') }}
+                        {{ ($pengumuman->jadwal_posting)->translatedFormat('l, d F Y, H:m:i') }}
                     </td>
                 </tr>
                 <tr>
@@ -44,7 +44,7 @@
                     <td>Dibuat Pada</td>
                     <td>:</td>
                     <td>
-                        {{ ($pengumuman->created_at)->translatedFormat('l, d F Y') }}
+                        {{ ($pengumuman->created_at)->translatedFormat('l, d F Y, H:m:i') }}
                     </td>
                 </tr>
             </table>

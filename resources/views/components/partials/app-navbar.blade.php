@@ -79,6 +79,6 @@
         </nav>
     </div>
     <footer class="margin-top-auto content-padding">
-        <p class="text-align-center">&copy; 2025 TK Negeri Pembina Sungai Kakap</p>
+        <p class="text-align-center">&copy;adereteiv 2025</p>
     </footer>
 </aside>

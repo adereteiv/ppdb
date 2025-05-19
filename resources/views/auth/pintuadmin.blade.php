@@ -9,10 +9,6 @@
             <x-flash-message button flash>{{ session('error') }}</x-flash-message>
             @endif
 
-            {{-- @error('email') // handled in <x-input/>
-            <x-flash-message button flash>{{ $message }}</x-flash-message>
-            @enderror --}}
-
             <form method="POST" action="{{ route('loginAdmin') }}">@csrf
                 <div>
                     <div class="margin-vertical">
