@@ -16,7 +16,7 @@
                     </x-flash-message>
                 @endif
                 <x-flash-message flash='blue' button>
-                    Harap mengunggah bukti pembayaran Anda. Ukuran maksimal berkas sebesar 1MB.
+                    Harap mengunggah bukti pembayaran Anda. Pembayaran dapat dilakukan ke rekening XXXX-XXXX.
                 </x-flash-message>
             </div>
             <form id="payForm" method="POST" action="{{ route('pendaftar.buktiBayar.update') }}" enctype="multipart/form-data"> @method('PUT') @csrf

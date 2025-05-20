@@ -577,11 +577,12 @@ table.fixed{table-layout: fixed;}
 /* Tooltip */
 .tooltip {
     .tooltiptext {
+        max-width: 300px;
+        /* white-space: nowrap; */
         visibility: hidden;
         position: fixed;
         z-index: 10;
         text-align: center;
-        white-space: nowrap;
         font-size: 14px;
         border-radius: 6px;
         padding: 6px 12px;
@@ -947,7 +948,6 @@ input[type="file"].form-item{
 #section-struktur{
     background: var(--bluemild);
     .struktur-title{
-        background-image: url(/img/cloud_title.png);
         background-position: center;
         background-repeat: no-repeat;
         padding: 4rem 1rem;
@@ -1314,9 +1314,7 @@ input[type="file"].form-item{
         border-radius: 4.5px;
         box-shadow: 2px 2px 5px var(--coloraccent2);
         border: var(--border);
-        &:hover{
-            background: var(--coloraccent3);
-        }
+        &:hover{background: var(--coloraccent3);}
         &:active{box-shadow: 2px 2px 5px var(--coloraccent2) inset;}
     }
     li{

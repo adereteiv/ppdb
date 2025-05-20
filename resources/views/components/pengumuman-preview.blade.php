@@ -7,14 +7,14 @@
     </div>
     <div class="justify-list content-padding-side-rem content-padding-bottom-rem">
         <div>{!! $keterangan !!}</div>
-        <div class="margin-vertical"><strong>Lampiran :</strong>
-            @if ($file)
-            @foreach ($file as $lampiran)
-                {{-- <a href="{{ asset('storage/' . $lampiran) }}" target="_blank" rel="noopener">{{ $lampiran }}</a> --}}
-                <p><a href="{{ asset('storage/' . $lampiran) }}" target="_blank" rel="noopener" style="text-decoration: none; color: var(--blue);">{{ basename($lampiran) }}</a></p>
-            @endforeach
-            @endif
-        </div>
+        @if ($file)
+            <div class="margin-vertical"><strong>Lampiran :</strong>
+                @foreach ($file as $lampiran)
+                    {{-- <a href="{{ asset('storage/' . $lampiran) }}" target="_blank" rel="noopener">{{ $lampiran }}</a> --}}
+                    <p><a href="{{ asset('storage/' . $lampiran) }}" target="_blank" rel="noopener" style="text-decoration: none; color: var(--blue);">{{ basename($lampiran) }}</a></p>
+                @endforeach
+            </div>
+        @endif
     </div>
 </div>
 {{-- <x-pengumuman-preview :jadwal="" judul="" :keterangan="" :file=""/> --}}

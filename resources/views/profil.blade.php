@@ -1,5 +1,5 @@
 <x-layouts.home-layout>
-    <section id="section-hero" class="home-section" style="background-image: url(img/Filler-Al_Fityan_2.jpg);">
+    <section id="section-hero" class="home-section" style="background-image: url({{ asset('static/Filler-Al_Fityan_2.jpg') }});">
         <div class="hero-overlay" style="background: rgba(0, 0, 0, 0.3);"></div>
         <div class="hero-title flex flex-center flex-col justify-around content-padding-rem container">
             <div class="beranda-main">
@@ -118,7 +118,7 @@
                     </a>
                 </div>
                 <div class="gallery-item">
-                    <a href="{{ asset('static/Filler-Daily_2.jpg') }}" class="gallery-lightbox">
+                    <a href="{{ asset('static/Filler-Manasik_Haji.jpg') }}" class="gallery-lightbox">
                         <img src="{{ asset('static/Filler-Manasik_Haji.jpg') }}" alt="Foto kegiatan Manasik Haji">
                     </a>
                 </div>

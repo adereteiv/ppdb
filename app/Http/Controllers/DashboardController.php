@@ -58,6 +58,7 @@ class DashboardController extends Controller
     public function showDashboard(){
         $user = $this->getData('user');
         $pendaftaran = $this->getData('pendaftaran');
+        $batch = $this->getData('batch');
         $pengumuman = Pengumuman::where(['tipe_pengumuman'=> 'Khusus Pendaftar'])->latest()->first();
 
         if (!$pendaftaran) return view('pendaftar.dashboard', ['formulirLengkap' => false, 'dokumenLengkap' => false, 'buktiBayarLengkap' => false]);
@@ -70,7 +71,7 @@ class DashboardController extends Controller
         ] = $status;
         $pendaftaran->refresh();
 
-        return view('pendaftar.dashboard', compact('pendaftaran', 'pengumuman', 'formulirLengkap', 'dokumenLengkap', 'buktiBayarLengkap'));
+        return view('pendaftar.dashboard', compact('pendaftaran','batch',  'pengumuman', 'formulirLengkap', 'dokumenLengkap', 'buktiBayarLengkap'));
     }
 
     /**
