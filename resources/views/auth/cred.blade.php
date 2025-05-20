@@ -9,12 +9,36 @@
                 <p>Hai, <b>{{ $nama }}</b>!</p>
             </x-flash-message>
             <p><b>Simpan data berikut untuk keperluan log in!</b></p>
+            <p><b>Screenshot bila perlu, Anda tidak akan melihat pesan ini lagi!</b></p>
             <br>
-            <p><strong>User ID:</strong> {{ $user_id }}</p>
-            <p><strong>Nomor HP:</strong> {{ $nomor_hp }}</p>
-            <p><strong>Password:</strong> {{ $password }}</p>
+            <table class="alternate">
+                <tr class="copyCred">
+                    <td width="1rem"><strong>User ID</strong></td>
+                    <td> {{ $user_id }}</td>
+                </tr>
+                <tr class="copyCred">
+                    <td><strong>Nomor HP</strong></td>
+                    <td> {{ $nomor_hp }}</td>
+                </tr>
+                <tr x-data="{ show: false }">
+                    <td><strong>Password: </strong></td>
+                    <td class="flex justify-between">
+                        <span x-text="show ? '{{ $password }}' : '{{ str_repeat('*', strlen($password)) }}'"></span>
+                        <button @click="show = !show" type="button" class="tombol-none">
+                            <i x-show="!show" x-cloak class="bi bi-eye"></i>
+                            <i x-show="show" x-cloak class="bi bi-eye-slash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+            <p class="copyCred" style="display: none;"><strong>Password:</strong> {{ $password }}</p>
+            <button class="content-margin-top inline-block text-align-left copyButton tombol-mini tombol-netral tooltip" data-target=".copyCred" data-tooltip="#tooltip1" data-label="Grup 1: " tooltip="bottom">
+                <span id="tooltip1" class="tooltiptext">Salin</span>
+                <span>Salin</span>
+                <i class="bi bi-copy"></i>
+            </button>
+            <br>
             <x-flash-message flash="red" icon="warn">
-                <p><b>Screenshot bila perlu, Anda tidak akan melihat pesan ini lagi!</b></p>
                 <p><strong>Halaman ini akan hilang dalam: <x-scripts.live-timer :expiry="now()->diffInSeconds($ttl)"/></strong></p>
             </x-flash-message>
             <div class="margin-vertical">

@@ -27,8 +27,15 @@ class PendaftarUnggahBuktiBayarController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $pendaftaran = Pendaftaran::where('user_id', $user->id)->firstOrFail();
+        $pendaftaran = Pendaftaran::where('user_id', $user->id)->first();
+        $batch = BatchPPDB::where('id', $pendaftaran->batch_id)->first();
         $buktiBayar = BuktiBayar::where('anak_id', optional($pendaftaran->infoAnak)->id)->first();
+
+        if (now() >= $batch->waktu_tenggat) {
+            return back()->with('check', 'Masa tenggat pendaftaran sudah lewat. Silakan menghubungi Admin bila ingin merubah data pendaftaran.');
+        } elseif ($pendaftaran->status === 'Terverifikasi') {
+            return back()->with('check', 'Data Anda sudah terverifikasi. Silakan menghubungi Admin bila ingin merubah data pendaftaran.');
+        }
 
         return view('pendaftar.buktibayar', compact('pendaftaran', 'buktiBayar'));
     }

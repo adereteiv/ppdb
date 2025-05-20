@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\InfoAnak;
 use App\Models\BatchPPDB;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Services\PendaftaranService;
-use Illuminate\Support\Facades\Cache;
 use App\Notifications\KirimUserIDNotification;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class RegisterController extends Controller
 {
@@ -75,8 +75,12 @@ class RegisterController extends Controller
         // If another user exists with the same name, differentiate the nomor_hp or email, people having the same name is possible
         $existingUser = User::where('name', $request->nama_anak)
             ->where(function ($query) use ($request) {
-                $query->where('email', $request->email)
-                    ->orWhere('nomor_hp', $request->nomor_hp);
+                if ($request->filled('email')) {
+                    $query->where('email', $request->email)
+                        ->orWhere('nomor_hp', $request->nomor_hp);
+                } else {
+                    $query->where('nomor_hp', $request->nomor_hp);
+                }
             })->first();
         if ($existingUser) {
             return back()
@@ -116,8 +120,9 @@ class RegisterController extends Controller
                 'panggilan_anak.required'       => 'Wajib diisi.',
                 'panggilan_anak.max'            => 'Melebihi batas maksimal 30 karakter.',
                 'panggilan_anak.regex'          => 'Hanya huruf Aa-Zz dan tanda hubung (-) yang diperbolehkan.',
+                'tempat_lahir.required'         => 'Tempat lahir wajib diisi.',
                 'tempat_lahir.max'              => 'Melebihi batas maksimal 60 karakter.',
-                'tanggal_lahir.required'        => 'Wajib diisi.',
+                'tanggal_lahir.required'        => 'Tanggal lahir wajib diisi.',
                 'tanggal_lahir.before_or_equal' => 'Anak harus berusia minimal 4 tahun.',
                 'tanggal_lahir.after'           => 'Usia anak maksimal berada di bawah 7 tahun.',
                 'jarak_tempuh.required'         => 'Wajib diisi.',
@@ -140,7 +145,7 @@ class RegisterController extends Controller
         // Display user credentials for login via temporary token
         $key = 'regis_confirm';
         $token = Str::random(40);
-        $expiry = now()->addMinutes(10);
+        $expiry = now()->addMinutes(30);
         Cache::put("{$key}:{$token}", [
             'title'     => 'Registrasi Berhasil',
             'user_id'   => $user->id,

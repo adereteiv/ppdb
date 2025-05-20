@@ -37,7 +37,7 @@ Route::post('/pintuadmin', [AuthController::class, 'loginAdmin'])->name('loginAd
 Route::get('/password-reset/{token}', [PasswordResetController::class, 'index'])->name('passwordReset');
 Route::post('/password-reset/{token}', [PasswordResetController::class, 'confirm'])->name('passwordResetPIN');
 Route::get('/password-reset/{token}/{id}', [PasswordResetController::class, 'edit'])->name('changePassword');
-Route::post('/password-reset/{token}/{id}', [PasswordResetController::class, 'update'])->name('newPassword');
+Route::post('/password-reset/{token}/{id}', [PasswordResetController::class, 'update'])->name('saveNewPassword');
 
 Route::middleware('auth.secure')->group(function () {
     Route::prefix('admin')->middleware('role:1')->name('admin.')->group(function () {

@@ -13,8 +13,12 @@
                 <x-flash-message flash='blue' icon='success'>Pendaftaran Anda sudah divalidasi, silakan menunggu pengumuman daftar peserta didik dan tanggal masuk akan segera diumumkan.</x-flash-message>
             @endif
             <x-flash-message class="bg-blue" icon>
-                <p>Silakan menekan pilihan tombol berikut untuk melengkapi pendaftaran Anda.</p>
-                <p>Indikator akan menyala ketika data sudah tersimpan.</p>
+                @if ($batch && now() >= $batch->waktu_tenggat)
+                    <p>Masa pendaftaran sudah lewat. Hubungi Admin jika ingin melakukan perubahan data pendaftaran.</p>
+                @else
+                    <p>Silakan menekan pilihan tombol berikut untuk melengkapi pendaftaran Anda.</p>
+                    <p>Indikator akan menyala ketika data sudah tersimpan.</p>
+                @endif
             </x-flash-message>
         </div>
         <div class="list-stepper flex gap scrollable content-padding-side-rem content-padding-bottom-rem">

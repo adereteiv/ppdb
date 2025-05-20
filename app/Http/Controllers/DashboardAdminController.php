@@ -45,6 +45,7 @@ class DashboardAdminController extends Controller
      */
     public function showPPDB(){
         $arsipPPDB = BatchPPDB::where('status', false)
+            ->where('waktu_tutup', '<', now())
             ->orderBy('tahun_ajaran', 'desc')
             ->orderBy('gelombang', 'desc')
             ->get();

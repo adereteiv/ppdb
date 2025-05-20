@@ -83,7 +83,7 @@ class PasswordResetController extends Controller
 
         $key = 'password_confirm';
         $newToken = Str::random(40);
-        $expiry = now()->addMinutes(10);
+        $expiry = now()->addMinutes(30);
         Cache::put("{$key}:{$newToken}", [
             'title'     => 'Berhasil Memperbarui Kata Sandi',
             'user_id'   => $user->id,

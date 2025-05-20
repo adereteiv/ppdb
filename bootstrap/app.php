@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\AuthSecureMiddleware;
-use App\Http\Middleware\PendaftarAccessMiddleware;
+use App\Http\Middleware\PendaftarRecoveryMiddleware;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.secure' => AuthSecureMiddleware::class,
             'role' => RoleMiddleware::class,
-            'pendaftar' => PendaftarAccessMiddleware::class,
+            'pendaftar' => PendaftarRecoveryMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
