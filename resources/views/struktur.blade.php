@@ -1,6 +1,6 @@
 <x-layouts.home-layout>
     <section id="section-struktur" class="home-section">
-        <div class="struktur-title text-align-center margin-vertical">
+        <div class="struktur-title text-align-center margin-vertical" style="background-image: url({{ asset('static/cloud_title.png') }});">
             <h1>Struktur Organisasi</h1>
             <h2>TK Negeri Pembina Sungai Kakap</h2>
         </div>

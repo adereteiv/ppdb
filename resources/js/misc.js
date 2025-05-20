@@ -36,36 +36,58 @@ export function alert(selector='.alert', delay=10000, fade=2000 ) {
         setTimeout(() => alert.remove(), fade);
     }, delay);
 }
-// [✓] Copy ID to Clipboard
+/* [✓] Copy ID to Clipboard
+<div>
+    <button class="copyButton" data-target=".copyGroup1" data-tooltip="#tooltip1" data-label="Grup 1: ">Copy</button>
+    <p class="copyGroup1">X</p>
+    <p class="copyGroup1">Y</p>
+    <p class="copyGroup1">Z</p>
+    <span id="tooltip1">Salin</span>
+</div>
+*/
 export function copyToClipboard() {
-    const copyButton = document.getElementById("copyButton");
-    const userIdElement = document.getElementById("userId");
-    const tooltiptext = document.getElementById("tooltiptext");
+    const copyButtons = document.querySelectorAll(".copyButton");
 
-    if (!copyButton || !userIdElement || !tooltiptext) return;
-    const copiedText = userIdElement.textContent.trim();
+    copyButtons.forEach((button) => {
+        const targetSelector = button.dataset.target; // e.g., ".copyTargetGroup1"
+        const tooltipSelector = button.dataset.tooltip; // e.g., "#tooltip1"
+        const label = button.dataset.label || "";
 
-    copyButton.addEventListener("click", () => {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(copiedText)
-                .then(() => { tooltiptext.textContent = `ID ${copiedText} disalin!`; })
-                .catch(() => { tooltiptext.textContent = `Gagal menyalin!`; });
+        const targetElements = document.querySelectorAll(targetSelector);
+        const tooltiptext = document.querySelector(tooltipSelector);
 
-        } else { //fallback http
-            const tempInput = document.createElement("textarea");
-            tempInput.value = copiedText;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-            tooltiptext.textContent = `ID ${copiedText} disalin!`;
-        }
-    });
+        if (!targetElements.length || !tooltiptext) return;
 
-    copyButton.addEventListener("mouseleave", () => {
-        tooltiptext.textContent = "Salin";
+        button.addEventListener("click", () => {
+            const copiedText = Array.from(targetElements)
+                .map(el => el.textContent.trim())
+                .join(", ");
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(copiedText)
+                    .then(() => {
+                        tooltiptext.textContent = `Berhasil menyalin ${label}${copiedText}!`;
+                    })
+                    .catch(() => {
+                        tooltiptext.textContent = `Gagal menyalin!`;
+                    });
+            } else {
+                const tempInput = document.createElement("textarea");
+                tempInput.value = copiedText;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                tooltiptext.textContent = `Berhasil menyalin ${label}${copiedText}!`;
+            }
+        });
+
+        button.addEventListener("mouseleave", () => {
+            tooltiptext.textContent = "Salin";
+        });
     });
 }
+
 // [✓] Tooltip
 /* Penggunaan
     <element class="tooltip" tooltip="left">

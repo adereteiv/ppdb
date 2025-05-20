@@ -19,11 +19,6 @@ class AuthController extends Controller
      * Fetches active batch and determines access to login page
      */
     public function showLogin(){
-        $x = BatchPPDB::where('status', true)->first();
-        if (!$x || now() >= $x->waktu_tenggat) {
-            return redirect()->route('home');
-        }
-
         return view('auth.login');
     }
 
@@ -93,10 +88,11 @@ class AuthController extends Controller
         // Step 2 | Prevent doing unnecessary steps
         if (Cache::has($lockoutKey)) {
             $cooldown = Cache::get($lockoutKey) - time(); // subtract by time() is necessary to show real countdown, UNIX timestamp is needed on $lockoutKey setter
-            $timeString = $cooldown > 60
-                ? gmdate("i:s", $cooldown) . ' menit'
-                : $cooldown . ' detik';
-            return back()->with('error', "Terlalu banyak percobaan. Coba lagi dalam {$timeString}.")->onlyInput($authField);
+            // $timeString = $cooldown > 60
+            //     ? gmdate("i:s", $cooldown) . ' menit'
+            //     : $cooldown . ' detik';
+            // return back()->with('error', "Terlalu banyak percobaan. Coba lagi dalam {$timeString}.")->onlyInput($authField);
+            return back()->with(['error' => 'Terlalu banyak percobaan. Coba lagi dalam', 'ttl' => $cooldown])->onlyInput($authField);
         }
         // Step 3
         if (Cache::has($key)) {
@@ -160,14 +156,26 @@ class AuthController extends Controller
             // dd("Key: ". $key, "Key Value: " . $attempts, "Lockout Key: " . $lockoutKey, "Lockout Key Value: " . Cache::get($lockoutKey));
             return back()->with('error', 'Login gagal. Periksa kembali '. ($isAdmin ? 'email' : 'ID') . ' dan kata sandi Anda.')->onlyInput($authField);
         }
+
         Auth::login($user);
+        $request->session()->regenerate();
 
-        if ($user->role_id === 2 && !$user->pendaftaran) return redirect()->route('pendaftar.recovery');
+        // Check and set user_session
+        $currentSessionId = session()->getId();
+        $existingSession = Cache::get("user_session:" . $user->id);
+        if ($existingSession && $existingSession !== $currentSessionId) {
+            Auth::logout();
+            session()->invalidate();
+            return back()->with('error', 'Akun Anda sedang aktif di perangkat lain.');
+        }
+        Cache::put("user_session:" . $user->id, $currentSessionId, now()->addMinutes(config('session.lifetime')));
 
+        // Throttling, removed when auth is succesful
         Cache::forget($key);
         Cache::forget($lockoutKey);
 
-        $request->session()->regenerate();
+        if ($user->role_id === 2 && !$user->pendaftaran) return redirect()->route('pendaftar.recovery');
+
         return redirect()->intended($isAdmin ? '/admin/dashboard' : '/pendaftar/dashboard');
     }
 
@@ -179,12 +187,14 @@ class AuthController extends Controller
      */
     public function logout(){
         $user = Auth::user();
+        if ($user) Cache::forget('user_session:' . $user->id);
+
         Auth::logout();
 
         session()->invalidate();
         session()->regenerateToken();
         Cookie::queue(Cookie::forget('arsip_key'));
 
-        return redirect($user?->role_id == 1 ? '/pintuadmin' : '/login');
+        return redirect($user?->role_id == 1 ? '/pintuadmin' : '/login')->with('success', 'Logout berhasil!');
     }
 }

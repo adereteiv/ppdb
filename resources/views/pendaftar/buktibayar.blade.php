@@ -7,16 +7,19 @@
         <div class="content-padding-side-rem constrict">
             <div class="content-margin">
                 @if ($pendaftaran->status == 'Menunggu' && $buktiBayar)
-                    <x-flash-message flash='yellow' button>
+                    <x-flash-message flash='yellow'>
                         Menunggu verifikasi pembayaran dari admin.
                     </x-flash-message>
                 @elseif ($pendaftaran->status !== 'Menunggu' && $buktiBayar)
-                    <x-flash-message flash='green' button>
+                    <x-flash-message flash='green'>
                         Pembayaran terverifikasi.
                     </x-flash-message>
                 @endif
-                <x-flash-message flash='blue' button>
-                    Harap mengunggah bukti pembayaran Anda. Ukuran maksimal berkas sebesar 1MB.
+                <x-flash-message flash='blue'>
+                    <ul>
+                        <li>Harap mengunggah bukti pembayaran Anda.</li>
+                        <li>Pembayaran dapat dilakukan ke rekening XXXX-XXXX.</li>
+                    </ul>
                 </x-flash-message>
             </div>
             <form id="payForm" method="POST" action="{{ route('pendaftar.buktiBayar.update') }}" enctype="multipart/form-data"> @method('PUT') @csrf

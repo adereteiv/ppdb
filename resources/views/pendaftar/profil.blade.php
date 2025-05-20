@@ -59,7 +59,13 @@
                             <tr>
                                 <td>Email</td>
                                 <td>:</td>
-                                <td>{{ $user->email }}</td>
+                                <td>
+                                    @if ($pendaftaran->user->email)
+                                        {{ $pendaftaran->user->email }}
+                                    @else
+                                        <i class="teks-netral">Data tidak ditemukan</i>
+                                    @endif
+                                </td>
                             </tr>
                             <tr>
                                 <td>Nomor HP/WA</td>

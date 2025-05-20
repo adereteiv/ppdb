@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Dokumen;
 use App\Models\SyaratDokumen;
+use App\Models\DokumenPersyaratan;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

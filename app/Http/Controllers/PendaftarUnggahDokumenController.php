@@ -31,15 +31,19 @@ class PendaftarUnggahDokumenController extends Controller
         $user = Auth::user();
         $pendaftaran = Pendaftaran::where('user_id', $user->id)->with('infoAnak')->first();
         $buktiBayar = BuktiBayar::where('anak_id', $pendaftaran->infoAnak->id)->exists();
+        $batch = BatchPPDB::findOrFail($pendaftaran->batch_id);
         // flow, pay first
         // if (!$buktiBayar || $pendaftaran->status === 'Menunggu') return back()->with('warn', 'Silakan menyelesaikan tahap pembayaran dan mengunggah bukti pembayaran. Admin akan melakukan verifikasi secepatnya.');
-        if (!$buktiBayar && $pendaftaran->status === 'Menunggu') {
+        if (now() >= $batch->waktu_tenggat) {
+            return back()->with('check', 'Masa tenggat pendaftaran sudah lewat. Silakan menghubungi Admin bila ingin merubah data pendaftaran.');
+        } elseif ($pendaftaran->status === 'Terverifikasi') {
+            return back()->with('check', 'Data Anda sudah terverifikasi. Silakan menghubungi Admin bila ingin merubah data pendaftaran.');
+        } elseif (!$buktiBayar && $pendaftaran->status === 'Menunggu') {
             return back()->with('warn', 'Silakan menyelesaikan tahap pembayaran dan mengunggah bukti pembayaran. Admin akan melakukan verifikasi secepatnya.');
         } elseif ($buktiBayar && $pendaftaran->status === 'Menunggu') {
             return back()->with('warn', 'Admin akan melakukan verifikasi pembayaran secepatnya.');
         }
 
-        $batch = BatchPPDB::findOrFail($pendaftaran->batch_id);
         $syaratDokumen = SyaratDokumen::where('batch_id', $batch->id)->with('tipeDokumen')->orderBy('id', 'desc')->get(); // Sesuaikan dengan BatchPPDBController
         $dokumenPersyaratan = DokumenPersyaratan::where('anak_id', optional($pendaftaran->infoAnak)->id)->get();
 

@@ -2,10 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\BatchPPDB;
 use Closure;
+use App\Models\BatchPPDB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -24,6 +25,20 @@ class AuthSecureMiddleware
         {
             throw new AuthenticationException();
         }
+
+        // Extend session cache
+        $cachedSession = Cache::get('user_session:' . Auth::id());
+        if ($cachedSession && $cachedSession !== session()->getId()) {
+            Auth::logout();
+            return redirect()->route('login')->withErrors([
+                'error' => 'Akun Anda telah digunakan di perangkat lain.',
+            ]);
+        }
+        Cache::put(
+            'user_session:' . Auth::id(),
+            session()->getId(),
+            now()->addMinutes(config('session.lifetime')) // refer to AuthController, the main setter is there
+        );
 
         // Handles case when, a user is logged in during batch closing, especially for user with role == 2, deduced from the requested url
         $batch = BatchPPDB::where('status', true)->first();

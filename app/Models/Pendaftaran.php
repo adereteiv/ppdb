@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\BatchPPDB;
 use App\Models\User;
 use App\Models\InfoAnak;
-use App\Models\BatchPPDB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
