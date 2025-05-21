@@ -19,11 +19,6 @@ class AuthController extends Controller
      * Fetches active batch and determines access to login page
      */
     public function showLogin(){
-        $x = BatchPPDB::where('status', true)->first();
-        if (!$x || now() >= $x->waktu_tenggat) {
-            return redirect()->route('home');
-        }
-
         return view('auth.login');
     }
 

@@ -118,7 +118,7 @@
                     </a>
                 </div>
                 <div class="gallery-item">
-                    <a href="{{ asset('static/Filler-Daily_2.jpg') }}" class="gallery-lightbox">
+                    <a href="{{ asset('static/Filler-Manasik_Haji.jpg') }}" class="gallery-lightbox">
                         <img src="{{ asset('static/Filler-Manasik_Haji.jpg') }}" alt="Foto kegiatan Manasik Haji">
                     </a>
                 </div>

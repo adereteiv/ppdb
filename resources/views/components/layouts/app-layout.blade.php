@@ -50,6 +50,10 @@
         <x-flash-message class='shadow' mode='alert warn'>{{ session('warn') }}</x-flash-message>
         @endif
 
+        @if (session()->has('check'))
+        <x-flash-message class='shadow' alert="blue" icon="success">{{ session('check') }}</x-flash-message>
+        @endif
+
         <x-partials.app-navbar/> {{-- Normal navbar --}}
         <x-modal id="appNavMobile"> {{-- Mobile navbar, use static modal --}}
             <x-slot:button-data-attributes>data-toggle-target="#appNavMobile" data-toggle-mode="close"</x-slot:button-data-attributes>

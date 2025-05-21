@@ -29,11 +29,16 @@ class PendaftarFormController extends Controller
     {
         $user = Auth::user();
         $pendaftaran = Pendaftaran::where('user_id', $user->id)->first();
+        $batch = BatchPPDB::find($pendaftaran->batch_id);
         $infoAnak = $pendaftaran ? InfoAnak::where('pendaftaran_id', $pendaftaran->id)->first() : null;
         $buktiBayar = BuktiBayar::where('anak_id', $infoAnak->id)->exists();
         // flow, pay first
         // if (!$buktiBayar || $pendaftaran->status === 'Menunggu') return back()->with('warn', 'Silakan menyelesaikan tahap pembayaran dan mengunggah bukti pembayaran. Admin akan melakukan verifikasi secepatnya.');
-        if (!$buktiBayar && $pendaftaran->status === 'Menunggu') {
+        if (now() >= $batch->waktu_tenggat) {
+            return back()->with('check', 'Masa tenggat pendaftaran sudah lewat. Silakan menghubungi Admin bila ingin merubah data pendaftaran.');
+        } elseif ($pendaftaran->status === 'Terverifikasi') {
+            return back()->with('check', 'Data Anda sudah terverifikasi. Silakan menghubungi Admin bila ingin merubah data pendaftaran.');
+        } elseif (!$buktiBayar && $pendaftaran->status === 'Menunggu') {
             return back()->with('warn', 'Silakan menyelesaikan tahap pembayaran dan mengunggah bukti pembayaran. Admin akan melakukan verifikasi secepatnya.');
         } elseif ($buktiBayar && $pendaftaran->status === 'Menunggu') {
             return back()->with('warn', 'Admin akan melakukan verifikasi pembayaran secepatnya.');
