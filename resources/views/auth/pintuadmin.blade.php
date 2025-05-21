@@ -6,7 +6,11 @@
                 <h1>Login Admin</h1>
             </div>
             @if (session()->has('error'))
-            <x-flash-message button flash>{{ session('error') }}</x-flash-message>
+            <x-flash-message button flash>{{ session('error') }}
+                @if (session()->has('ttl'))
+                    <x-scripts.live-timer :expiry="session('ttl')"/>.
+                @endif
+            </x-flash-message>
             @endif
 
             <form method="POST" action="{{ route('loginAdmin') }}">@csrf

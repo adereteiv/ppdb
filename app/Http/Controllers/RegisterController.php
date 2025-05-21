@@ -89,10 +89,6 @@ class RegisterController extends Controller
         }
 
         // Model creations
-        $pendaftaranService = new PendaftaranService;
-        $user = $pendaftaranService->saveAkun($request);
-        $pendaftaran = $pendaftaranService->savePendaftaran($user->id, $activeBatch->id);
-
         $request->validate([
                 'nama_anak'         => 'required|string|max:255|regex:/^[a-zA-Z-\s]+$/',
                 'panggilan_anak'    => 'required|string|max:30|regex:/^[a-zA-Z-\s]+$/',
@@ -130,6 +126,9 @@ class RegisterController extends Controller
                 'jarak_tempuh.max'              => 'Jarak rumah melebihi 20km.',
             ],
         );
+        $pendaftaranService = new PendaftaranService;
+        $user = $pendaftaranService->saveAkun($request);
+        $pendaftaran = $pendaftaranService->savePendaftaran($user->id, $activeBatch->id);
         InfoAnak::create([
             'pendaftaran_id' => $pendaftaran->id,
             'nama_anak' => $sanitize['nama_anak'],

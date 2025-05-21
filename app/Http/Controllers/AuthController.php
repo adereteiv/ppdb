@@ -88,10 +88,11 @@ class AuthController extends Controller
         // Step 2 | Prevent doing unnecessary steps
         if (Cache::has($lockoutKey)) {
             $cooldown = Cache::get($lockoutKey) - time(); // subtract by time() is necessary to show real countdown, UNIX timestamp is needed on $lockoutKey setter
-            $timeString = $cooldown > 60
-                ? gmdate("i:s", $cooldown) . ' menit'
-                : $cooldown . ' detik';
-            return back()->with('error', "Terlalu banyak percobaan. Coba lagi dalam {$timeString}.")->onlyInput($authField);
+            // $timeString = $cooldown > 60
+            //     ? gmdate("i:s", $cooldown) . ' menit'
+            //     : $cooldown . ' detik';
+            // return back()->with('error', "Terlalu banyak percobaan. Coba lagi dalam {$timeString}.")->onlyInput($authField);
+            return back()->with(['error' => 'Terlalu banyak percobaan. Coba lagi dalam', 'ttl' => $cooldown])->onlyInput($authField);
         }
         // Step 3
         if (Cache::has($key)) {
