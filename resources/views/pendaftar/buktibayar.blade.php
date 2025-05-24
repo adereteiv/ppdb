@@ -19,6 +19,7 @@
                     <ul>
                         <li>Harap mengunggah bukti pembayaran Anda.</li>
                         <li>Pembayaran dapat dilakukan ke rekening XXXX-XXXX.</li>
+                        <li>Informasi lebih lengkap dapat dilihat pada menu Beranda, atau hubungi operator.</li>
                     </ul>
                 </x-flash-message>
             </div>

@@ -61,24 +61,24 @@
                                         <x-input type="date" name="tanggal_lahir"/>
                                     </div>
                                     <div class="content-padding-side-rem">Jarak Tempuh (km)<sup style="color:#FF0000;">*</sup>
-                                        <x-input type="number" name="jarak_tempuh" placeholder="Jarak dari rumah ke sekolah"/>
+                                        <x-input type="number" name="jarak_tempuh" placeholder="Jarak maksimal 20km"/>
                                     </div>
                                 </div>
                                 <div class="flex-1">
                                     <div class="content-padding-side-rem">Nama Panggilan Anak<sup style="color:#FF0000;">*</sup>
                                         <x-input type="text" name="panggilan_anak"/>
                                     </div>
-                                    <div class="content-padding-side-rem">Alamat e-mail Orang Tua/Wali
+                                    <div class="content-padding-side-rem">Alamat e-mail Orang Tua/Wali<sup style="visibility: hidden;">*</sup>
                                         <x-input type="email" name="email" placeholder="Masukkan email orang tua"/>
                                     </div>
                                     <div class="content-padding-side-rem">Nomor HP/WA<sup style="color:#FF0000;">*</sup>
                                         <x-input type="tel" name="nomor_hp" placeholder="+62XXXXX atau 08XXXX"/>
                                     </div>
                                     <div class="content-padding-side-rem">Masukkan Kata Sandi (Mohon Diingat!)<sup style="color:#FF0000;">*</sup>
-                                        <x-input type="password" name="password" placeholder="Kata sandi, min. 8 karakter"/>
+                                        <x-input-password name="password" placeholder="Kata sandi, min. 8 karakter"/>
                                     </div>
                                     <div class="content-padding-side-rem">Konfirmasi Kata Sandi<sup style="color:#FF0000;">*</sup>
-                                        <x-input type="password" name="password_confirmation" placeholder="Masukkan ulang kata sandi"/>
+                                        <x-input-password name="password_confirmation" placeholder="Masukkan ulang kata sandi"/>
                                     </div>
                                 </div>
                             </div>

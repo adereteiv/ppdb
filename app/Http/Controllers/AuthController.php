@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\BatchPPDB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\{Auth,Hash,Cache,Cookie};
+use App\Models\{User,BatchPPDB};
 
 class AuthController extends Controller
 {

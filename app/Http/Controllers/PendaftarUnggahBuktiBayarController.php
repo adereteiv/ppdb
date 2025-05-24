@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BatchPPDB;
-use App\Models\BuktiBayar;
-use App\Models\Pendaftaran;
-use App\Services\PendaftaranService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\{BatchPPDB,BuktiBayar,Pendaftaran};
+use App\Services\PendaftaranService;
 
 class PendaftarUnggahBuktiBayarController extends Controller
 {

@@ -21,7 +21,7 @@
                         <x-input type="email" name="email" placeholder="Email Admin" autofocus required/>
                     </div>
                     <div class="margin-vertical">
-                        <x-input type="password" name="password" placeholder="Kata sandi" required/>
+                        <x-input-password name="password" placeholder="Kata sandi" required/>
                     </div>
                     <div class="margin-vertical">
                         <button type="submit" class="tombol-besar tombol-netral">Log In</button>

@@ -20,12 +20,12 @@
             <form method="POST" action="{{ route('loginPendaftar') }}">@csrf
                 <div>
                     <div class="margin-vertical">
-                        Nomor HP/WA atau ID Pengguna
-                        <x-input type="text" name="id" placeholder="Sesuai yang didaftarkan" autofocus required/>
+                        ID Pengguna atau Nomor HP/WA
+                        <x-input type="text" name="id" placeholder="" autocomplete="username" autofocus required/>
                     </div>
                     <div class="margin-vertical">
                         Kata Sandi
-                        <x-input type="password" name="password" placeholder="Masukkan kata sandi" required/>
+                        <x-input-password name="password" placeholder="Masukkan kata sandi" autocomplete="current-password" required/>
                     </div>
                     <div class="margin-vertical">
                         {{-- js to prevent double submission by clicking too fast --}}

@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BatchPPDB;
-use App\Models\Pendaftaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use App\Models\{BatchPPDB,Pendaftaran};
 
 class DashboardAdminController extends Controller
 {

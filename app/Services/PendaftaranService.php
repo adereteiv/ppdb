@@ -2,17 +2,19 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use App\Models\InfoAnak;
-use App\Models\BuktiBayar;
-use App\Models\Pendaftaran;
-use App\Models\OrangTuaWali;
-use App\Models\SyaratDokumen;
-use App\Models\DokumenPersyaratan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Models\{
+    User,
+    InfoAnak,
+    BuktiBayar,
+    Pendaftaran,
+    OrangTuaWali,
+    SyaratDokumen,
+    DokumenPersyaratan
+};
 
 class PendaftaranService
 {
@@ -129,7 +131,7 @@ class PendaftaranService
                                     'after:' . now()->subYears(7)->toDateString(),
                                     ],
             'alamat_anak'       =>  'required|string|max:255',
-            'jarak_tempuh'      =>  'required|numeric|min:0|max:50',
+            'jarak_tempuh'      =>  'required|numeric|min:1|max:20',
             'kewarganegaraan'   =>  'required|in:WNI,WNA Keturunan',
             'bahasa_di_rumah'   =>  'required|string',
             'agama'             =>  'required|in:Buddha,Hindu,Islam,Katolik,Khonghucu,Kristen Protestan',

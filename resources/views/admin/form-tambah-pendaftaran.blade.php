@@ -28,8 +28,8 @@
                                     <table>
                                         <tr><td>E-mail Orang Tua/Wali<x-input type="email" name="email" placeholder="Masukkan email orang tua"/></td></tr>
                                         <tr><td>Nomor HP/WA<sup style="color:#FF0000;">*</sup><x-input type="tel" name="nomor_hp" placeholder="Nomor HP yang bisa dihubungi"/></td></tr>
-                                        <tr><td>Masukkan Kata Sandi<sup style="color:#FF0000;">*</sup><x-input type="password" name="password" placeholder="Kata sandi, min. 8 karakter"/></td></tr>
-                                        <tr><td>Konfirmasi Kata Sandi<sup style="color:#FF0000;">*</sup><x-input type="password" name="password_confirmation" placeholder="Masukkan ulang kata sandi"/></td></tr>
+                                        <tr><td>Masukkan Kata Sandi<sup style="color:#FF0000;">*</sup><x-input-password name="password" placeholder="Kata sandi, min. 8 karakter"/></td></tr>
+                                        <tr><td>Konfirmasi Kata Sandi<sup style="color:#FF0000;">*</sup><x-input-password name="password_confirmation" placeholder="Masukkan ulang kata sandi"/></td></tr>
                                     </table>
                                 </div>
                                 <div class="padding-10">
