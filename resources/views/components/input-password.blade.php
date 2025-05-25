@@ -18,3 +18,7 @@
         <i x-show="show" x-cloak class="bi bi-eye-slash"></i>
     </button>
 </div>
+
+@error($name)
+<p class="flex flex-start teks-negatif">{{ $message }}</p>
+@enderror

@@ -25,7 +25,7 @@ Route::get('/profil',[HomeController::class, 'profil']);
 Route::get('/struktur',[HomeController::class, 'struktur']);
 
 Route::get('/daftar', [RegisterController::class, 'showRegister']);
-Route::post('/daftar', [RegisterController::class, 'store'])->name('register')->middleware('throttle:2,5');
+Route::post('/daftar', [RegisterController::class, 'store'])->name('register')->middleware('throttle:3,5');
 Route::get('/konfirmasi/{key}/{token}', [RegisterController::class, 'cred'])->name('cred');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -48,14 +48,14 @@ Route::middleware('auth.secure')->group(function () {
             Route::post('/', [DashboardAdminController::class, 'setArsipKey'])->name('arsipKey');
 
             Route::prefix('/arsip')->name('arsip.')->group(function() {
-                Route::get('/data', [PPDBArsipController::class, 'passData'])->middleware('throttle:30,1')->name('data'); // Route for AJAX request
+                Route::get('/data', [PPDBArsipController::class, 'passData'])->middleware('throttle:ppdb-arsip')->name('data'); // Route for AJAX request
                 Route::get('/rincian', [PPDBArsipController::class, 'showRincian'])->name('rincian');
                 Route::get('/export/{id}', [PPDBArsipController::class, 'export'])->name('export');
                 Route::resource('/', PPDBArsipController::class)->parameters(['' => 'id'])->except(['create', 'store', 'edit', 'update']);
             });
 
             Route::prefix('/aktif')->name('aktif.')->group(function() {
-                Route::get('/data', [PPDBAktifController::class, 'passData'])->middleware('throttle:30,1')->name('data'); // Route for AJAX request
+                Route::get('/data', [PPDBAktifController::class, 'passData'])->middleware('throttle:ppdb-aktif')->name('data'); // Route for AJAX request
                 Route::get('/rincian', [PPDBAktifController::class, 'showRincian'])->name('rincian');
                 Route::get('/export', [PPDBAktifController::class, 'export'])->name('export');
                 Route::post('/tutup', [PPDBAktifController::class, 'tutupPPDB'])->name('tutup');
@@ -75,7 +75,7 @@ Route::middleware('auth.secure')->group(function () {
 
         Route::prefix('/pengumuman')->name('pengumuman.')->group(function (){
             Route::get('/', [KelolaPengumumanController::class, 'index'])->name('index');
-            Route::get('/data', [KelolaPengumumanController::class, 'passData'])->middleware('throttle:30,1')->name('data');
+            Route::get('/data', [KelolaPengumumanController::class, 'passData'])->middleware('throttle:pengumuman')->name('data');
             Route::get('/export', [KelolaPengumumanController::class, 'export'])->name('export');
             Route::resource('/', KelolaPengumumanController::class)->parameters(['' => 'id'])->except(['edit', 'update']);
         });

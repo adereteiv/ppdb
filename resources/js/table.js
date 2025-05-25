@@ -27,9 +27,6 @@ async function fetchData(overrideParams = {}) {
 	tableState = { ...tableState, ...overrideParams };
 
     const query = new URLSearchParams(tableState).toString();
-    // const url = window.location.pathname === '/admin/ppdb/aktif'
-    //     ? `/admin/ppdb/aktif/data?${query}`
-    //     : `/admin/ppdb/arsip/data?${query}`;
     const urlMapping = {
         '/admin/ppdb/aktif': '/admin/ppdb/aktif/data',
         '/admin/ppdb/arsip': '/admin/ppdb/arsip/data',
@@ -38,21 +35,18 @@ async function fetchData(overrideParams = {}) {
     const base = urlMapping[window.location.pathname];
     const url = base ? `${base}?${query}` : null;
 
-    const response = await fetchContent(url);
+    const data = await fetchContent(url);
 
-    if (response) {
-        try {
-            const data = JSON.parse(response);
-            if (data?.html) {
-                renderTable(data.html);
-                renderPagination(data.pagination);
-                saveTableState();
-            } else {
-                console.warn("Incomplete response structure.");
-            }
-        } catch (error) {
-            console.error("Error parsing JSON:", error);
+    try {
+        if (data?.html) {
+            renderTable(data.html);
+            renderPagination(data.pagination);
+            saveTableState();
+        } else {
+            console.warn("Incomplete response structure.");
         }
+    } catch (error) {
+        console.error("Error parsing JSON:", error);
     }
 }
 
@@ -173,6 +167,10 @@ function saveTableState() {
 }
 
 // restores saved table state if any
+function updatePerPageSelect() {
+    const select = document.querySelector('#perPageSelect');
+    if (select) select.value = tableState.perPage;
+};
 export function restoreTableState() {
     const urlParams = new URLSearchParams(window.location.search);
     const saved = sessionStorage.getItem('tableState');
@@ -200,4 +198,5 @@ export function restoreTableState() {
 
     fetchData();
     tableInteractions();
+    updatePerPageSelect
 }

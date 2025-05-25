@@ -137,7 +137,7 @@ class RegisterController extends Controller
         ]);
 
         // Because email is nullable (refer to db schema and validation), check for email value before sending email notification
-        if (isset($user->email)) $user->notify(new KirimUserIDNotification($user->id));
+        if (isset($user->email)) $user->notify(new KirimUserIDNotification($user->name, $user->id, $user->nomor_hp, $request->password));
 
         // Display user credentials for login via temporary token
         $key = 'regis_confirm';
