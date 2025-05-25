@@ -87,7 +87,7 @@ class PendaftaranService
                 'password.required' => 'Kata sandi wajib diisi.',
                 'password.min'      => 'Kata sandi minimal 8 karakter.',
                 'password.max'      => 'Kata sandi melebihi batas maksimal 60 karakter.',
-                'password.confirmed'=> 'Kata sandi tidak cocok.',
+                'password.confirmed'=> 'Konfirmasi kata sandi tidak cocok. Silakan masukkan kembali kata sandi dan konfirmasinya.',
                 'nama_anak.required'=> 'Wajib diisi.',
                 'nama_anak.max'     => 'Melebihi batas maksimal 255 karakter.',
                 'nama_anak.regex'   => 'Hanya huruf Aa-Zz dan tanda hubung (-) yang diperbolehkan.',

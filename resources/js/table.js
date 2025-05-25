@@ -23,36 +23,45 @@ let tableState = {
  * [✓] saveTableState
  * [✓] restoreTableState
  */
+function getRouteBase() {
+    // const path = window.location.pathname;
+    // if (path.startsWith('/admin/ppdb/aktif')) return '/admin/ppdb/aktif';
+    // if (path.startsWith('/admin/ppdb/arsip')) return '/admin/ppdb/arsip';
+    // if (path.startsWith('/admin/pengumuman')) return '/admin/pengumuman';
+    // return null;
+    const match = window.location.pathname.match(/^\/admin\/(ppdb\/(aktif|arsip)|pengumuman)/);
+    return match ? `/admin/${match[1]}` : null;
+}
+
 async function fetchData(overrideParams = {}) {
 	tableState = { ...tableState, ...overrideParams };
-
     const query = new URLSearchParams(tableState).toString();
-    // const url = window.location.pathname === '/admin/ppdb/aktif'
-    //     ? `/admin/ppdb/aktif/data?${query}`
-    //     : `/admin/ppdb/arsip/data?${query}`;
-    const urlMapping = {
-        '/admin/ppdb/aktif': '/admin/ppdb/aktif/data',
-        '/admin/ppdb/arsip': '/admin/ppdb/arsip/data',
-        '/admin/pengumuman': '/admin/pengumuman/data'
-    };
-    const base = urlMapping[window.location.pathname];
-    const url = base ? `${base}?${query}` : null;
 
-    const response = await fetchContent(url);
+    // const urlMapping = {
+    //     '/admin/ppdb/aktif': '/admin/ppdb/aktif/data',
+    //     '/admin/ppdb/arsip': '/admin/ppdb/arsip/data',
+    //     '/admin/pengumuman': '/admin/pengumuman/data'
+    // };
+    // const base = urlMapping[window.location.pathname];
+    // const url = base ? `${base}?${query}` : null;
+    const base = getRouteBase();
+    if (!base) {
+        console.warn("Unknown base route. Skipping data fetch.");
+        return;
+    }
+    const url = base ? `${base}/data?${query}` : null;
 
-    if (response) {
-        try {
-            const data = JSON.parse(response);
-            if (data?.html) {
-                renderTable(data.html);
-                renderPagination(data.pagination);
-                saveTableState();
-            } else {
-                console.warn("Incomplete response structure.");
-            }
-        } catch (error) {
-            console.error("Error parsing JSON:", error);
+    const data = await fetchContent(url);
+    try {
+        if (data?.html) {
+            renderTable(data.html);
+            renderPagination(data.pagination);
+            saveTableState();
+        } else {
+            console.warn("Incomplete response structure.");
         }
+    } catch (error) {
+        console.error("Error parsing JSON:", error);
     }
 }
 
@@ -173,6 +182,10 @@ function saveTableState() {
 }
 
 // restores saved table state if any
+function updatePerPageSelect() {
+    const select = document.querySelector('#perPageSelect');
+    if (select) select.value = tableState.perPage;
+};
 export function restoreTableState() {
     const urlParams = new URLSearchParams(window.location.search);
     const saved = sessionStorage.getItem('tableState');
@@ -200,4 +213,5 @@ export function restoreTableState() {
 
     fetchData();
     tableInteractions();
+    updatePerPageSelect
 }

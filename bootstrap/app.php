@@ -28,12 +28,21 @@ return Application::configure(basePath: dirname(__DIR__))
             $time = $retryAfter > 60
                 ? gmdate("i:s", $retryAfter) . " menit."
                 : $retryAfter . " detik.";
+            // $message = "Terlalu banyak permintaan. Coba lagi dalam " . $time;
+            $message = "Terlalu banyak permintaan. Coba lagi dalam ";
             if ($request->is('daftar')) {
                 return back()
                     ->with('error', "Terlalu banyak percobaan registrasi. Sembari menunggu, silakan menyelesaikan tahap pendaftaran pada registrasi sebelumnya terlebih dahulu.")->withInput()
                     ->with('retryAfter', $retryAfter); // for live timer, view('daftar')
             }
-            return back()->with('error', "Terlalu banyak percobaan. Coba lagi dalam " . $time)->withInput();
+            if ($request->expectsJson()) { // Return JSON error for AJAX/fetch calls
+                return response()->json([
+                    'message' => $message,
+                    'type' => 'error',
+                    'retryAfter' => $retryAfter,
+                ], 429);
+            }
+            return back()->with('error', $message)->withInput()->with('retryAfter', $retryAfter);
         });
         $exceptions->renderable(function (AuthenticationException $e, $request) {
             return redirect('login')->with('loginDulu', 'Silakan login terlebih dahulu.');

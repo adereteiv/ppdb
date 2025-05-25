@@ -1,12 +1,8 @@
 <x-layouts.app-layout>
 
-<div class="app-content
-{{-- height-100 flex flex-center --}}
-">
-    <div class="
-    {{-- wrapper --}}
-    content-padding-side-rem content-padding">
-        <div class="flex-1 flex flex-col justify-around {{-- justify-center --}} text-align-center">
+<div class="app-content">
+    <div class="content-padding-side-rem content-padding">
+        <div class="flex-1 flex flex-col flex-center justify-around text-align-center">
             <div class="flex flex-col gap content-padding-vertical">
                 <h5>Kelola Arsip PPDB</h5>
                 <div>

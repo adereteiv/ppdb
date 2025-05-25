@@ -674,6 +674,7 @@ table.fixed{table-layout: fixed;}
 .flex-col{flex-direction: column; flex-wrap: wrap;}
 .flex-nowrap {flex-wrap: nowrap;}
 .flex-1{flex:1;}
+.flex-1-half{flex:1 50%;}
 .flex-2{flex:2;}
 .flex-3{flex:3;}
 .flex-4{flex:4;}
@@ -779,7 +780,7 @@ ol{
 .form-item{
     font: inherit;
     /* margin: 4px 0; */
-    min-height: 32px;
+    /* min-height: 32px; */
     padding: 3px 5px;
     width: 100%;
     border: 1px solid var(--coloraccent2);
@@ -1493,6 +1494,7 @@ input[type="file"].form-item{
 }
 @media (max-width: 767px){
     .flex-1{flex: auto;}
+    .flex-1-half{flex: 100%;}
     #section-hero .beranda-main{
         .header_main{font: var(--h2);}
         .header_sub{font: var(--h5-normal);}

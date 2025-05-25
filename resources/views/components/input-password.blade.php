@@ -6,15 +6,21 @@
     name="{{ $name }}"
     value="{{ old($name, $value) }}"
     {{ $attributes->merge(['class' => 'form-item padding-10']) }}
+    style="padding-right:30px;"
     />
 
     <button
     @click="show = !show"
     type="button"
-    class="tombol-none position-absolute top-0 right-0 bottom-0 padding-side-10"
+    class="tombol-none position-absolute top-0 right-0 bottom-0"
+    style="padding-right:5px;"
     tabindex="-1"
     >
         <i x-show="!show" x-cloak class="bi bi-eye"></i>
         <i x-show="show" x-cloak class="bi bi-eye-slash"></i>
     </button>
 </div>
+
+@error($name)
+<p class="flex flex-start teks-negatif">{{ $message }}</p>
+@enderror

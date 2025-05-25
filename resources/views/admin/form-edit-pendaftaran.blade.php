@@ -9,7 +9,7 @@
         <hr style="border: 1px solid rgba(0, 0, 0, .15); margin: 0 1rem;">
         <div class="content-padding content-padding-side-rem">
             <div class="content-margin content-padding-side-rem">
-                <x-flash-message flash='blue' button>
+                <x-flash-message flash='blue'>
                     Perubahan status dan catatan admin akan langsung terkirim tanpa perlu menekan tombol 'Simpan'. Selainnya, dapat diperbaharui secara manual.
                 </x-flash-message>
             </div>
