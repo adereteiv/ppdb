@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BatchPPDB;
-use App\Models\Pengumuman;
+use App\Models\{BatchPPDB,Pengumuman};
 
 class HomeController extends Controller
 {

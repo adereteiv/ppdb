@@ -2,18 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\InfoAnak;
-use App\Models\BatchPPDB;
-use App\Models\BuktiBayar;
-use App\Models\Pengumuman;
-use App\Models\Pendaftaran;
-use App\Models\OrangTuaWali;
-use App\Models\SyaratDokumen;
-use App\Models\DokumenPersyaratan;
-use App\Services\PendaftaranService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\{Facades\Auth,Str};
+use App\Models\{BatchPPDB,Pendaftaran,SyaratDokumen,InfoAnak,BuktiBayar,OrangTuaWali,DokumenPersyaratan,Pengumuman};
+use App\Services\PendaftaranService;
 
 class DashboardController extends Controller
 {

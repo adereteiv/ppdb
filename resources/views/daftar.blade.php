@@ -47,46 +47,43 @@
                         <div class="content-margin-bottom">
                             <h3>Formulir Registrasi</h3>
                             <div class="flex">
-                                <div class="flex-1">
-                                    <div class="content-padding-side-rem">Nama Lengkap Anak<sup style="color:#FF0000;">*</sup>
-                                        <x-input type="text" name="nama_anak"/>
-                                        @if (session('akunAda'))
-                                            <br><p style="color: red">{{ session('akunAda') }}</p>
-                                        @endif
-                                    </div>
-                                    <div class="content-padding-side-rem">Tempat Lahir Anak<sup style="color:#FF0000;">*</sup>
-                                        <x-input type="text" name="tempat_lahir"/>
-                                    </div>
-                                    <div class="content-padding-side-rem">Tanggal Lahir Anak<sup style="color:#FF0000;">*</sup>
-                                        <x-input type="date" name="tanggal_lahir"/>
-                                    </div>
-                                    <div class="content-padding-side-rem">Jarak Tempuh (km)<sup style="color:#FF0000;">*</sup>
-                                        <x-input type="number" name="jarak_tempuh" placeholder="Jarak dari rumah ke sekolah"/>
-                                    </div>
+                                <div class="flex-1-half content-padding-side-rem">Nama Lengkap Anak<sup style="color:#FF0000;">*</sup>
+                                    <x-input type="text" name="nama_anak"/>
+                                    @if (session('akunAda'))
+                                        <br><p style="color: red">{{ session('akunAda') }}</p>
+                                    @endif
                                 </div>
-                                <div class="flex-1">
-                                    <div class="content-padding-side-rem">Nama Panggilan Anak<sup style="color:#FF0000;">*</sup>
-                                        <x-input type="text" name="panggilan_anak"/>
-                                    </div>
-                                    <div class="content-padding-side-rem">Alamat e-mail Orang Tua/Wali
-                                        <x-input type="email" name="email" placeholder="Masukkan email orang tua"/>
-                                    </div>
-                                    <div class="content-padding-side-rem">Nomor HP/WA<sup style="color:#FF0000;">*</sup>
-                                        <x-input type="tel" name="nomor_hp" placeholder="+62XXXXX atau 08XXXX"/>
-                                    </div>
-                                    <div class="content-padding-side-rem">Masukkan Kata Sandi (Mohon Diingat!)<sup style="color:#FF0000;">*</sup>
-                                        <x-input type="password" name="password" placeholder="Kata sandi, min. 8 karakter"/>
-                                    </div>
-                                    <div class="content-padding-side-rem">Konfirmasi Kata Sandi<sup style="color:#FF0000;">*</sup>
-                                        <x-input type="password" name="password_confirmation" placeholder="Masukkan ulang kata sandi"/>
-                                    </div>
+                                <div class="flex-1-half content-padding-side-rem">Nama Panggilan Anak<sup style="color:#FF0000;">*</sup>
+                                    <x-input type="text" name="panggilan_anak"/>
+                                </div>
+                                <div class="flex-1-half content-padding-side-rem">Tempat Lahir Anak<sup style="color:#FF0000;">*</sup>
+                                    <x-input type="text" name="tempat_lahir"/>
+                                </div>
+                                <div class="flex-1-half content-padding-side-rem">Tanggal Lahir Anak<sup style="color:#FF0000;">*</sup>
+                                    <x-input type="date" name="tanggal_lahir"/>
+                                </div>
+                                <div class="flex-1-half content-padding-side-rem">Jarak Tempuh (km)<sup style="color:#FF0000;">*</sup>
+                                    <x-input type="number" name="jarak_tempuh" placeholder="Jarak maksimal 20km"/>
+                                </div>
+                                <div class="flex-1-half content-padding-side-rem">Alamat e-mail Orang Tua/Wali<sup style="visibility: hidden;">*</sup>
+                                    <x-input type="email" name="email" placeholder="Masukkan email orang tua"/>
+                                </div>
+                                <div class="flex-1-half content-padding-side-rem">Nomor HP/WA<sup style="color:#FF0000;">*</sup>
+                                    <x-input type="tel" name="nomor_hp" placeholder="+62XXXXX atau 08XXXX"/>
+                                </div>
+                                <div class="flex-1-half content-padding-side-rem">Masukkan Kata Sandi (Mohon Diingat!)<sup style="color:#FF0000;">*</sup>
+                                    <x-input-password name="password" placeholder="Kata sandi, min. 8 karakter"/>
+                                </div>
+                                <div class="flex-1-half"></div>
+                                <div class="flex-1-half content-padding-side-rem">Konfirmasi Kata Sandi<sup style="color:#FF0000;">*</sup>
+                                    <x-input-password name="password_confirmation" placeholder="Masukkan ulang kata sandi"/>
                                 </div>
                             </div>
                         </div>
                         <hr style="border: 1px solid rgba(0, 0, 0, .15); margin: 1rem 0;">
                         <div class="content-margin-bottom">
                             <h3>Konfirmasi Data Pendaftar</h3>
-                            <div class="flex align-items-center">
+                            <div class="flex content-padding-side-rem align-items-center justify-end">
                                 <p class="flex-1">Dengan ini saya menyatakan bahwa data yang saya berikan di formulir ini adalah benar adanya sesuai dengan bukti-bukti yang ada</p>
                                 <button type="submit" class="tombol-besar tombol-netral" onclick="this.disabled=true; this.form.submit();">DAFTAR</button>
                             </div>

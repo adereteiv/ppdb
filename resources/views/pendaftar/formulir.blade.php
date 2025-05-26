@@ -7,7 +7,7 @@
         <div class="content-padding content-padding-side-rem">
             <div class="content-padding-side-rem">
                 <x-flash-message flash='blue'>
-                    <h6>Perhatian!</h6>
+                    <h6>Petunjuk Pengisian!</h6>
                     <ul>
                         <li>Silakan isi Data Anak terlebih dahulu sebelum mengisi data Orang Tua (Ayah & Ibu) / Wali.</li>
                         <li>Isilah formulir secara lengkap dan jelas sesuai kebenaran yang ada.</li>

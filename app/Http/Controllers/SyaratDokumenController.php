@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TipeDokumen;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use App\Models\TipeDokumen;
 
 class SyaratDokumenController extends Controller
 {

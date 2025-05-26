@@ -14,7 +14,7 @@
             @endif
             <x-flash-message class="bg-blue" icon>
                 @if ($batch && now() >= $batch->waktu_tenggat)
-                    <p>Masa pendaftaran sudah lewat. Hubungi Admin jika ingin melakukan perubahan data pendaftaran.</p>
+                    <p>Masa pendaftaran sudah lewat. Hubungi operator jika ingin melakukan perubahan data pendaftaran.</p>
                 @else
                     <p>Silakan menekan pilihan tombol berikut untuk melengkapi pendaftaran Anda.</p>
                     <p>Indikator akan menyala ketika data sudah tersimpan.</p>

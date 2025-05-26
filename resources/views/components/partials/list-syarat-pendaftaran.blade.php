@@ -5,7 +5,7 @@
             <li>Usia TK B: 5 - 6 Tahun</li>
         </ul>
     </li><br>
-    <li>Melakukan pembayaran biaya pendaftaran sebesar RpXXX.XXX pada rekening XXXXX (meliputi seragam anak tiga setel) dan melampirkan bukti pembayaran, dengan ketentuan:
+    <li>Melakukan pembayaran biaya pendaftaran sebesar Rp800.000 pada rekening XXXX-XXXX (meliputi seragam anak tiga setel) dan melampirkan bukti pembayaran, dengan ketentuan:
         <ul>
             <li>Pembayaran dapat dilakukan secara bertahap dan tetap wajib menyertakan bukti pembayaran sebagai tanda jadi.</li>
             <li>Pembayaran 50% mendapatkan seragam sebanyak dua setel.</li>
@@ -19,7 +19,7 @@
             <li>KTP Orang Tua/Wali</li>
             <li>Akta Kelahiran Anak</li>
             <li>Pas Foto Anak</li>
-            <li>Surat Pernyataan Orang Tua/Wali Calon Siswa <a href="#" style="text-decoration: none; color: var(--blue);" target="_blank" rel="noopener">(lihat disini)</a></li>
+            <li>Surat Pernyataan Orang Tua/Wali Calon Siswa <a href="{{ asset('static/Surat_Pernyataan_Orang_Tua_Wali_Calon_Siswa_-_TKN_Pembina_Sungai_Kakap.pdf') }}" style="text-decoration: none; color: var(--blue);" target="_blank" rel="noopener">(lihat disini)</a></li>
             <li>KIA (opsional)</li>
         </ul>
     </li><br>

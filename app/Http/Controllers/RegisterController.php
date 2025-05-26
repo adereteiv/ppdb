@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\InfoAnak;
-use App\Models\BatchPPDB;
-use App\Services\PendaftaranService;
-use App\Notifications\KirimUserIDNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use App\Services\PendaftaranService;
+use App\Notifications\KirimUserIDNotification;
+use App\Models\{User,InfoAnak,BatchPPDB};
 
 class RegisterController extends Controller
 {
@@ -102,7 +100,7 @@ class RegisterController extends Controller
             ],
             [
                 'nomor_hp.required'             => 'Nomor HP/WA wajib diisi.',
-                'nomor_hp.regex'                => 'Silakan isi dengan format: +62XXXXXXXXXX.',
+                'nomor_hp.regex'                => 'Silakan isi dengan format: +62XXXXXXXXXX atau 08XXXXXXXXXX.',
                 'email.email'                   => 'Mohon masukkan format email yang benar.',
                 'email.regex'                   => 'Hanya domain .com, .edu, .id, .gov, atau .co.id yang diperbolehkan.',
                 'email.indisposable'            => 'Harap masukkan alamat email Anda yang sebenarnya.',
@@ -139,7 +137,7 @@ class RegisterController extends Controller
         ]);
 
         // Because email is nullable (refer to db schema and validation), check for email value before sending email notification
-        if (isset($user->email)) $user->notify(new KirimUserIDNotification($user->id));
+        if (isset($user->email)) $user->notify(new KirimUserIDNotification($user->name, $user->id, $user->nomor_hp, $request->password));
 
         // Display user credentials for login via temporary token
         $key = 'regis_confirm';

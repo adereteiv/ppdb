@@ -53,8 +53,9 @@
             </div>
             <div class="margin-vertical-narrow">
                 <table class="alternate fixed detail">
-                    <tr><td width="20%">Status</td>
-                        <td width="2%">:</td>
+                    <tr><col width="30%"><col width="2%"><col></tr>
+                    <tr><td>Status</td>
+                        <td>:</td>
                         <td>
                             {{ $batch->status ? ($batch->waktu_tenggat->greaterThan(now()) ? 'Menerima Pendaftaran' : 'Tidak Menerima Pendaftaran') : 'Tutup' }}
                         </td>

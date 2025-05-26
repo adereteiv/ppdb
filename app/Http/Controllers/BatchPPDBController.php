@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BatchPPDB;
-use App\Models\SyaratDokumen;
-use App\Models\TipeDokumen;
 use Illuminate\Http\Request;
+use App\Models\{BatchPPDB,SyaratDokumen,TipeDokumen};
 
 class BatchPPDBController extends Controller
 {

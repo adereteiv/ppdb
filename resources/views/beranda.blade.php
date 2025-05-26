@@ -23,6 +23,13 @@
         </div>
     </section>
 
+    {{-- <a href="#section-prosedur" class="scroll-down-container" aria-label="Scroll down">
+        <svg class="scroll-down" width="136" height="136" viewBox="0 0 24 48" xmlns="http://www.w3.org/2000/svg">
+            <polyline class="scroll-arrow arrow1" points="6,16 12,22 18,16" />
+            <polyline class="scroll-arrow arrow2" points="6,28 12,34 18,28" />
+        </svg>
+    </a> --}}
+
     {{-- Pengumuman untuk 'Umum', refer to HomeController, --}}
     @if ($pengumuman)
     <section id="section-informasi" class="home-section">

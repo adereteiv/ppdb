@@ -62,7 +62,7 @@
             </div>
         </div>
         <div class="footer-body text-align-center">
-            <p>&copy;adereteiv 2025s</p>
+            <p>&copy;adereteiv 2025</p>
         </div>
     </div>
 </footer>

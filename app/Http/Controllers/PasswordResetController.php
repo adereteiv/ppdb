@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Pendaftaran;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\{Facades\Cache,Str};
+use App\Models\{User,Pendaftaran};
 
 class PasswordResetController extends Controller
 {

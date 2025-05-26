@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Pendaftaran;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Pendaftaran;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\InfoAnak>
@@ -24,6 +24,7 @@ class InfoAnakFactory extends Factory
             'panggilan_anak'    => fake()->firstName(),
             'tempat_lahir'      => fake()->city(),
             'tanggal_lahir'     => fake()->dateTimeBetween('-7 years', '-4 years')->format('Y-m-d'),
+            'jarak_tempuh'      => fake()->numberBetween(1,20),
             'alamat_anak'       => fake()->address(),
             'jenis_kelamin'     => fake()->randomElement(['Laki-Laki', 'Perempuan']),
             'kewarganegaraan'   => fake()->randomElement(['WNI', 'WNA Keturunan']),
@@ -40,6 +41,7 @@ class InfoAnakFactory extends Factory
             'tinggi_badan'      => fake()->randomFloat(2, 80, 150),
             'golongan_darah'    => fake()->randomElement(['Belum Periksa', 'O', 'AB', 'A', 'B', ]),
             'riwayat_penyakit'  => fake()->optional()->sentence(),
+            'ukuran_baju'       => fake()->randomElement(['M','L','XL','XXL']),
             'mendaftar_sebagai' => $mendaftarSebagai,
         ];
         if ($mendaftarSebagai === 'Pindahan') {

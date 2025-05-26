@@ -9,11 +9,11 @@
                 <div>
                     <div class="margin-vertical">
                         Kata Sandi Baru
-                        <x-input type="password" name="password" placeholder="Kata sandi, min. 8 karakter"/>
+                        <x-input-password name="password" placeholder="Kata sandi, min. 8 karakter"/>
                     </div>
                     <div class="margin-vertical">
                         Konfirmasi Kata Sandi
-                        <x-input type="password" name="password_confirmation" placeholder="Masukkan ulang kata sandi"/>
+                        <x-input-password name="password_confirmation" placeholder="Masukkan ulang kata sandi"/>
                     </div>
                     <div class="margin-vertical">
                         {{-- js to prevent double submission by clicking too fast --}}

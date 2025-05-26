@@ -1,22 +1,45 @@
 // [✓] Fetch
 export async function fetchContent(url, targetSelector = null) {
     try {
-        const response = await fetch(url);
-		if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const response = await fetch(url, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "Accept": "application/json, text/html",
+            }
+        });
 
-        const content = await response.text();
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({
+                message: "Terjadi kesalahan.",
+                type: "error"
+            }));
+            throw errorData;
+        }
+
+        const contentType = response.headers.get('content-type');
+
+        if (contentType && contentType.includes('application/json')){
+            return await response.json();;
+        }
+
+        const html = await response.text();
         if (targetSelector) {
             const targetElement = document.querySelector(targetSelector);
             if (targetElement) {
-                targetElement.innerHTML = content;
+                targetElement.innerHTML = html;
             } else {
                 console.error(`Target element '${targetSelector}' not found.`);
             }
         }
-
-        return content;
+        return html;
     } catch (error) {
         console.error("Error fetching content:", error);
+        if (error.retryAfter) {
+            // Pass 'error' as mode (string), plus retryAfter seconds
+            showAlert(error.message, 'error', 10000, 1000, error.retryAfter);
+        } else {
+            showAlert(error.message || "Terjadi kesalahan.", `alert ${error.type || 'error'}`);
+        }
         return null;
     }
 }
@@ -34,6 +57,103 @@ export function alert(selector='.alert', delay=10000, fade=2000 ) {
     setTimeout(() => {
         alert.style.opacity = "0";
         setTimeout(() => alert.remove(), fade);
+    }, delay);
+}
+// [] JS Alert
+let currentAlertTimeout = null;
+let currentFadeTimeout = null;
+
+export function showAlert(message, mode = 'error', delay = 10000, fade = 1000, expiry = null) {
+    // Remove any existing alert
+    const existing = document.querySelector('.reminder.alert, .reminder.flash');
+    if (existing) {
+        existing.remove();
+        clearTimeout(currentAlertTimeout);
+        clearTimeout(currentFadeTimeout);
+    }
+
+    // Create the alert wrapper div
+    const alertDiv = document.createElement('div');
+    alertDiv.setAttribute('x-data', '{ show: true }');
+    alertDiv.setAttribute('x-show', 'show');
+    alertDiv.className = `reminder flex flex-nowrap teks-putih justify-between margin-vertical`;
+
+    const countdown = document.createElement('div');
+    countdown.setAttribute('id', 'countdown');
+
+    // Add mode-specific classes (matches x-flash-message logic)
+    const modeClasses = {
+        'error': ['alert', 'must', 'bg-redpowder'],
+        'warn': ['alert', 'warn', 'bg-yellowpowder'],
+        'success': ['alert', 'mild', 'bg-green'],
+    };
+    const iconMap = {
+        'error': 'bi-x-circle',
+        'warn': 'bi-exclamation-circle',
+        'success': 'bi-check2-circle',
+    };
+    const classes = modeClasses[mode] || ['alert', 'bg-red'];
+    alertDiv.classList.add(...classes);
+    const iconClass = iconMap[mode] || 'bi-info-circle';
+
+    let contentHTML = `
+        <div class="flex-1 flex flex-nowrap">
+            <span class="reminder-icon">
+                <i class="bi ${iconClass}"></i>
+            </span>
+            <span>
+                ${message}
+                ${expiry !== null && !isNaN(expiry) ? `<b><span id="countdown">--:--</span></b>.` : ''}
+            </span>
+        </div>
+    `;
+
+    // Close button
+    contentHTML += `
+        <div>
+            <button class="tombol-none" @click="show = false">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>`;
+
+    alertDiv.innerHTML = contentHTML;
+    document.body.appendChild(alertDiv);
+
+    // Animate alert in
+    requestAnimationFrame(() => {
+        alertDiv.style.opacity = '1';
+        alertDiv.style.top = '4rem';
+        alertDiv.style.transition = 'opacity 0.5s ease, top 0.5s ease';
+    });
+
+    // Start countdown if expiry present
+    if (expiry !== null && !isNaN(expiry)) {
+        const countdownElement = alertDiv.querySelector('#countdown');
+        const endTime = Date.now() + expiry * 1000;
+
+        function updateTimer() {
+            const now = Date.now();
+            const diff = Math.max(0, Math.floor((endTime - now) / 1000));
+
+            const minutes = Math.floor(diff / 60);
+            const secs = diff % 60;
+            countdownElement.textContent = `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+            if (diff > 0) {
+                setTimeout(updateTimer, 1000);
+            }
+        }
+        updateTimer();
+    }
+
+    // Set fade-out timers
+    currentAlertTimeout = setTimeout(() => {
+        alertDiv.style.opacity = '0';
+        currentFadeTimeout = setTimeout(() => {
+            alertDiv.remove();
+            currentAlertTimeout = null;
+            currentFadeTimeout = null;
+        }, fade);
     }, delay);
 }
 /* [✓] Copy ID to Clipboard

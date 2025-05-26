@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\BatchPPDB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\{Auth,Hash,Cache,Cookie};
+use App\Models\{User,BatchPPDB};
 
 class AuthController extends Controller
 {
@@ -156,14 +152,26 @@ class AuthController extends Controller
             // dd("Key: ". $key, "Key Value: " . $attempts, "Lockout Key: " . $lockoutKey, "Lockout Key Value: " . Cache::get($lockoutKey));
             return back()->with('error', 'Login gagal. Periksa kembali '. ($isAdmin ? 'email' : 'ID') . ' dan kata sandi Anda.')->onlyInput($authField);
         }
+
         Auth::login($user);
+        $request->session()->regenerate();
 
-        if ($user->role_id === 2 && !$user->pendaftaran) return redirect()->route('pendaftar.recovery');
+        // Check and set user_session
+        $currentSessionId = session()->getId();
+        $existingSession = Cache::get("user_session:" . $user->id);
+        if ($existingSession && $existingSession !== $currentSessionId) {
+            Auth::logout();
+            session()->invalidate();
+            return back()->with('error', 'Akun Anda sedang aktif di perangkat lain.');
+        }
+        Cache::put("user_session:" . $user->id, $currentSessionId, now()->addMinutes(config('session.lifetime')));
 
+        // Throttling, removed when auth is succesful
         Cache::forget($key);
         Cache::forget($lockoutKey);
 
-        $request->session()->regenerate();
+        if ($user->role_id === 2 && !$user->pendaftaran) return redirect()->route('pendaftar.recovery');
+
         return redirect()->intended($isAdmin ? '/admin/dashboard' : '/pendaftar/dashboard');
     }
 
@@ -175,12 +183,14 @@ class AuthController extends Controller
      */
     public function logout(){
         $user = Auth::user();
+        if ($user) Cache::forget('user_session:' . $user->id);
+
         Auth::logout();
 
         session()->invalidate();
         session()->regenerateToken();
         Cookie::queue(Cookie::forget('arsip_key'));
 
-        return redirect($user?->role_id == 1 ? '/pintuadmin' : '/login');
+        return redirect($user?->role_id == 1 ? '/pintuadmin' : '/login')->with('success', 'Logout berhasil!');
     }
 }

@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BatchPPDB;
-use App\Models\BuktiBayar;
-use App\Models\Pendaftaran;
-use App\Models\SyaratDokumen;
-use App\Models\DokumenPersyaratan;
-use App\Models\OrangTuaWali;
+use Illuminate\Http\Request;
+use App\Models\{BatchPPDB,BuktiBayar,Pendaftaran,SyaratDokumen,DokumenPersyaratan,OrangTuaWali};
 use App\Services\DataTableService;
 use App\Exports\MaatExport;
-use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
