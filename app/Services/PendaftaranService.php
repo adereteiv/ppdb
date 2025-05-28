@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Collection;
+use App\Notifications\KirimUserIDNotification;
 use App\Models\{
     User,
     InfoAnak,
@@ -15,6 +17,7 @@ use App\Models\{
     SyaratDokumen,
     DokumenPersyaratan
 };
+use Illuminate\Support\Facades\Artisan;
 
 class PendaftaranService
 {
@@ -413,5 +416,28 @@ class PendaftaranService
             $buktiBayar->file_path = $filePath;
             $buktiBayar->save();
         }
+    }
+
+    public function sendEmailWithQueue(array $userData, string|null $password)
+    {
+        try {
+            if (isset($userData['email']) && array_key_exists('email', $userData)) {
+                $user = \App\Models\User::where('email', $userData['email'])->first();
+
+                if (!$user) {
+                    return 'User tidak ditemukan';
+                }
+
+                $user->notify(new KirimUserIDNotification($userData['name'], $userData['id'], $userData['nomor_hp'], $password));
+
+                Artisan::call('queue:work --timeout=0 --stop-when-empty');
+
+                return true;
+            }
+        } catch (\Exception $e) {
+            logger()->error($e->getMessage(), [$e->getTrace()]);
+        }
+
+        return false;
     }
 }
