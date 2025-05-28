@@ -23,20 +23,35 @@ let tableState = {
  * [✓] saveTableState
  * [✓] restoreTableState
  */
+function getRouteBase() {
+    // const path = window.location.pathname;
+    // if (path.startsWith('/admin/ppdb/aktif')) return '/admin/ppdb/aktif';
+    // if (path.startsWith('/admin/ppdb/arsip')) return '/admin/ppdb/arsip';
+    // if (path.startsWith('/admin/pengumuman')) return '/admin/pengumuman';
+    // return null;
+    const match = window.location.pathname.match(/^\/admin\/(ppdb\/(aktif|arsip)|pengumuman)/);
+    return match ? `/admin/${match[1]}` : null;
+}
+
 async function fetchData(overrideParams = {}) {
 	tableState = { ...tableState, ...overrideParams };
-
     const query = new URLSearchParams(tableState).toString();
-    const urlMapping = {
-        '/admin/ppdb/aktif': '/admin/ppdb/aktif/data',
-        '/admin/ppdb/arsip': '/admin/ppdb/arsip/data',
-        '/admin/pengumuman': '/admin/pengumuman/data'
-    };
-    const base = urlMapping[window.location.pathname];
-    const url = base ? `${base}?${query}` : null;
+
+    // const urlMapping = {
+    //     '/admin/ppdb/aktif': '/admin/ppdb/aktif/data',
+    //     '/admin/ppdb/arsip': '/admin/ppdb/arsip/data',
+    //     '/admin/pengumuman': '/admin/pengumuman/data'
+    // };
+    // const base = urlMapping[window.location.pathname];
+    // const url = base ? `${base}?${query}` : null;
+    const base = getRouteBase();
+    if (!base) {
+        console.warn("Unknown base route. Skipping data fetch.");
+        return;
+    }
+    const url = base ? `${base}/data?${query}` : null;
 
     const data = await fetchContent(url);
-
     try {
         if (data?.html) {
             renderTable(data.html);

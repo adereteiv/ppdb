@@ -10,7 +10,7 @@
         <div class="content-padding-rem">
             <div class="constrict">
                 <div class="content-margin">
-                    <x-flash-message flash='blue' button>
+                    <x-flash-message flash='blue'>
                         Tipe, Judul, dan Keterangan Pengumuman wajib dicantumkan.
                     </x-flash-message>
                 </div>
