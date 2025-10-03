@@ -31,7 +31,7 @@ class PendaftarUnggahDokumenController extends Controller
         // flow, pay first
         // if (!$buktiBayar || $pendaftaran->status === 'Menunggu') return back()->with('warn', 'Silakan menyelesaikan tahap pembayaran dan mengunggah bukti pembayaran. Admin akan melakukan verifikasi secepatnya.');
         if (now() >= $batch->waktu_tenggat) {
-            return back()->with('check', 'Masa tenggat pendaftaran sudah lewat. Silakan menghubungi Admin bila ingin merubah data pendaftaran.');
+            return back()->with('check', 'Masa tenggat pendaftaran sudah lewat. Silakan menghubungi Admin bila ingin mengubah data pendaftaran.');
         } elseif ($pendaftaran->status === 'Terverifikasi') {
             return back()->with('check', 'Data Anda sudah terverifikasi. Silakan menghubungi Admin bila ingin merubah data pendaftaran.');
         } elseif (!$buktiBayar && $pendaftaran->status === 'Menunggu') {

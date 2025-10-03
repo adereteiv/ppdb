@@ -43,7 +43,7 @@
                             </ul>
                         </x-flash-message>
                     </div>
-                    <form method="POST" action="{{ route('register') }}">@csrf
+                    <form method="POST" action="{{ route('register.send') }}">@csrf
                         <div class="content-margin-bottom">
                             <h3>Formulir Registrasi</h3>
                             <div class="flex">

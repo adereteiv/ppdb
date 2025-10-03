@@ -56,9 +56,9 @@ class PPDBAktifController extends Controller
             function($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('pendaftaran.id', 'LIKE', "%{$search}%")
-                      ->orWhereHas('infoAnak', function ($q) use ($search) {
-                          $q->where('nama_anak', 'LIKE', "%{$search}%");
-                      });
+                        ->orWhereHas('infoAnak', function ($q) use ($search) {
+                            $q->where('nama_anak', 'LIKE', "%{$search}%");
+                        });
                 });
             },
             function($query, $sort, $order) {

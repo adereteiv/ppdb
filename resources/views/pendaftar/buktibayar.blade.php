@@ -23,7 +23,7 @@
                     </ul>
                 </x-flash-message>
             </div>
-            <form id="payForm" method="POST" action="{{ route('pendaftar.buktiBayar.update') }}" enctype="multipart/form-data"> @method('PUT') @csrf
+            <form id="payForm" method="POST" action="{{ route('pendaftar.bukti_bayar.update') }}" enctype="multipart/form-data"> @method('PUT') @csrf
                 <div class="margin-vertical">
                     <x-inputbox-file
                         label="Bukti Bayar"
@@ -33,7 +33,7 @@
                         :dokumen="$buktiBayar"/>
                 </div>
 
-                <div class="margin-vertical text-align-center content-padding-vertical">
+                <div class="margin-vertical flex flex-center text-align-center content-padding-vertical">
                     <input class="tombol-besar tombol-netral" type="submit" value="Simpan">
                 </div>
                 <x-scripts.submit-button form="payForm"/>

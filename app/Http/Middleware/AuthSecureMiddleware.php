@@ -23,7 +23,7 @@ class AuthSecureMiddleware
         // Handles cases when user attempts to access restricted url if not logged in
         if (!Auth::check())
         {
-            throw new AuthenticationException();
+            return redirect()->route('home');
         }
 
         // Extend session cache

@@ -5,7 +5,7 @@
             <div class="text-align-center margin-vertical">
                 <h2>Ubah Kata Sandi</h2>
             </div>
-            <form method="POST" action="{{ route('saveNewPassword', ['token' => $token, 'id' => $id]) }}">@csrf
+            <form method="POST" action="{{ route('password_reset.update', ['token' => $token, 'id' => $id]) }}">@csrf
                 <div>
                     <div class="margin-vertical">
                         Kata Sandi Baru

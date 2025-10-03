@@ -28,12 +28,13 @@ class PasswordResetController extends Controller
             'ttl' => $expiry,
         ], $expiry);
 
-        return redirect()->route('admin.ppdb.aktif.getPasswordResetLink', ['token' => $token]);
+        // return $this->getLink($token);
+        return redirect()->route('admin.ppdb.aktif.password_reset.link', ['token' => $token]);
     }
     public function getLink($token) {
         $data = $this->getOrAbort($token);
 
-        $link = route('passwordReset', ['token' => $token]);
+        $link = route('password_reset', ['token' => $token]);
         $pendaftaran = Pendaftaran::where('user_id', $data['user_id'])->first();
 
         return view('auth.password-reset-link', ['data' => $data, 'link' => $link, 'pendaftaran' => $pendaftaran]);
@@ -55,7 +56,7 @@ class PasswordResetController extends Controller
             return back()->with('error', 'PIN salah atau kedaluwarsa.')->withInput();
         }
 
-        return redirect()->route('changePassword', ['id' => $data['user_id'], 'token' => $token]);
+        return redirect()->route('password_reset.form', ['id' => $data['user_id'], 'token' => $token]);
     }
 
     /**

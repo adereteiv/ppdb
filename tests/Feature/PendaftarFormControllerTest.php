@@ -31,6 +31,7 @@ class PendaftarFormControllerTest extends TestCase
     {
         [$user, $pendaftaran, $infoAnak] = $this->createUserAndPendaftaran();
 
+        // adjust url here, check route
         $response = $this->actingAs($user)->get('/pendaftar/formulir');
 
         $response->assertStatus(200);
@@ -56,6 +57,11 @@ class PendaftarFormControllerTest extends TestCase
     //this test is turbulent
     public function test_detail_pindahan_required_jika_murid_pindahan()
     {
+        // but still fails assertion, with the following error declaration
+        // Session missing error: sekolah_lama
+        // Failed asserting that false is true.
+        // The following errors occurred during the last request:
+        // Silakan diisi sesuai kebenaran yang ada.
         [$user, $pendaftaran, $infoAnak] = $this->createUserAndPendaftaran([
             'mendaftar_sebagai' => 'Pindahan',
             'yang_mendaftarkan' => 'Wali',
@@ -82,6 +88,16 @@ class PendaftarFormControllerTest extends TestCase
 
     public function test_partially_filled_wali_data_is_saved_even_when_orang_tua_is_selected()
     {
+        // Failed asserting that a row in the table [orang_tua_wali] matches the attributes {
+        //    "anak_id": 419,
+        //    "relasi": "wali",
+        //    "nama": "Nama Wali",
+        //    "pendidikan": null,
+        //    "pekerjaan": null,
+        //    "alamat": null,
+        //    "nomor_hp": null
+        // }.
+        // pointing out that "The table is empty."
         [$user, $pendaftaran, $infoAnak] = $this->createUserAndPendaftaran([
             'yang_mendaftarkan' => 'Orang Tua',
         ]);

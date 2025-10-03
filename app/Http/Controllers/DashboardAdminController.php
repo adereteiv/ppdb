@@ -12,7 +12,7 @@ class DashboardAdminController extends Controller
      * Display summary from recent admission batch
      */
     public function showDashboard(){
-        $batch = BatchPPDB::where('status', true)->latest()->first() ?? BatchPPDB::latest()->first();
+        $batch = BatchPPDB::where('status', true)->latest()->first();// ?? BatchPPDB::latest()->first();
         if (!$batch) {
             return view('admin.dashboard', [
                 'batch' => 'Belum ada pembukaan gelombang PPDB',

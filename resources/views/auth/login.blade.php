@@ -17,7 +17,7 @@
                 </x-flash-message>
             @endif
 
-            <form method="POST" action="{{ route('loginPendaftar') }}">@csrf
+            <form method="POST" action="{{ route('login.send') }}">@csrf
                 <div>
                     <div class="margin-vertical">
                         ID Pengguna atau Nomor HP/WA

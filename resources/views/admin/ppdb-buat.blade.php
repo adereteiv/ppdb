@@ -18,7 +18,7 @@
                         </x-inputbox>
                         <x-inputbox for="gelombang" class="content-padding-top content-padding-bottom">
                             <x-slot:label><b>Gelombang</b></x-slot>
-                            <x-input class="form-item" type="text" name="gelombang" id="gelombang" readonly required/>
+                            <x-input class="form-item" type="text" name="gelombang" id="gelombang" readonly required disabled/>
                             @if (session('gelombangAda'))
                                 <br><p style="color: red">{{ session('gelombangAda') }}</p>
                             @endif
@@ -97,7 +97,7 @@
                     <div class="flex justify-between">
                         <b>Atur Syarat Dokumen</b>
                         <div class="flex">
-                            <button type="button" class="tombol-mini tombol-netral" alt="Tambah" data-url="{{ route('admin.ppdb.buat.syaratDokumen') }}">
+                            <button type="button" class="tombol-mini tombol-netral" alt="Tambah" data-url="{{ route('admin.ppdb.buat.syarat_dokumen') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20" width="20"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
                                 Tambah
                             </button>
@@ -125,7 +125,7 @@
                     </div>
                 </div>
             </form>
-            <div class="margin-vertical text-align-center">
+            <div class="flex justify-center margin-vertical">
                 <button type="submit" class="tombol-besar tombol-netral" form="ppdbBuat">Simpan</button>
             </div>
         </div>

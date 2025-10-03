@@ -9,8 +9,41 @@
         <hr style="border: 1px solid rgba(0, 0, 0, .15); margin: 0 1rem;">
         <div class="content-padding content-padding-side-rem">
             <div class="content-margin content-padding-side-rem">
-                <x-flash-message flash='blue'>
-                    Perubahan status dan catatan admin akan langsung terkirim tanpa perlu menekan tombol 'Simpan'. Selainnya, dapat diperbaharui secara manual.
+                <x-flash-message flash='blue' class="cursor-pointer">
+                    <div data-toggle-target="#petunjukPengisian" class="flex justify-between">
+                        <p><b>Petunjuk Pengeditan</b></p>
+                        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    </div>
+                    <ul id="petunjukPengisian" class="overflow-hidden vertical-dropdown">
+                        <li class="subtext">Sebelum melakukan perubahan data, Admin diharapkan untuk terlebih dahulu mengonfirmasi dengan orang tua atau wali pendaftar mengenai informasi mana saja yang perlu diperbarui.</li>
+                        <li class="subtext">Perlu diketahui bahwa perubahan pada Status Pendaftaran dan Catatan Admin akan otomatis tersimpan (autosave) tanpa perlu menekan tombol "Simpan".</li>
+                        <li class="subtext">Pastikan data yang diisi sudah selengkap mungkin. Bila orang tua belum memberikan info lengkap, silakan ditanyakan agar datanya bisa dilengkapi.</li>
+                        <li class="subtext">Apabila orang tua atau wali ingin mengganti kata sandi, tekan tombol 'Buat Tautan dan PIN' untuk membuat tautan dan PIN pengaturan ulang kata sandi yang berlaku selama 30 menit. Mohon segera informasikan tautan dan PIN tersebut ke orang tua agar segera melakukan penggantian kata sandi.</li>
+                    </ul>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", () => {
+                            const arrow = document.querySelector(".arrow");
+                            const target = document.querySelector("#petunjukPengisian");
+                            target
+
+                            if (!arrow || !target) return;
+
+                            // Link `arrow` to `target` and update `arrow` based on .open/.close on `target`
+                            const updateArrow = () => {
+                                const isOpen = target.classList.contains("open");
+                                arrow.style.transform = isOpen ? "rotate(0deg)" : "rotate(-90deg)";
+                                arrow.style.transition = "transform 0.2s";
+                            };
+                            // Reflects the initial state of `target` on page load
+                            updateArrow();
+
+                            // Watch for DOM changes (specifically class attribute changes) on the `target` element.
+                            const observer = new MutationObserver(() => {
+                                updateArrow();
+                            });
+                            observer.observe(target, { attributes: true, attributeFilter: ["class"] });
+                        });
+                    </script>
                 </x-flash-message>
             </div>
             <div class="biodata scrollable">
@@ -41,7 +74,7 @@
                                 <div class="padding-side-10">
                                     <table>
                                         <tr><td><p>Ubah Kata Sandi Pengguna</p>
-                                            <p><a class="badge round tombol-netral" style="text-decoration: none;" href="{{ route('admin.ppdb.aktif.setToken', $pendaftaran->user->id) }}" onclick="this.style.pointerEvents='none'">Dapatkan Link dan PIN</a></p>
+                                            <p><a class="badge round tombol-netral" style="text-decoration: none;" href="{{ route('admin.ppdb.aktif.password_reset.set_token', $pendaftaran->user->id) }}" onclick="this.style.pointerEvents='none'">Buat Tautan dan PIN</a></p>
                                         </td></tr>
                                         <tr><td>Status Pendaftaran <span style="color:#2962ff">(klik status untuk mengubah)</span>
                                                 @if ($pendaftaran->status == 'Mengisi' || !$pendaftaran->infoAnak->buktiBayar->first())
@@ -146,29 +179,29 @@
                                 <div class="padding-10">
                                     <b>Data Anak</b>
                                     <table>
-                                        <tr><td>Nama<x-input type="text" class="form-item" name="nama_anak" :value="old('nama_anak', $infoAnak->nama_anak ?? '')" placeholder="Nama Anak" required/></td></tr>
-                                        <tr><td>Nama Panggilan<x-input type="text" class="form-item" name="panggilan_anak" :value="old('panggilan_anak', $infoAnak->panggilan_anak ?? '')" placeholder="Nama Panggilan Anak" required/></td></tr>
-                                        <tr><td>Tempat Lahir<x-input type="text" class="form-item" name="tempat_lahir" :value="old('tempat_lahir', $infoAnak->tempat_lahir ?? '')" placeholder="Tempat Lahir Anak" required/></td></tr>
-                                        <tr><td>Tanggal Lahir<x-input type="date" class="form-item" name="tanggal_lahir" :value="old('tanggal_lahir', $infoAnak->tanggal_lahir ?? '')" required/></td></tr>
-                                        <tr><td>Jarak Tempuh (km)<x-input type="number" name="jarak_tempuh" class="form-item" :value="old('jarak_tempuh', $infoAnak->jarak_tempuh ?? '')" required/></td></tr>
-                                        <tr><td>Alamat<x-input-textarea class="form-item" name="alamat_anak" rows="4" cols="23" :value="old('alamat_anak', $infoAnak->alamat_anak ?? '')" placeholder="Silakan tulis alamat disini" required/></td></tr>
-                                        <tr><td>Jenis Kelamin<x-input-radio id="jk" name="jenis_kelamin" :options="config('form-options.jenis_kelamin')" :value="$infoAnak->jenis_kelamin ?? '' " required/></td></tr>
-                                        <tr><td>Kewarganegaraan<x-input-radio id="kwn" name="kewarganegaraan" :options="config('form-options.kewarganegaraan')" :value="$infoAnak->kewarganegaraan ?? '' " required/></td></tr>
-                                        <tr><td>Bahasa di Rumah<x-input-select class="form-item" name="bahasa_di_rumah" :options="config('form-options.bahasa_di_rumah')" :value="$infoAnak->bahasa_di_rumah ?? '' " required/></td></tr>
-                                        <tr><td>Agama<x-input-select class="form-item" name="agama" :options="config('form-options.agama')" :value="$infoAnak->agama ?? '' " required/></td></tr>
-                                        <tr><td>Status Tinggal<x-input-select class="form-item" name="status_tinggal" :options="config('form-options.status_tinggal')" :value="$infoAnak->status_tinggal ?? '' " required/></td></tr>
-                                        <tr><td>Yang Mendaftarkan<x-input-radio id="yang_mendaftarkan" name="yang_mendaftarkan" :options="config('form-options.yang_mendaftarkan')" :value="$infoAnak->yang_mendaftarkan ?? '' " required/></td></tr>
-                                        <tr><td>Status Anak<x-input-select class="form-item" name="status_anak" :options="config('form-options.status_anak')" :value="$infoAnak->status_anak ?? '' " required/></td></tr>
-                                        <tr><td>Anak Ke-<x-input type="number" class="form-item" name="anak_ke" min="1" :value="old('anak_ke', $infoAnak->anak_ke ?? '')" required/></td></tr>
+                                        <tr><td>Nama<x-input type="text" class="form-item" name="nama_anak" :value="old('nama_anak', $infoAnak->nama_anak ?? '')" placeholder="Nama Anak"/></td></tr>
+                                        <tr><td>Nama Panggilan<x-input type="text" class="form-item" name="panggilan_anak" :value="old('panggilan_anak', $infoAnak->panggilan_anak ?? '')" placeholder="Nama Panggilan Anak"/></td></tr>
+                                        <tr><td>Tempat Lahir<x-input type="text" class="form-item" name="tempat_lahir" :value="old('tempat_lahir', $infoAnak->tempat_lahir ?? '')" placeholder="Tempat Lahir Anak"/></td></tr>
+                                        <tr><td>Tanggal Lahir<x-input type="date" class="form-item" name="tanggal_lahir" :value="old('tanggal_lahir', $infoAnak->tanggal_lahir ?? '')"/></td></tr>
+                                        <tr><td>Jarak Tempuh (km)<x-input type="number" name="jarak_tempuh" class="form-item" :value="old('jarak_tempuh', $infoAnak->jarak_tempuh ?? '')"/></td></tr>
+                                        <tr><td>Alamat<x-input-textarea class="form-item" name="alamat_anak" rows="4" cols="23" :value="old('alamat_anak', $infoAnak->alamat_anak ?? '')" placeholder="Silakan tulis alamat disini"/></td></tr>
+                                        <tr><td>Jenis Kelamin<x-input-radio id="jk" name="jenis_kelamin" :options="config('form-options.jenis_kelamin')" :value="$infoAnak->jenis_kelamin ?? '' "/></td></tr>
+                                        <tr><td>Kewarganegaraan<x-input-radio id="kwn" name="kewarganegaraan" :options="config('form-options.kewarganegaraan')" :value="$infoAnak->kewarganegaraan ?? '' "/></td></tr>
+                                        <tr><td>Bahasa di Rumah<x-input-select class="form-item" name="bahasa_di_rumah" :options="config('form-options.bahasa_di_rumah')" :value="$infoAnak->bahasa_di_rumah ?? '' "/></td></tr>
+                                        <tr><td>Agama<x-input-select class="form-item" name="agama" :options="config('form-options.agama')" :value="$infoAnak->agama ?? '' "/></td></tr>
+                                        <tr><td>Status Tinggal<x-input-select class="form-item" name="status_tinggal" :options="config('form-options.status_tinggal')" :value="$infoAnak->status_tinggal ?? '' "/></td></tr>
+                                        <tr><td>Yang Mendaftarkan<x-input-radio id="yang_mendaftarkan" name="yang_mendaftarkan" :options="config('form-options.yang_mendaftarkan')" :value="$infoAnak->yang_mendaftarkan ?? '' "/></td></tr>
+                                        <tr><td>Status Anak<x-input-select class="form-item" name="status_anak" :options="config('form-options.status_anak')" :value="$infoAnak->status_anak ?? '' "/></td></tr>
+                                        <tr><td>Anak Ke-<x-input type="number" class="form-item" name="anak_ke" min="1" :value="old('anak_ke', $infoAnak->anak_ke ?? '')"/></td></tr>
                                         <tr><td>Saudara Kandung<x-input type="number" class="form-item" name="saudara_kandung" min="0" :value="old('saudara_kandung', $infoAnak->saudara_kandung ?? '')"/></td></tr>
                                         <tr><td>Saudara Tiri<x-input type="number" class="form-item" name="saudara_tiri" min="0" :value="old('saudara_tiri', $infoAnak->saudara_tiri ?? '')"/></td></tr>
                                         <tr><td>Saudara Angkat<x-input type="number" class="form-item" name="saudara_angkat" min="0" :value="old('saudara_angkat', $infoAnak->saudara_angkat ?? '')"/></td></tr>
-                                        <tr><td>Berat Badan (kg)<x-input type="number" class="form-item" name="berat_badan" :value="old('berat_badan', $infoAnak->berat_badan ?? '')" required/></td></tr>
-                                        <tr><td>Tinggi Badan (cm)<x-input type="number" class="form-item" name="tinggi_badan" :value="old('tinggi_badan', $infoAnak->tinggi_badan ?? '')" required/></td></tr>
-                                        <tr><td>Ukuran Baju<x-input-select name="ukuran_baju" class="form-item" :options="config('form-options.ukuran_baju')" :value="$infoAnak->ukuran_baju ?? '' " required/></td></tr>
-                                        <tr><td>Golongan Darah<x-input-select class="form-item" name="golongan_darah" :options="config('form-options.golongan_darah')" :value="$infoAnak->golongan_darah ?? '' " required/></td></tr>
+                                        <tr><td>Berat Badan (kg)<x-input type="number" class="form-item" name="berat_badan" :value="old('berat_badan', $infoAnak->berat_badan ?? '')"/></td></tr>
+                                        <tr><td>Tinggi Badan (cm)<x-input type="number" class="form-item" name="tinggi_badan" :value="old('tinggi_badan', $infoAnak->tinggi_badan ?? '')"/></td></tr>
+                                        <tr><td>Ukuran Baju<x-input-select name="ukuran_baju" class="form-item" :options="config('form-options.ukuran_baju')" :value="$infoAnak->ukuran_baju ?? '' "/></td></tr>
+                                        <tr><td>Golongan Darah<x-input-select class="form-item" name="golongan_darah" :options="config('form-options.golongan_darah')" :value="$infoAnak->golongan_darah ?? '' "/></td></tr>
                                         <tr><td>Riwayat Penyakit<x-input-textarea class="form-item" name="riwayat_penyakit" rows="4" cols="23" :value="old('riwayat_penyakit', $infoAnak->riwayat_penyakit ?? '')" placeholder="Silakan diisi bila ada" /></td></tr>
-                                        <tr><td>Mendaftar Sebagai<x-input-radio id="mendaftar_sebagai" name="mendaftar_sebagai" :options="config('form-options.mendaftar_sebagai')" :value="$infoAnak->mendaftar_sebagai ?? '' " required/></td></tr>
+                                        <tr><td>Mendaftar Sebagai<x-input-radio id="mendaftar_sebagai" name="mendaftar_sebagai" :options="config('form-options.mendaftar_sebagai')" :value="$infoAnak->mendaftar_sebagai ?? '' "/></td></tr>
                                         {{-- JS for If, daftar_sebagai has option value=2 selected, display the part below, else don't show --}}
                                         <tbody id="pindahanBit" style="display:none;">
                                         <tr><td>Sekolah Lama<x-input class="pindahan-input form-item" type="text" name="sekolah_lama" :value="old('sekolah_lama', $infoAnak->sekolah_lama ?? '')"/></td></tr>

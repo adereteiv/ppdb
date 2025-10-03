@@ -15,6 +15,15 @@ class AuthController extends Controller
      * Fetches active batch and determines access to login page
      */
     public function showLogin(){
+        // Adopted from RoleMiddleware, but controller-level logic is enough for this
+        if (!BatchPPDB::where('status', true)->first()){
+            return request()->is('/login')
+                ? redirect('/daftar')
+                : back();
+        }
+        if (Auth::check() && Auth::user()->role_id == 2) {
+            return redirect('/pendaftar/dashboard');
+        }
         return view('auth.login');
     }
 
@@ -140,7 +149,9 @@ class AuthController extends Controller
             }
         }
 
+        // This check fails intellisense idfknowhy, but it's basically checking if either: no $user found or the entered password mismatches the hashed value of an existing $user
         if (!$user || !Hash::check($credentials['password'], $user->password))
+            // Changed to the above because now it allows role_id = 2 to register using two different modifiers: ID or nomor_hp
             // !Auth::attempt([
             //     $authField => $credentials[$authField],
             //     'password' => $credentials['password'],

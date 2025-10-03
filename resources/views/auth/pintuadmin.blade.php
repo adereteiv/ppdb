@@ -15,7 +15,7 @@
                 </x-flash-message>
             @endif
 
-            <form method="POST" action="{{ route('loginAdmin') }}">@csrf
+            <form method="POST" action="{{ route('login.admin.send') }}">@csrf
                 <div>
                     <div class="margin-vertical">
                         <x-input type="email" name="email" placeholder="Email Admin" autofocus required/>

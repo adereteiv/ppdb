@@ -5,7 +5,7 @@
             <div class="text-align-center margin-vertical">
                 <h2>Konfirmasi PIN Ganti Kata Sandi</h2>
             </div>
-            <form method="POST" action="{{ route('passwordResetPIN', $token) }}">@csrf
+            <form method="POST" action="{{ route('password_reset.pin', $token) }}">@csrf
                 <div>
                     <div class="margin-vertical">
                         PIN

@@ -19,8 +19,10 @@
     </div>
     <div class="wrapper teks-putih text-align-center bg-blue">
         <div class="content-padding-rem">
-            <h6 class="margin-vertical">Gelombang PPDB Terbaru: {{ $batch }}</h6>
-            <h6 class="margin-vertical">Total Pendaftar: {{ $pendaftaranTotal }}</h6>
+            <h6 class="margin-vertical">Gelombang PPDB Terbaru:<br>{{ $batch }}</h6>
+            @if (!$batch)
+                <h6 class="margin-vertical">Total Pendaftar: {{ $pendaftaranTotal }}</h6>
+            @endif
         </div>
     </div>
     <div class="admin-summary gap-rem">

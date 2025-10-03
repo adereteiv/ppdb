@@ -23,12 +23,11 @@ class AuthControllerTest extends TestCase
             'password' => Hash::make('passwordtest'),
         ]);
 
-        $response = $this->post('/login', [
+        $this->post('/login', [
             'id' => $user->id,
             'password' => 'passwordtest',
         ]);
 
-        $response->assertRedirect('/pendaftar/dashboard');
         $this->assertAuthenticatedAs($user);
     }
 

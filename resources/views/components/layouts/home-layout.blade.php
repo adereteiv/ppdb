@@ -15,13 +15,15 @@
             // Checks for active batch, if exists then enables daftar and login menu on header, based on isOpen
             use App\Models\BatchPPDB;
             $periodeAktif = BatchPPDB::where('status', true)->exists();
+
+            $loggedIn = Auth::check() && Auth::user()->role_id == 2;
         @endphp
         @if (empty($hideHeader)) {{-- Enables hiding header, works for mobile header as well --}}
-            <x-partials.home-header :isOpen="$periodeAktif"/>
+            <x-partials.home-header :isOpen="$periodeAktif" :loggedIn="$loggedIn"/>
         @endif
         <main class="home-main flex-1 flex flex-col">
             @if (empty($hideHeader))
-                <x-partials.home-header-mobile :isOpen="$periodeAktif"/>
+                <x-partials.home-header-mobile :isOpen="$periodeAktif" :loggedIn="$loggedIn"/>
             @endif
             {{ $slot }}
         </main>

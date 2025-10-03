@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Collection;
 use App\Notifications\KirimUserIDNotification;
 use App\Models\{
     User,
@@ -138,7 +137,7 @@ class PendaftaranService
             'kewarganegaraan'   =>  'required|in:WNI,WNA Keturunan',
             'bahasa_di_rumah'   =>  'required|string',
             'agama'             =>  'required|in:Buddha,Hindu,Islam,Katolik,Khonghucu,Kristen Protestan',
-            'status_tinggal'    =>  'required|in:Bersama Orang Tua,Bersama Wali,Panti Asuhan',
+            'status_tinggal'    =>  'required|in:Bersama Orang Tua,Bersama Wali',
             'yang_mendaftarkan' =>  'required|in:Orang Tua,Wali',
             'status_anak'       =>  'required|in:Anak Kandung,Bukan Anak Kandung',
             'anak_ke'           =>  'required|numeric|min:1|max:200',
@@ -286,7 +285,7 @@ class PendaftaranService
             $sanitize['panggilan_anak'],
         ]);
 
-        // Enables username change, safe because nomor_hp and email is made via register where differentiation happens, refer to DashboardController
+        // Enables username change, safe because nomor_hp and email is made via register where differentiation happens, refer to DashboardController@recovery
         User::where('id', $pendaftaran->user->id)->update(['name' => $sanitize['nama_anak']]);
         $infoAnak = InfoAnak::updateOrCreate(['pendaftaran_id' => $pendaftaran->id], $validatedData);
 
@@ -422,11 +421,8 @@ class PendaftaranService
     {
         try {
             if (isset($userData['email']) && array_key_exists('email', $userData)) {
-                $user = \App\Models\User::where('email', $userData['email'])->first();
-
-                if (!$user) {
-                    return 'User tidak ditemukan';
-                }
+                $user = User::where('email', $userData['email'])->first();
+                if (!$user) return 'User tidak ditemukan';
 
                 $user->notify(new KirimUserIDNotification($userData['name'], $userData['id'], $userData['nomor_hp'], $password));
 

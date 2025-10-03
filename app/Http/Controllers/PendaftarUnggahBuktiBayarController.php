@@ -30,7 +30,7 @@ class PendaftarUnggahBuktiBayarController extends Controller
         $buktiBayar = BuktiBayar::where('anak_id', optional($pendaftaran->infoAnak)->id)->first();
 
         if (now() >= $batch->waktu_tenggat) {
-            return back()->with('check', 'Masa tenggat pendaftaran sudah lewat. Silakan menghubungi Admin bila ingin merubah data pendaftaran.');
+            return back()->with('check', 'Masa tenggat pendaftaran sudah lewat. Silakan menghubungi Admin bila ingin mengubah data pendaftaran.');
         } elseif ($pendaftaran->status === 'Terverifikasi') {
             return back()->with('check', 'Data Anda sudah terverifikasi. Silakan menghubungi Admin bila ingin merubah data pendaftaran.');
         }

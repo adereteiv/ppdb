@@ -25,7 +25,8 @@ class KirimUserIDNotificationTest extends TestCase
             'role_id' => 2,
         ]);
 
-        $user->notify(new KirimUserIDNotification($user->id));
+        // $user->notify(new KirimUserIDNotification($user->id));
+        $user->notify(new KirimUserIDNotification($user->name, $user->id, $user->nomor_hp, $user->password));
 
         Notification::assertSentTo($user, KirimUserIDNotification::class, function ($notification, $channels) use ($user){
             $email = $notification->toMail($user);

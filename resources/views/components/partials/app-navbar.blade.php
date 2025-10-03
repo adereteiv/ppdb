@@ -14,19 +14,19 @@
                     <li>
                         <x-nav-link class="content-padding-vertical content-padding-side-rem" href="{{ route('admin.dashboard') }}" :active="request()->is('admin/dashboard')">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20" width="20"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg>
-                            <span class="flex flex-center padding-left-10">Beranda</span>
+                            <span class="flex flex-center padding-left-10 text-align-center">Beranda</span>
                         </x-nav-link>
                     </li>
                     <li>
                         <x-nav-link class="content-padding-vertical content-padding-side-rem" href="{{ route('admin.ppdb.index') }}" :active="request()->is('admin/ppdb*')">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20" width="20"><path d="M80-200v-80h400v80H80Zm0-200v-80h200v80H80Zm0-200v-80h200v80H80Zm744 400L670-354q-24 17-52.5 25.5T560-320q-83 0-141.5-58.5T360-520q0-83 58.5-141.5T560-720q83 0 141.5 58.5T760-520q0 29-8.5 57.5T726-410l154 154-56 56ZM560-400q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z"/></svg>
-                            <span class="flex flex-center padding-left-10">PPDB</span>
+                            <span class="flex flex-center padding-left-10 text-align-center">Kelola PPDB</span>
                         </x-nav-link>
                     </li>
                     <li>
                         <x-nav-link class="content-padding-vertical content-padding-side-rem" href="{{ route('admin.pengumuman.index') }}" :active="request()->is('admin/pengumuman*')">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" height="20" width="20"><path d="M720-440v-80h160v80H720Zm48 280-128-96 48-64 128 96-48 64Zm-80-480-48-64 128-96 48 64-128 96ZM200-200v-160h-40q-33 0-56.5-23.5T80-440v-80q0-33 23.5-56.5T160-600h160l200-120v480L320-360h-40v160h-80Zm240-182v-196l-98 58H160v80h182l98 58Zm120 36v-268q27 24 43.5 58.5T620-480q0 41-16.5 75.5T560-346ZM300-480Z"/></svg>
-                            <span class="flex flex-center padding-left-10">Pengumuman</span>
+                            <span class="flex flex-center padding-left-10 text-align-center">Kelola Pengumuman</span>
                         </x-nav-link>
                     </li>
                 @else
@@ -59,9 +59,9 @@
                                 <div id="appNavSub" class="submenu-content {{ $submenuOpen ? 'open' : '' }}">
                                     <div class="content-padding-bottom-rem content-padding-side-rem">
                                         <div class="wrapper">
-                                            <x-nav-link href="{{ route('pendaftar.buktiBayar') }}" :active="request()->is('pendaftar/buktibayar')">Bukti Pembayaran</x-nav-link>
+                                            <x-nav-link href="{{ route('pendaftar.bukti_bayar') }}" :active="request()->is('pendaftar/buktibayar')">Bukti Pembayaran</x-nav-link>
                                             <x-nav-link href="{{ route('pendaftar.formulir') }}" :active="request()->is('pendaftar/formulir')">Formulir</x-nav-link>
-                                            <x-nav-link href="{{ route('pendaftar.dokumen') }}" :active="request()->is('pendaftar/dokumen')">Unggah Dokumen</x-nav-link>
+                                            <x-nav-link href="{{ route('pendaftar.dokumen') }}" :active="request()->is('pendaftar/dokumen')">Dokumen Persyaratan</x-nav-link>
                                         </div>
                                     </div>
                                 </div>

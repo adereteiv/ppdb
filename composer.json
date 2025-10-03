@@ -10,6 +10,7 @@
         "egulias/email-validator": "^4.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "league/commonmark": "^2.7.0",
         "maatwebsite/excel": "^3.1",
         "mews/purifier": "^3.4",
         "propaganistas/laravel-disposable-email": "^2.4"

@@ -22,7 +22,7 @@
             </x-flash-message>
         </div>
         <div class="list-stepper flex gap scrollable content-padding-side-rem content-padding-bottom-rem">
-            <a class="flex-1 {{ $buktiBayarLengkap ? 'active' : '' }}" href="{{ route('pendaftar.buktiBayar') }}"><li class="content-padding {{ $buktiBayarLengkap ? 'active' : '' }}">1. Bukti Pembayaran</li></a>
+            <a class="flex-1 {{ $buktiBayarLengkap ? 'active' : '' }}" href="{{ route('pendaftar.bukti_bayar') }}"><li class="content-padding {{ $buktiBayarLengkap ? 'active' : '' }}">1. Bukti Pembayaran</li></a>
             <a class="flex-1 {{ $formulirLengkap ? 'active' : '' }}" href="{{ route('pendaftar.formulir') }}"><li class="content-padding {{ $formulirLengkap ? 'active' : '' }}">2. Formulir Pendaftaran</li></a>
             <a class="flex-1 {{ $dokumenLengkap ? 'active' : '' }}" href="{{ route('pendaftar.dokumen') }}"><li class="content-padding {{ $dokumenLengkap ? 'active' : '' }}">3. Dokumen Persyaratan</li></a>
         </div>

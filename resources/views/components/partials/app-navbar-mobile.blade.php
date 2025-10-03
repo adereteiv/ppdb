@@ -64,9 +64,9 @@
                         <div id="appNavMobileSub" class="submenu-content {{ $submenuOpen ? 'open' : '' }} ">
                             <div class="content-padding-bottom-rem">
                                 <div class="wrapper content-padding">
-                                    <x-nav-link href="{{ route('pendaftar.buktiBayar') }}" :active="request()->is('pendaftar/buktibayar')">Bukti Pembayaran</x-nav-link>
+                                    <x-nav-link href="{{ route('pendaftar.bukti_bayar') }}" :active="request()->is('pendaftar/buktibayar')">Bukti Pembayaran</x-nav-link>
                                     <x-nav-link href="{{ route('pendaftar.formulir') }}" :active="request()->is('pendaftar/formulir')">Formulir</x-nav-link>
-                                    <x-nav-link href="{{ route('pendaftar.dokumen') }}" :active="request()->is('pendaftar/dokumen')">Unggah Dokumen</x-nav-link>
+                                    <x-nav-link href="{{ route('pendaftar.dokumen') }}" :active="request()->is('pendaftar/dokumen')">Dokumen Persyaratan</x-nav-link>
                                 </div>
                             </div>
                         </div>

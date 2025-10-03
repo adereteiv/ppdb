@@ -6,4 +6,5 @@
     <li>Mengunggah Dokumen Persyaratan, format Surat Pernyataan dapat dilihat pada bagian Syarat dan Ketentuan;</li>
     <li>Kelengkapan data pendaftaran akan diverifikasi secepatnya.</li>
     <li>Pengumuman penerimaan akan diposting pada Dashboard Pendaftaran.</li>
+    <li>Dokumen yang sudah diunggah harap dibawa ke sekolah saat hari pertama masuk sekolah untuk pendaftaran ulang. Untuk foto anak, harap membawa sebanyak 4 lembar dengan ukuran 4x6.</li>
 </ol>

@@ -6,9 +6,9 @@
             <h6 class="margin-vertical">Data Pengumuman</h6>
             <table class="alternate fixed detail">
                 <tr>
-                    <td width="25%">Posted By</td>
+                    <td width="25%">Diposting Oleh:</td>
                     <td width="5%">:</td>
-                    <td>{{ $pengumuman->user->name }} {{ $pengumuman->user->id }}</td>
+                    <td>{{ $pengumuman->user->name }} (ID Pengguna: {{ $pengumuman->user->id }})</td>
                 </tr>
                 <tr>
                     <td>ID Pengumuman</td>

@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use App\Services\PendaftaranService;
-use App\Notifications\KirimUserIDNotification;
 use App\Models\{User,InfoAnak,BatchPPDB};
 
 class RegisterController extends Controller
@@ -138,9 +137,6 @@ class RegisterController extends Controller
 
         // Gunakan service khusus kirim email disini
         $pendaftaranService->sendEmailWithQueue($user->toArray(), $request->password);
-
-        // Because email is nullable (refer to db schema and validation), check for email value before sending email notification
-        // if (isset($user->email)) $user->notify(new KirimUserIDNotification($user->name, $user->id, $user->nomor_hp, $request->password));
 
         // Display user credentials for login via temporary token
         $key = 'regis_confirm';

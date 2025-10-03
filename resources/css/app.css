@@ -882,11 +882,13 @@ input[type="file"].form-item{
     li:hover a, a.current{
         padding-left: 3rem;
     }
+}
+.vertical-dropdown{
     &.close{
         max-height: 0;
     }
     &.open{
-        max-height: 100vh;
+        max-height: 100%;
     }
 }
 .home-footer{
@@ -1508,7 +1510,7 @@ input[type="file"].form-item{
 }
 @media (max-width: 991px){
     .org-card{width: 100%;}
-    .app-layout footer, .home-navbar .navbar, .section-kid-small, .arrow{display: none;}
+    .app-layout footer, .home-navbar .navbar, .section-kid-small, .app-navbar .arrow, .app-navbar-mobile .arrow{display: none;}
     .home-footer *{flex-direction: column;}
     .app-navbar{
         &.open{width: 8rem;}
@@ -1572,4 +1574,10 @@ input[type="file"].form-item{
 #pendaftar-biodata,
 #pendaftar-formulir{
     td{vertical-align: top;}
+}
+
+/* Remove built-in password reveal icon on Microsoft Edge */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
 }

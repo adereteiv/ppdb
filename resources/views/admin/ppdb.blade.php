@@ -7,11 +7,11 @@
                 <h5>Kelola Arsip PPDB</h5>
                 <div>
                     @if ($arsipPPDB->isNotEmpty())
-                        <form action="{{ route('admin.ppdb.arsipKey') }}" method="POST" class="flex flex-col gap">@csrf
+                        <form action="{{ route('admin.ppdb.arsip_key') }}" method="POST" class="flex flex-col gap">@csrf
                             <div>
                                 <x-input-select name="periode" :options="$arsipOptions" :value="request()->cookie('arsip_key')"/>
                             </div>
-                            <div><button type="submit" class="tombol-besar tombol-netral">Akses Arsip</button></div>
+                            <div class="flex flex-center"><button type="submit" class="tombol-besar tombol-netral">Akses Arsip</button></div>
                         </form>
                     @else
                         <button class="tombol-besar tombol-netral">Rekam arsip PPDB tidak ditemukan</button>
